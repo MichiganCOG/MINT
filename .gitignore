@@ -1,0 +1,7 @@
+*.o*
+results/*
+*.pkl
+data/*
+*.pyc
+*.npy
+*.pdf
