@@ -26,6 +26,7 @@ python train.py \
 --Model alexnet \
 --Gamma 0.2 \
 --Nesterov \
---Device_ids 0
+--Device_ids 0 \
+--Prune_step 1
 
 echo "end"

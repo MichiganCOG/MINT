@@ -91,24 +91,25 @@ def mi(x, y, z=None, k=3, base=2):
 
 
 def knn_mi(first_vector, second_vector, class_attrb):
-    first_vector  = first_vector.reshape(-1, 1)
-    second_vector = second_vector.reshape(-1, 1)
-    class_attrb   = class_attrb.reshape(-1, 1)
+    #first_vector  = first_vector.reshape(-1, 1)
+    #second_vector = second_vector.reshape(-1, 1)
+    #class_attrb   = class_attrb.reshape(-1, 1)
+    #import pdb; pdb.set_trace()
 
     return max(0, mi(first_vector, second_vector, class_attrb))
 
 if __name__=="__main__":
     start = time.time()
 
-    n_samples   = 5000
+    n_samples   = 50
 
-    data_matrix = np.random.multivariate_normal(mean=np.zeros((n_samples,)), cov=np.identity(n_samples), size=(3))
+    data_matrix = np.random.multivariate_normal(mean=np.zeros((6,)), cov=np.identity(6), size=(n_samples))
 
     mid = time.time()
 
-    x =data_matrix[0,:].reshape(n_samples,1) 
-    y =data_matrix[1,:].reshape(n_samples,1) 
-    z =data_matrix[2,:].reshape(n_samples,1)
+    x =data_matrix[:,:2].reshape(n_samples,2) 
+    y =data_matrix[:,2:4].reshape(n_samples,2) 
+    z =data_matrix[::,4:].reshape(n_samples,2)
 
     
     I_value = max(0,mi(x,y,z))
