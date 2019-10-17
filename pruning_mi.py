@@ -140,53 +140,11 @@ def alg1a_group(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op, labels,
     print('Time to calculate dependencies for one child is %f seconds'%((layer_end_time - layer_start_time)/np.sum(children[:nlayers])))
     print('Time to calculate one I measure is %f seconds'%((layer_end_time - layer_start_time)/np.sum(children[:nlayers])/(p1_op.shape[1]*p1_op.shape[1] - p1_op.shape[1])))
 
-def calc_perf(prune_percent, parent_key, children_key, alg, clusters=2):
-    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/CIFAR10_ALEXNET_BATCH/0/logits_final.pkl')
 
-    # Load Data
-    trainloader, testloader = data_loader('CIFAR10', 128)
- 
-    # Check if GPU is available (CUDA)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    
-    # Load Network
-    model = alex(num_classes=10).to(device)
-    model.load_state_dict(init_weights)
-    model.eval()
+def pruner(I_parent, prune_percent, parent_key, children_key, children, clusters, labels, final_weights, model, testloader):
 
-    # Obtain Activations
-    print("----------------------------------")
-    print("Collecting activations from layers")
-
-    act_start_time = time.time()
-    p1_op, c1_op = activations(trainloader, model, device, parent_linear1=True, parent_linear2=False, parent_linear3=False, child_linear1=False, child_linear2=True, child_linear3=False)
-    p2_op, c2_op = activations(trainloader, model, device, parent_linear1=False, parent_linear2=True, parent_linear3=False, child_linear1=False, child_linear2=False, child_linear3=True)
-    act_end_time   = time.time()
-
-    print("Time taken to collect activations is : %f seconds\n"%(act_end_time - act_start_time))
-
-    print("----------------------------------")
-
-    nlayers      = len(parent_key) 
-    labels       = np.zeros((nlayers,8))
-    children     = [8, 10]
-    I_parent     = np.zeros((nlayers, 10, p1_op.shape[1]))
-
-    if alg == '1a':
-        alg1a(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op)
-
-    elif alg == '1b':
-        alg1b(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op)
-
-    else:
-        alg1a_group(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op, labels, clusters)
-
-    # END IF
-
-    print("----------------------------------")
-    print("Begin Pruning of Weights")
-    #np.save('i_parent.npy', I_parent)
-    #I_parent = np.load('i_parent.npy')
+    # Create a copy
+    init_weights   = final_weights.copy()
 
     sorted_weights = np.sort(I_parent.reshape(-1)[np.where(I_parent.reshape(-1)!=0.)[0]])
     cutoff_index   = np.round(prune_percent * sorted_weights.shape[0]).astype('int')
@@ -234,30 +192,72 @@ def calc_perf(prune_percent, parent_key, children_key, alg, clusters=2):
         print('Percent weights remaining from %d layers is %f'%(len(parent_key), valid_count/float(total_count)*100.))
 
     else:
-        print('Percent weights remaining from %d layers is %f'%(len(parent_key), len(np.where(init_weights[children_key[0]].reshape(-1)!= 0.0)[0])/float(init_weights[children_key[0]].reshape(-1).shape[0])*100.))
+        total_count = len(np.where(init_weights[children_key[0]].reshape(-1)!= 0.0)[0])
+        valid_count = float(init_weights[children_key[0]].reshape(-1).shape[0])
+        print('Percent weights remaining from %d layers is %f'%(len(parent_key), valid_count/total_count*100.))
 
 
-
-    true_prune_percent = valid_count / float(total_count)
+    true_prune_percent = valid_count / float(total_count) * 100.
 
     model.load_state_dict(init_weights)
     acc = 100.*accuracy(model, testloader, device) 
     print('Accuracy of the pruned network on the 10000 test images: %f %%\n' %(acc))
-
+    
     return acc, true_prune_percent
 
-if __name__=='__main__':
-    print "Calculation of performance change for one-shot pruning based on Mutual Information"
+
+def calc_perf(parent_key, children_key, alg, clusters=2):
+    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/CIFAR10_ALEXNET_BATCH/0/logits_final.pkl')
+
+    # Load Data
+    trainloader, testloader = data_loader('CIFAR10', 128)
+ 
+    # Check if GPU is available (CUDA)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    
+    # Load Network
+    model = alex(num_classes=10).to(device)
+    model.load_state_dict(init_weights)
+    model.eval()
+
+    # Obtain Activations
+    print("----------------------------------")
+    print("Collecting activations from layers")
+
+    act_start_time = time.time()
+    p1_op, c1_op = activations(trainloader, model, device, parent_linear1=True, parent_linear2=False, parent_linear3=False, child_linear1=False, child_linear2=True, child_linear3=False)
+    p2_op, c2_op = activations(trainloader, model, device, parent_linear1=False, parent_linear2=True, parent_linear3=False, child_linear1=False, child_linear2=False, child_linear3=True)
+    act_end_time   = time.time()
+
+    print("Time taken to collect activations is : %f seconds\n"%(act_end_time - act_start_time))
+
+    print("----------------------------------")
+
+    nlayers      = len(parent_key) 
+    labels       = np.zeros((nlayers,8))
+    children     = [8, 10]
+    I_parent     = np.zeros((nlayers, 10, p1_op.shape[1]))
+
+    if alg == '1a':
+        alg1a(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op)
+
+    elif alg == '1b':
+        alg1b(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op)
+
+    else:
+        alg1a_group(nlayers, children, I_parent, p1_op, p2_op, c1_op, c2_op, labels, clusters)
+
+    # END IF
+
+    print("----------------------------------")
+    print("Begin Pruning of Weights")
+
 
     perf         = None
     prune_per    = None
-    parent_key   = ['linear1.weight','linear2.weight']
-    children_key = ['linear2.weight','linear3.weight']
-    alg          = '1b'
-    clusters     = 3 
 
     for prune_percent in np.arange(0.0, 1.0, step=0.1):
-        acc, true_prune_percent = calc_perf(prune_percent, parent_key, children_key, alg, clusters)
+        acc, true_prune_percent = pruner(I_parent, prune_percent, parent_key, children_key, children, clusters, labels, init_weights, model, testloader)
         if perf is None:
             perf      = [acc]
             prune_per = [true_prune_percent]
@@ -269,7 +269,22 @@ if __name__=='__main__':
         # END IF
 
     print(prune_per)
-    print(per)
+    print(perf)
+
+
+    return perf, prune_per
+
+if __name__=='__main__':
+    print "Calculation of performance change for one-shot pruning based on Mutual Information"
+
+    perf         = None
+    prune_per    = None
+    parent_key   = ['linear1.weight','linear2.weight']
+    children_key = ['linear2.weight','linear3.weight']
+    alg          = '1b'
+    clusters     = 3 
+
+    perf, prune_per = calc_perf(parent_key, children_key, alg, clusters=2)
 
     plt.plot(prune_per, perf) 
     plt.xlabel('Ratio of weights pruned')

@@ -92,10 +92,28 @@ class Alexnet(nn.Module):
         self.linear2.set_mask(masks[6])
         self.linear3.set_mask(masks[7])
 
-    def forward(self, x, labels=False, linear1=False, linear2=False, linear3=False):
+    def forward(self, x, labels=False, conv1=False, conv2=False, conv3=False, conv4=False, conv5=False, linear1=False, linear2=False, linear3=False):
         out = self.pool1(self.relu1(self.conv1(x)))
+        if conv1:
+            return out
+
         out = self.pool2(self.relu2(self.conv2(out)))
-        out = self.pool3(self.relu5(self.conv5(self.relu4(self.conv4(self.relu3(self.conv3(out)))))))
+        if conv2:
+            return out
+
+
+
+        out = self.relu3(self.conv3(out))
+        if conv3:
+            return out
+
+        out = self.relu4(self.conv4(out))
+        if conv4:
+            return out
+
+        out = self.pool3(self.relu5(self.conv5(out)))
+        if conv5:
+            return out
 
         out = self.avgpool(out)
  

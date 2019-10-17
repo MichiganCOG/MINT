@@ -11,13 +11,16 @@ from utils        import save_checkpoint, load_checkpoint, accuracy
 
 
 def calc_perf(prune_percent):
-    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/CIFAR10_ALEXNET_BATCH/0/logits_final.pkl')
+    layerss = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','linear1.weight','linear2.weight','linear3.weight']
+
+    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/STL10_ALEXNET_BATCH/0/logits_final.pkl')
     final_weights  = init_weights.copy()
     sorted_weights = None
     cutoff_value   = -100.0
     
     for item in init_weights.keys():
-        if 'linear2.weight' in item or 'linear3.weight' in item:
+        if item in layerss:
+        #if 'conv2.weight' in item or 'linear2.weight' in item or 'linear3.weight' in item:
             if sorted_weights is None:
                 sorted_weights = np.abs(init_weights[item].reshape(-1))
             else:
@@ -35,7 +38,8 @@ def calc_perf(prune_percent):
     valid_count = 0
  
     for item in init_weights.keys():
-        if 'linear2.weight' in item or 'linear3.weight' in item:
+        #if 'conv2.weight' in item or 'linear2.weight' in item or 'linear3.weight' in item:
+        if item in layerss:
             orig_shape          = final_weights[item].shape
             sorted_weights      = np.abs(final_weights[item].reshape(-1)).numpy()
             cutoff_indices      = np.where(sorted_weights < cutoff_value)[0]        
@@ -51,7 +55,7 @@ def calc_perf(prune_percent):
     true_prune_percent = valid_count/float(total_count)*100.
 
     # Load Data
-    trainloader, testloader = data_loader('CIFAR10', 128)
+    trainloader, testloader = data_loader('STL10', 128)
     
     # Check if GPU is available (CUDA)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -60,7 +64,7 @@ def calc_perf(prune_percent):
     model = alex(num_classes=10).to(device)
     model.load_state_dict(final_weights)
     
-    torch.save(model.state_dict(), 'alexnet_stl10_'+str(int(prune_percent*10))+'.pkl')
+    #torch.save(model.state_dict(), 'alexnet_stl10_'+str(int(prune_percent*10))+'.pkl')
  
     acc = 100.*accuracy(model, testloader, device) 
     print('Accuracy of the pruned network on the 10000 test images: %f %%\n' %(acc))
