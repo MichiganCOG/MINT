@@ -11,9 +11,9 @@ from utils        import save_checkpoint, load_checkpoint, accuracy
 
 
 def calc_perf(prune_percent):
-    layerss = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','linear1.weight','linear2.weight','linear3.weight']
+    layerss = ['linear2.weight','linear3.weight']#['conv2.weight','conv3.weight','conv4.weight','conv5.weight','linear1.weight','linear2.weight','linear3.weight']
 
-    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/STL10_ALEXNET_BATCH/0/logits_final.pkl')
+    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/CIFAR10_ALEXNET_BATCH/0/logits_final.pkl')
     final_weights  = init_weights.copy()
     sorted_weights = None
     cutoff_value   = -100.0
@@ -55,7 +55,7 @@ def calc_perf(prune_percent):
     true_prune_percent = valid_count/float(total_count)*100.
 
     # Load Data
-    trainloader, testloader = data_loader('STL10', 128)
+    trainloader, testloader = data_loader('CIFAR10', 128)
     
     # Check if GPU is available (CUDA)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -89,6 +89,9 @@ if __name__=='__main__':
             prune_per.append(true_prune_percent)
 
         # END IF
+
+    print prune_per
+    print perf
 
     plt.plot(prune_per, perf) 
     plt.xlabel('Ratio of weights pruned')
