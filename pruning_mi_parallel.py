@@ -1,5 +1,6 @@
 import torch
 import copy
+import multiprocessing
 
 import numpy             as np
 import matplotlib.pyplot as plt
@@ -136,6 +137,26 @@ def alg1b(nlayers, children, I_parent, p1_op, c1_op, labels, clusters=2):
     #print('Time to calculate dependencies for one child is %f seconds'%((layer_end_time - layer_start_time)/np.sum(children[:nlayers])))
     #print('Time to calculate one I measure is %f seconds'%((layer_end_time - layer_start_time)/np.sum(children[:nlayers])/(p1_op.shape[1]*p1_op.shape[1] - p1_op.shape[1])))
 
+
+def cmi(data):
+
+       
+    clusters, c1_op, child, p1_op, num_layers, labels = data 
+    I_value = np.zeros((clusters,))
+
+    for group_1 in range(clusters):
+        for group_2 in range(clusters):
+            if group_1 == group_2:
+                continue
+            I_value[group_1] += knn_mi(c1_op[str(num_layers)][:, child].reshape(-1,1), p1_op[str(num_layers)][:, np.where(labels[str(num_layers)]==group_1)[0]], p1_op[str(num_layers)][:, np.where(labels[str(num_layers)]==group_2)[0]]) 
+
+        # END FOR
+ 
+    # END FOR 
+
+    return I_value 
+
+
 def alg1a_group(nlayers, children, I_parent, p1_op, c1_op, labels, clusters=2):
 
     print("----------------------------------")
@@ -152,20 +173,23 @@ def alg1a_group(nlayers, children, I_parent, p1_op, c1_op, labels, clusters=2):
     print("----------------------------------")
     print("Begin Execution of Algorithm 1 (a) Group")
 
-    for num_layers in [len(labels.keys())-1]:
-        for child in tqdm(range(children[str(num_layers)])):
-            for group_1 in range(clusters):
-                for group_2 in range(clusters):
-                    if group_1 == group_2:
-                        continue
-                    I_value = knn_mi(c1_op[str(num_layers)][:, child].reshape(-1,1), p1_op[str(num_layers)][:, np.where(labels[str(num_layers)]==group_1)[0]], p1_op[str(num_layers)][:, np.where(labels[str(num_layers)]==group_2)[0]]) 
-                    I_parent[str(num_layers)][child, group_1] += I_value
+    pool = multiprocessing.Pool(6)
 
-                # END FOR
- 
-            # END FOR 
+    data = []
+    for num_layers in tqdm([len(labels.keys())-1]):
+        for child in range(children[str(num_layers)]):
+            data.append([clusters, c1_op, child, p1_op, num_layers, labels])
 
-        # END FOR
+        # END FOR 
+
+        data = tuple(data)
+        ret_values = pool.map(cmi, data)
+
+        for child in range(children[str(num_layers)]):
+            I_parent[str(num_layers)][child,:] = ret_values[child]
+
+        # END FOR 
+
 
     # END FOR
 
@@ -361,10 +385,10 @@ if __name__=='__main__':
 
     perf         = None
     prune_per    = None
-    parent_key   = ['conv5.weight']#['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight',  'linear1.weight','linear2.weight']
-    children_key = ['linear1.weight']#['conv2.weight','conv3.weight','conv4.weight','conv5.weight','linear1.weight','linear2.weight','linear3.weight']
+    parent_key   = ['linear1.weight','linear2.weight']#['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight',  'linear1.weight','linear2.weight']
+    children_key = ['linear2.weight','linear3.weight']#['conv2.weight','conv3.weight','conv4.weight','conv5.weight','linear1.weight','linear2.weight','linear3.weight']
     alg          = '1a_group'
-    clusters     = 15 
+    clusters     = 4 
 
     perf, prune_per = calc_perf(parent_key, children_key, alg, clusters)
 
