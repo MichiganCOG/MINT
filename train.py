@@ -33,8 +33,10 @@ from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
 from models                    import BasicBlock
-from models                    import Alexnet   as alex
-from models                    import ResNet    as resnet 
+from models                    import Alexnet       as alex
+from models                    import Alexnet_mod2  as alex_mod2
+from models                    import ResNet        as resnet 
+from models                    import MLP           as mlp 
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
@@ -140,22 +142,28 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         if Model == 'alexnet':
             model = alex(num_classes=Dims).to(device)
 
+        elif Model == 'alexnet2':
+            model = alex_mod2(num_classes=Dims).to(device)
+
         elif Model == 'resnet':
             model = resnet(BasicBlock, [2,2,2,2], num_classes=Dims).to(device)
+
+        elif Model == 'mlp':
+            model = mlp(num_classes=Dims).to(device)
 
         else:
             print('Invalid optimizer selected. Exiting')
             exit(1)
 
         # END IF
-        import pdb; pdb.set_trace()
 
         logsoftmax = nn.LogSoftmax()
 
         # Prune-Loop
         for prune_loop in range(Prune_steps):
             params     = [p for p in model.parameters() if p.requires_grad]
-            optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
+            #optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
+            optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
             scheduler  = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
 
             # Training Loop

@@ -68,6 +68,20 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
         train_data = datasets.STL10("data", split='train', transform=train_transform, download=False)
         test_data  = datasets.STL10("data", split='test',  transform=test_transform,  download=False)
 
+
+    elif dataset == 'MNIST':
+
+        train_data = datasets.MNIST('./data', 
+                                       train=True, 
+                                       download=True, 
+                                       transform=transforms.ToTensor())
+        
+        test_data  = datasets.MNIST('./data', 
+                                            train=False, 
+                                            transform=transforms.ToTensor())
+        
+        
+
     else:
         print('Dataset selected isn\'t supported! Error.')
         exit(0)

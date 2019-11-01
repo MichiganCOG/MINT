@@ -7,40 +7,6 @@ from math import log
 import time
 
 
-#def entropy(counts):
-#    '''Compute entropy.'''
-#    ps = counts/float(np.sum(counts))  # coerce to float and normalize
-#    #ps = ps[np.nonzero(ps)]            # toss out zeros
-#    #H = -sum(ps * numpy.log2(ps))   # compute entropy
-#    
-#    return ps
-#
-#def entropy_label(counts):
-#    '''Compute entropy.'''
-#    ps = counts/float(np.sum(counts))  # coerce to float and normalize
-#    ps = ps[np.nonzero(ps)]            # toss out zeros
-#    #H = -sum(ps * numpy.log2(ps))   # compute entropy
-#    
-#    return ps
-#
-#
-#def mi(x, y, z, binss=64):
-#    counts_xyz = entropy(np.histogramdd(np.hstack((x, y, z)), bins=binss)[0])#, range=[[0, 311335], [0, 311335], [0, 311335]])[0])
-#
-#    counts_xy  = entropy(np.histogramdd(np.hstack((x, y)), bins=binss)[0])#, range=[[0, 311335], [0, 311335]])[0])
-#    counts_yz  = entropy(np.histogramdd(np.hstack((y, z)), bins=binss)[0])#, range=[[0, 311335], [0, 311335]])[0])
-#    
-#    counts_z   = entropy(np.histogramdd(z, bins=binss)[0])#, range=[0, 311335])[0])
-#
-#    values = 0.0
-#
-#    for idx in range(binss):
-#        import pdb; pdb.set_trace()
-#        if ((counts_xy[idx] !=0) and (counts_yz[idx]!=0)):
-#            values += counts_xyz[idx] * np.log(counts_xyz[idx]*counts[z]/(counts_xy[idx]*counts_yz[idx]))
-
-#    return values 
-
 def add_noise(x, intens=1e-10):
     # small noise to break degeneracy, see doc.
     return x + intens * np.random.random_sample(x.shape)
