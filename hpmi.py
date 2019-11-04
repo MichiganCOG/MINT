@@ -81,13 +81,13 @@ def mi(X, Y, Z):
     I = []
     #MC_i = []
     iter = 1
-    m_ = 0
+    m_ = 0.
     for _ in range(iter):            
         train1, train23 = NearestNeighborBootstrap(X, Y, Z)
         train = np.append(train1, train23, axis=0)
         Tree = MSTgenerator(train, train.shape[0])
         #print("tree=", Tree)
-        r = 0
+        r = 0.
         for i in range(train.shape[0] - 1):
                 if (Tree.indices[i] >= n1 and i < n1) or (Tree.indices[i] < n1 and i >= n1):
                     r += 1

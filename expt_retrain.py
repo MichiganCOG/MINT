@@ -3,7 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
+from utils                     import save_checkpoint, load_checkpoint, accuracy
 from torchvision import datasets, transforms
+from models                    import MLP           as mlp 
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -47,10 +49,13 @@ class Net(nn.Module):
         x = self.fc3(x)
         return F.log_softmax(x, dim=1)
 
-model = Net().to(device)
+model = mlp(10).to(device)
 
 # Load Model Info
-
+model.load_state_dict(load_checkpoint('/z/home/madantrg/Pruning/results/0/logits_29.pkl'))
+mask = np.load('logits_retrain.npy').item()
+model.setup_masks(mask)
+import pdb; pdb.set_trace()
 
 #optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 optimizer = torch.optim.RMSprop(model.parameters(), lr=0.001)

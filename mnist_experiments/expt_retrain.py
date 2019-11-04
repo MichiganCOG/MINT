@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 
 from torchvision import datasets, transforms
+from models                    import MLP           as mlp 
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -50,7 +51,9 @@ class Net(nn.Module):
 model = Net().to(device)
 
 # Load Model Info
-
+mask = np.load('../logits_retrain.npy').item()
+model.setup_masks(mask)
+import pdb; pdb.set_trace()
 
 #optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 optimizer = torch.optim.RMSprop(model.parameters(), lr=0.001)

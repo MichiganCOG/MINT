@@ -37,3 +37,7 @@ class MLP(nn.Module):
             x = F.softmax(x, dim=1)
 
         return x
+
+    def setup_masks(self, mask):
+        self.fc2.set_mask(torch.Tensor(mask['fc2.weight']))
+        self.fc3.set_mask(torch.Tensor(mask['fc3.weight']))

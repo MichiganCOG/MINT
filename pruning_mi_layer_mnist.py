@@ -55,7 +55,7 @@ def activations_mlp(data_loader, model, device, item_key):
     if len(parents_op.shape) > 2:
         parents_op  = np.mean(parents_op, axis=(2,3))
 
-    return parents_op+0.0001, labels_op
+    return parents_op, labels_op
 
 
 

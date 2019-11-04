@@ -41,63 +41,6 @@ from models                    import MLP           as mlp
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
 
-def weight_prune(model, pruning_perc):
-    '''
-    Prune pruning_perc% weights globally (not layer-wise)
-    arXiv: 1606.09274
-    '''    
-    all_weights = []
-    for p in model.parameters():
-        if len(p.data.size()) != 1:
-            all_weights += list(p.cpu().data.abs().numpy().flatten())
-
-    not_zero_idxs = np.where(np.array(all_weights)!=0.0)[0]
-    threshold = np.percentile(np.array(all_weights)[not_zero_idxs], pruning_perc)
-
-    # generate mask
-    masks = []
-    for p in model.parameters():
-        if len(p.data.size()) != 1:
-            #pruned_inds = (p.data.abs() != 0) & (p.data.abs() > threshold)
-            pruned_inds = p.data.abs() > threshold
-            masks.append(pruned_inds.float())
-    return masks
-
-def pruned_weights(model, prune_percent=0.6):
-    init_weights    = model.state_dict()
-    final_weights   = init_weights.copy()
-    sorted_weights  = None
-    cutoff_value    = -100.0
-    
-    for item in init_weights.keys():
-        #if 'weight' in item:
-        if sorted_weights is None:
-            sorted_weights = np.abs(init_weights[item].reshape(-1))
-        else:
-            sorted_weights = np.hstack((sorted_weights, np.abs(init_weights[item].reshape(-1))))
-    
-        #    # END IF
-    
-    sorted_weights = np.sort(sorted_weights)
-    not_zero_idxs  = np.where(sorted_weights!=0.0)[0]
-    cutoff_index   = np.round(prune_percent * sorted_weights[not_zero_idxs].shape[0]).astype('int')
-    cutoff_value   = sorted_weights[not_zero_idxs][cutoff_index]
-    print('Cutoff value: ', cutoff_value)
-    
-    for item in init_weights.keys():
-        #if 'weight' in item:
-        orig_shape          = final_weights[item].shape
-        sorted_weights      = np.abs(final_weights[item].reshape(-1)).numpy()
-        cutoff_indices      = np.where(sorted_weights < cutoff_value)[0]        
-        final_weights[item] = final_weights[item].reshape(-1)
-        final_weights[item][cutoff_indices] = 0.0
-        print('Number of zeroed weights is %d'%(len(np.where(final_weights[item]==0.0)[0])))
-        final_weights[item] = final_weights[item].reshape(orig_shape)
-    
-
-    model.load_state_dict(final_weights)
-
-    return model
 
 def set_lr(optimizer, lr_update, utype='const'):
     for param_group in optimizer.param_groups:
@@ -119,7 +62,7 @@ def set_lr(optimizer, lr_update, utype='const'):
 
     return optimizer
 
-def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Prune_steps):
+def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Retrain, Retrain_mask):
 
     print("Experimental Setup: ", args)
 
@@ -157,85 +100,84 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
 
         # END IF
 
+        # Retrain option
+        if Retrain:
+            model.load_state_dict(load_checkpoint(Retrain))
+            mask = np.load(Retrain_mask).item()
+            model.setup_masks(mask)
+
         logsoftmax = nn.LogSoftmax()
 
         # Prune-Loop
-        for prune_loop in range(Prune_steps):
-            params     = [p for p in model.parameters() if p.requires_grad]
-            #optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
-            optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
-            scheduler  = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
+        params     = [p for p in model.parameters() if p.requires_grad]
+        #optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
+        optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
+        scheduler  = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
 
-            # Training Loop
-            for epoch in range(Epoch):
-                running_loss = 0.0
-                print('Epoch: ', epoch)
+        # Training Loop
+        for epoch in range(Epoch):
+            running_loss = 0.0
+            print('Epoch: ', epoch)
 
-                # Save Current Model
-                save_checkpoint(epoch, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_'+str(epoch)+'.pkl')
+            # Save Current Model
+            save_checkpoint(epoch, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_'+str(epoch)+'.pkl')
 
-                # Setup Model To Train 
-                model.train()
+            # Setup Model To Train 
+            model.train()
 
-                start_time = time.time()
+            start_time = time.time()
 
-                for step, data in enumerate(trainloader):
-            
-                    # Extract Data From Loader
-                    x_input, y_label = data
+            for step, data in enumerate(trainloader):
+        
+                # Extract Data From Loader
+                x_input, y_label = data
 
-                    ########################### Data Loader + Training ##################################
-                    one_hot                                       = np.zeros((y_label.shape[0], Dims))
-                    one_hot[np.arange(y_label.shape[0]), y_label] = 1
-                    y_label                                       = torch.Tensor(one_hot) 
+                ########################### Data Loader + Training ##################################
+                one_hot                                       = np.zeros((y_label.shape[0], Dims))
+                one_hot[np.arange(y_label.shape[0]), y_label] = 1
+                y_label                                       = torch.Tensor(one_hot) 
 
 
-                    if x_input.shape[0] and x_input.shape[0] >= len(Device_ids):
-                        x_input, y_label = x_input.to(device), y_label.to(device)
+                if x_input.shape[0] and x_input.shape[0] >= len(Device_ids):
+                    x_input, y_label = x_input.to(device), y_label.to(device)
 
-                        optimizer.zero_grad()
+                    optimizer.zero_grad()
 
-                        outputs = model(x_input)
-                        loss    = torch.mean(torch.sum(-y_label * logsoftmax(outputs), dim=1))
+                    outputs = model(x_input)
+                    loss    = torch.mean(torch.sum(-y_label * logsoftmax(outputs), dim=1))
 
-                        loss.backward()
-                        optimizer.step()
-            
-                        running_loss += loss.item()
-                    
-                        ## Add Loss Element
-                        writer.add_scalar(Dataset+'/'+Model+'/loss', loss.item(), epoch*len(trainloader) + step)
-                        if np.isnan(running_loss):
-                            import pdb; pdb.set_trace()
-
-                        # END IF
+                    loss.backward()
+                    optimizer.step()
+        
+                    running_loss += loss.item()
+                
+                    ## Add Loss Element
+                    writer.add_scalar(Dataset+'/'+Model+'/loss', loss.item(), epoch*len(trainloader) + step)
+                    if np.isnan(running_loss):
+                        import pdb; pdb.set_trace()
 
                     # END IF
 
-                    ########################### Data Loader + Training ##################################
+                # END IF
+
+                ########################### Data Loader + Training ##################################
  
-                    if step % 100 == 0:
-                        print('Epoch: ', epoch, '| train loss: %.4f' % (running_loss/100.))
-                        running_loss = 0.0
+                if step % 100 == 0:
+                    print('Epoch: ', epoch, '| train loss: %.4f' % (running_loss/100.))
+                    running_loss = 0.0
 
-                    # END IF
+                # END IF
    
-                # END FOR
-                scheduler.step()
+            scheduler.step()
 
-                end_time = time.time()
-                print("Time for epoch: %f", end_time - start_time)
+            end_time = time.time()
+            print("Time for epoch: %f", end_time - start_time)
  
-                epoch_acc = 100*accuracy(model, testloader, device)
-                writer.add_scalar(Dataset+'/'+Model+'/accuracy', epoch_acc, epoch)
+            epoch_acc = 100*accuracy(model, testloader, device)
+            writer.add_scalar(Dataset+'/'+Model+'/accuracy', epoch_acc, epoch)
 
-                print('Accuracy of the network on the 10000 test images: %f %%\n' % (epoch_acc))
-            
-            # END FOR
-            if prune_loop != Prune_steps-1:
-                masks = weight_prune(model, 60)
-                model.set_masks(masks) 
-
+            print('Accuracy of the network on the 10000 test images: %f %%\n' % (epoch_acc))
+        
         # END FOR
 
         # Close Tensorboard Element
@@ -266,11 +208,12 @@ if __name__ == "__main__":
     parser.add_argument('--Gamma',                type=float ,   default=0.1)
     parser.add_argument('--Nesterov',             action='store_true' , default=False)
     parser.add_argument('--Device_ids',           nargs='+',     type=int,       default=[0])
-    parser.add_argument('--Prune_steps',          type=int   ,   default=2)
+    parser.add_argument('--Retrain',              type=str)
+    parser.add_argument('--Retrain_mask',          type=str)
     
     args = parser.parse_args()
  
-    acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Prune_steps)
+    acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask)
     
     print('Average accuracy: ', np.mean(acc))
     print('Peak accuracy: ',    np.max(acc))
