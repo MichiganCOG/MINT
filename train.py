@@ -110,9 +110,12 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
 
         # Prune-Loop
         params     = [p for p in model.parameters() if p.requires_grad]
-        #optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
-        optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
+        optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
+        #optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
         scheduler  = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
+
+
+        best_model_acc = 0.0
 
         # Training Loop
         for epoch in range(Epoch):
@@ -177,6 +180,11 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
             writer.add_scalar(Dataset+'/'+Model+'/accuracy', epoch_acc, epoch)
 
             print('Accuracy of the network on the 10000 test images: %f %%\n' % (epoch_acc))
+
+
+            if best_model_acc < epoch_acc:
+                best_model_acc = epoch_acc
+                save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_best.pkl')
         
         # END FOR
 
@@ -186,6 +194,8 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         # Save Final Model
         save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_final.pkl')
         total_acc.append(100.*accuracy(model, testloader, device))
+
+        print('Highest accuracy obtained is %f'%(best_model_acc))
         
     return total_acc 
 
@@ -203,7 +213,7 @@ if __name__ == "__main__":
     parser.add_argument('--Expt_rerun',           type=int   ,   default=1)
     parser.add_argument('--Milestones',           nargs='+',     type=float,       default=[100,150,200])
     parser.add_argument('--Opt',                  type=str   ,   default='sgd')
-    parser.add_argument('--Weight_decay',         type=float ,   default=0.001)
+    parser.add_argument('--Weight_decay',         type=float ,   default=0.0001)
     parser.add_argument('--Model',                type=str   ,   default='resnet32')
     parser.add_argument('--Gamma',                type=float ,   default=0.1)
     parser.add_argument('--Nesterov',             action='store_true' , default=False)
@@ -215,6 +225,6 @@ if __name__ == "__main__":
  
     acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask)
     
-    print('Average accuracy: ', np.mean(acc))
-    print('Peak accuracy: ',    np.max(acc))
-    print('Std. of accuracy: ', np.std(acc))
+    #print('Average accuracy: ', np.mean(acc))
+    #print('Peak accuracy: ',    np.max(acc))
+    #print('Std. of accuracy: ', np.std(acc))

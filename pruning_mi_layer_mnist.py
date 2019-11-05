@@ -17,63 +17,11 @@ from sklearn.decomposition   import PCA
 from scipy.cluster.hierarchy import fclusterdata
 from sklearn.cluster         import MeanShift 
 
-def activations_mlp(data_loader, model, device, item_key):
-    parents_op  = None
-    labels_op   = None
 
-    with torch.no_grad():
-        for step, data in enumerate(data_loader):
-            x_input, y_label = data
+# Custom Imports
+from pruning_utils import activations_mlp, sub_sample
+from mi_estimation import *
 
-            if parents_op is None:
-                if 'fc1' in item_key:
-                    parents_op  = model(x_input.to(device), fc1=True).cpu().numpy()
-                elif 'fc2' in item_key:
-                    parents_op  = model(x_input.to(device), fc2=True).cpu().numpy()
-                elif 'fc3' in item_key:
-                    parents_op  = model(x_input.to(device)).cpu().numpy()
-
-                labels_op = y_label.numpy()
-
-            else:
-                if 'fc1' in item_key:
-                    parents_op  = np.vstack((model(x_input.to(device), fc1=True).cpu().numpy(), parents_op))
-                elif 'fc2' in item_key:
-                    parents_op  = np.vstack((model(x_input.to(device), fc2=True).cpu().numpy(), parents_op))
-                elif 'fc3' in item_key:
-                    parents_op  = np.vstack((model(x_input.to(device)).cpu().numpy(), parents_op))
-
-                labels_op = np.hstack((labels_op, y_label.numpy()))
-
-            # END IF 
-
-        # END FOR
-
-    # END FOR
-
-
-    if len(parents_op.shape) > 2:
-        parents_op  = np.mean(parents_op, axis=(2,3))
-
-    return parents_op, labels_op
-
-
-
-def sub_sample(activations, labels, num_samples_per_class=100):
-
-    chosen_sample_idxs = []
-
-    # Basic Implementation of Nearest Mean Classifier
-    unique_labels = np.unique(labels)
-    centroids     = np.zeros((len(unique_labels), activations.shape[1]))
-
-    for idxs in range(len(unique_labels)):
-        centroids[idxs] = np.mean(activations[np.where(labels==unique_labels[idxs])[0]], axis=0)
-        chosen_idxs = np.argsort(np.linalg.norm(activations[np.where(labels==unique_labels[idxs])[0]] - centroids[idxs], axis=1))[:num_samples_per_class]
-        chosen_sample_idxs.extend((np.where(labels==unique_labels[idxs])[0])[chosen_idxs].tolist())
-
-    
-    return activations[chosen_sample_idxs]
 
 def cmi(data):
     clusters, c1_op, child, p1_op, num_layers, labels, labels_children = data 
@@ -90,48 +38,6 @@ def cmi(data):
 
 
     return I_value 
-
-def cmi_group(data):
-    clusters, c1_op, child, p1_op, num_layers, labels, labels_children, group_1 = data 
-    I_value = 0. 
-
-    for group_2 in range(clusters):
-        if group_1 == group_2:
-            continue
-
-        I_value += (mi(c1_op[str(num_layers)][:, np.where(labels_children[str(num_layers)]==child)[0]], p1_op[str(num_layers)][:, np.where(labels[str(num_layers)]==group_1)[0]], p1_op[str(num_layers)][:, np.where(labels[str(num_layers)]==group_2)[0]]))/float(clusters-1)
-
-    # END FOR 
-
-
-    return I_value 
-
-def alg1a_group_g_parallel(nlayers, children, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
-
-    print("----------------------------------")
-    print("Begin Execution of Algorithm 1 (a) Group")
-
-    pool = multiprocessing.Pool(6)
-
-    for num_layers in [len(labels.keys())-1]:
-        for child in tqdm(range(clusters_children[num_layers])):
-            data = []
-            for group_1 in range(clusters[num_layers]):
-                data.append([clusters[num_layers], c1_op, child, p1_op, num_layers, labels, labels_children, group_1])
-
-            # END FOR 
-
-            data = tuple(data)
-            ret_values = pool.map(cmi_group, data)
-
-            for group_1 in range(clusters[num_layers]):
-                I_parent[str(num_layers)][child,group_1] = ret_values[group_1]
-
-            # END FOR
- 
-        # END FOR
-
-    # END FOR
 
 def alg1a_group_non(nlayers, children, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
 
@@ -157,7 +63,6 @@ def alg1a_group_non(nlayers, children, I_parent, p1_op, c1_op, labels, labels_ch
         # END FOR 
 
     # END FOR
-    import pdb; pdb.set_trace()
 
 def alg1a_group(nlayers, children, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
 

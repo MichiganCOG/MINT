@@ -20,64 +20,11 @@ import copy
 import multiprocessing 
 from sklearn.cluster import KMeans
 
-#### Activation function ####
-def activations_mlp(data_loader, model, device, item_key):
-    parents_op  = None
-    labels_op   = None
 
-    with torch.no_grad():
-        for step, data in enumerate(data_loader):
-            x_input, y_label = data
+# Custom Imports
+from pruning_utils import activations_mlp, sub_sample
+from mi_estimation import *
 
-            if parents_op is None:
-                if 'fc1' in item_key:
-                    parents_op  = model(x_input.to(device), fc1=True).cpu().numpy()
-                elif 'fc2' in item_key:
-                    parents_op  = model(x_input.to(device), fc2=True).cpu().numpy()
-                elif 'fc3' in item_key:
-                    parents_op  = model(x_input.to(device)).cpu().numpy()
-
-                labels_op = y_label.numpy()
-
-            else:
-                if 'fc1' in item_key:
-                    parents_op  = np.vstack((model(x_input.to(device), fc1=True).cpu().numpy(), parents_op))
-                elif 'fc2' in item_key:
-                    parents_op  = np.vstack((model(x_input.to(device), fc2=True).cpu().numpy(), parents_op))
-                elif 'fc3' in item_key:
-                    parents_op  = np.vstack((model(x_input.to(device)).cpu().numpy(), parents_op))
-
-                labels_op = np.hstack((labels_op, y_label.numpy()))
-
-            # END IF 
-
-        # END FOR
-
-    # END FOR
-
-
-    if len(parents_op.shape) > 2:
-        parents_op  = np.mean(parents_op, axis=(2,3))
-
-    return parents_op, labels_op
-
-
-#### Sub-sample function ####
-def sub_sample(activations, labels, num_samples_per_class=250):
-
-    chosen_sample_idxs = []
-
-    # Basic Implementation of Nearest Mean Classifier
-    unique_labels = np.unique(labels)
-    centroids     = np.zeros((len(unique_labels), activations.shape[1]))
-
-    for idxs in range(len(unique_labels)):
-        centroids[idxs] = np.mean(activations[np.where(labels==unique_labels[idxs])[0]], axis=0)
-        chosen_idxs = np.argsort(np.linalg.norm(activations[np.where(labels==unique_labels[idxs])[0]] - centroids[idxs], axis=1))[:num_samples_per_class]
-        chosen_sample_idxs.extend((np.where(labels==unique_labels[idxs])[0])[chosen_idxs].tolist())
-
-    
-    return activations[chosen_sample_idxs]
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
 def cmi(data):
@@ -97,7 +44,7 @@ def cmi(data):
     return I_value 
 
 #### Alg. 1 (a) groups
-def alg1a_group(nlayers, children, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
+def alg1a_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
 
     print("----------------------------------")
     print("Begin Execution of Algorithm 1 (a) Group")
@@ -123,7 +70,7 @@ def alg1a_group(nlayers, children, I_parent, p1_op, c1_op, labels, labels_childr
     # END FOR
 
 #### Alg. 1 (a) groups (Non parallelized version to test functionality and timing)
-def alg1a_group_non(nlayers, children, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
+def alg1a_group_non(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children):
 
     print("----------------------------------")
     print("Begin Execution of Algorithm 1 (a) Group")
@@ -131,7 +78,6 @@ def alg1a_group_non(nlayers, children, I_parent, p1_op, c1_op, labels, labels_ch
     for num_layers in range(nlayers):
         for child in range(clusters_children[num_layers]):
             for group_1 in range(clusters[num_layers]):
-                import pdb; pdb.set_trace()
                 for group_2 in tqdm(range(clusters[num_layers])):
                     if group_1 == group_2:
                         continue
@@ -146,86 +92,13 @@ def alg1a_group_non(nlayers, children, I_parent, p1_op, c1_op, labels, labels_ch
 
     # END FOR
 
-#### Pruning and Saving Weights Function
-def pruner(I_parent, prune_percent, parent_key, children_key, children, clusters, clusters_children, labels, labels_children, final_weights, model, testloader, device):
-
-    # Create a copy
-    init_weights   = copy.deepcopy(final_weights)
-
-    sorted_weights = None
-    mask_weights   = {}
-
-    # Flatten I_parent dictionary
-    for looper_idx in range(len(I_parent.keys())):
-        if sorted_weights is None:
-            sorted_weights = I_parent[str(looper_idx)].reshape(-1)
-        else:
-            sorted_weights =  np.concatenate((sorted_weights, I_parent[str(looper_idx)].reshape(-1)))
-
-    sorted_weights = np.sort(sorted_weights)
-    cutoff_index   = np.round(prune_percent * sorted_weights.shape[0]).astype('int')
-    cutoff_value   = sorted_weights[cutoff_index]
-    print('Cutoff index %d wrt total number of elements %d' %(cutoff_index, sorted_weights.shape[0])) 
-    print('Cutoff value %f' %(cutoff_value)) 
-
-
-    for num_layers in range(len(parent_key)):
-        parent_k   = parent_key[num_layers]
-        children_k = children_key[num_layers]
-
-        for child in range(clusters_children[num_layers]):
-            for group_1 in range(clusters[num_layers]):
-                if I_parent[str(num_layers)][child, group_1] <= cutoff_value:
-                    for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
-                        for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                            init_weights[children_k][group_c, group_p] = 0.
-
-                # END IF
-
-            # END FOR
-
-        # END FOR
-        mask_weights[children_k] = np.ones(init_weights[children_k].shape)
-        mask_weights[children_k][np.where(init_weights[children_k]==0)] = 0
-
-    # END FOR
-
-    if len(parent_key) > 1:
-        total_count = 0
-        valid_count = 0
-        for num_layers in range(len(parent_key)):
-            total_count += init_weights[children_key[num_layers]].reshape(-1).shape[0]
-            valid_count += len(np.where(init_weights[children_key[num_layers]].reshape(-1)!=0.)[0])
-        
-        print('Percent weights remaining from %d layers is %f'%(len(parent_key), valid_count/float(total_count)*100.))
-
-    else:
-        valid_count = len(np.where(init_weights[children_key[0]].reshape(-1)!= 0.0)[0])
-        total_count = float(init_weights[children_key[0]].reshape(-1).shape[0])
-        print('Percent weights remaining from %d layers is %f'%(len(parent_key), valid_count/total_count*100.))
-
-
-
-    true_prune_percent = valid_count / float(total_count) * 100.
-
-    model.load_state_dict(init_weights)
-    acc = 100.*accuracy(model, testloader, device) 
-    print('Accuracy of the pruned network on the 10000 test images: %f %%\n' %(acc))
-   
-    ## Save Mask
-    np.save('logits_29_'+str(prune_percent*10)+'.npy', mask_weights)
-
- 
-    return acc, true_prune_percent
-
 
 #### Main Code Executor 
-def calc_perf(parent_key, children_key, clusters, clusters_children):
-
+def calc_perf(parent_key, children_key, clusters, clusters_children, load_weights, save_data_dir):
 
 
     #### Load Model ####
-    init_weights   = load_checkpoint('/z/home/madantrg/Pruning/results/0/logits_29.pkl')
+    init_weights   = load_checkpoint(load_weights)
 
     # Check if GPU is available (CUDA)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -279,7 +152,6 @@ def calc_perf(parent_key, children_key, clusters, clusters_children):
     for idx in range(nlayers):
         labels[str(idx)]          = np.zeros((init_weights[children_key[idx]].shape[1],))
         labels_children[str(idx)] = np.zeros((init_weights[children_key[idx]].shape[0],))
-        children[str(idx)]        = init_weights[children_key[idx]].shape[0]
         I_parent[str(idx)]        = np.zeros((clusters_children[idx], clusters[idx]))
 
         #### Compute Clusters/Groups ####
@@ -319,42 +191,25 @@ def calc_perf(parent_key, children_key, clusters, clusters_children):
 
     del act, lab
 
-    alg1a_group(nlayers, children, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children)
+    alg1a_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children)
 
+    np.save(save_data_dir+'/I_parent.npy', I_parent)
+    np.save(save_data_dir+'/Labels.npy', labels)
+    np.save(save_data_dir+'/Labels_children.npy', labels_children)
 
-    print("----------------------------------")
-    print("Begin Pruning of Weights")
-
-    perf         = None
-    prune_per    = None
-
-    for prune_percent in np.arange(0.0, 1.0, step=0.1):
-        acc, true_prune_percent = pruner(I_parent, prune_percent, parent_key, children_key, children, clusters, clusters_children, labels, labels_children, init_weights, model, testloader, device)
-        if perf is None:
-            perf      = [acc]
-            prune_per = [true_prune_percent]
-
-        else:
-            perf.append(acc)
-            prune_per.append(true_prune_percent)
-
-        # END IF
-
-    print(prune_per)
-    print(perf)
-
-
-    return perf, prune_per
 
 if __name__=='__main__':
     print "Calculation of performance change for one-shot pruning based on Mutual Information"
 
-    perf              = None
-    prune_per         = None
     parent_key        = ['fc1.weight','fc2.weight']
     children_key      = ['fc2.weight','fc3.weight']
     alg               = '1a_group'
-    clusters          = [10, 10]#,150]
-    clusters_children = [10, 10]#,20]
+    clusters          = [10, 10]
+    clusters_children = [10, 10]
 
-    perf, prune_per = calc_perf(parent_key, children_key, clusters, clusters_children)
+    load_weights  = '/z/home/madantrg/Pruning/results/0/logits_best.pkl'
+    save_data_dir = '/z/home/madantrg/Pruning/results/0/'
+
+    calc_perf(parent_key, children_key, clusters, clusters_children, load_weights, save_data_dir)
+
+    print('Code Execution Complete')
