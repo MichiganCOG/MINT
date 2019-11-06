@@ -47,7 +47,7 @@ def activations_mlp(data_loader, model, device, item_key):
 
 
 #### Sub-sample function ####
-def sub_sample(activations, labels, num_samples_per_class=100):
+def sub_sample(activations, labels, num_samples_per_class=250):
 
     chosen_sample_idxs = []
 

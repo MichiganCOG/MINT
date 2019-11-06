@@ -22,8 +22,7 @@ from sklearn.cluster import KMeans
 
 
 # Custom Imports
-from pruning_utils import activations_mlp, sub_sample
-from mi_estimation import *
+from utils import activations_mlp, sub_sample, mi
 
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
@@ -164,9 +163,9 @@ def calc_perf(parent_key, children_key, clusters, clusters_children, load_weight
 
         else:
             #labels[str(idx)] = fclusterdata(X=whiten(p1_op[str(idx)].T), t=clusters[idx], criterion='maxclust', method='ward') - 1
-            #kmeans = KMeans(init='k-means++', n_clusters=clusters[idx], n_init=100, max_iter=1000)
-            #labels[str(idx)] = kmeans.fit_predict(p1_op[str(idx)].T)
-            labels[str(idx)] = np.repeat(np.arange(clusters[idx]), labels[str(idx)].shape[0]/clusters[idx])
+            kmeans = KMeans(init='k-means++', n_clusters=clusters[idx], n_init=100, max_iter=1000)
+            labels[str(idx)] = kmeans.fit_predict(p1_op[str(idx)].T)
+            #labels[str(idx)] = np.repeat(np.arange(clusters[idx]), labels[str(idx)].shape[0]/clusters[idx])
 
         # END IF
 
@@ -176,9 +175,9 @@ def calc_perf(parent_key, children_key, clusters, clusters_children, load_weight
 
         else:
             #labels_children[str(idx)] = fclusterdata(X=whiten(c1_op[str(idx)].T), t=clusters_children[idx], criterion='maxclust', method='ward') - 1
-            #kmeans = KMeans(init='k-means++', n_clusters=clusters_children[idx], n_init=100, max_iter=1000)
-            #labels_children[str(idx)] = kmeans.fit_predict(c1_op[str(idx)].T)
-            labels_children[str(idx)] = np.repeat(np.arange(clusters_children[idx]), labels_children[str(idx)].shape[0]/clusters_children[idx])
+            kmeans = KMeans(init='k-means++', n_clusters=clusters_children[idx], n_init=100, max_iter=1000)
+            labels_children[str(idx)] = kmeans.fit_predict(c1_op[str(idx)].T)
+            #labels_children[str(idx)] = np.repeat(np.arange(clusters_children[idx]), labels_children[str(idx)].shape[0]/clusters_children[idx])
 
         # END IF
 

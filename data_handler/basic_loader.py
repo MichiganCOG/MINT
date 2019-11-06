@@ -11,34 +11,19 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
 
 
     if dataset == 'CIFAR10':
-        mean = [125.3/255., 123.0/255., 113.9/255.]
-        std  = [63.0/255.,  62.1/255.,  66.7/255.]
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
 
-        train_transform = transforms.Compose([transforms.Resize((227,227)),
-                                              transforms.RandomHorizontalFlip(),
+        train_transform = transforms.Compose([transforms.RandomHorizontalFlip(),
+                                              transforms.RandomCrop(32, 4),
                                               transforms.ToTensor(),
-                                              transforms.Normalize(mean, std)])
+                                              normalize])
 
         
-        test_transform = transforms.Compose([transforms.Resize((227, 227)), transforms.ToTensor(), transforms.Normalize(mean, std)])
+        test_transform = transforms.Compose([transforms.ToTensor(), normalize])
         
-        train_data = datasets.CIFAR10("data", train=True,  transform=train_transform, download=False)
+        train_data = datasets.CIFAR10("data", train=True,  transform=train_transform, download=True)
         test_data  = datasets.CIFAR10("data", train=False, transform=test_transform,  download=False)
-
-    elif dataset == 'CIFAR10_im':
-        mean = [125.3/255., 123.0/255., 113.9/255.]
-        std  = [63.0/255.,  62.1/255.,  66.7/255.]
-
-        train_transform = transforms.Compose([transforms.Resize((227,227)),
-                                              transforms.RandomHorizontalFlip(),
-                                              transforms.ToTensor(),
-                                              transforms.Normalize(mean, std)])
-
-        
-        test_transform = transforms.Compose([transforms.Resize((227, 227)), transforms.ToTensor(), transforms.Normalize(mean, std)])
-        
-        train_data = CIFAR10("data", train=True,  transform=train_transform, download=False)
-        test_data  = CIFAR10("data", train=False, transform=test_transform,  download=False)
 
     elif dataset == 'CIFAR100':
 

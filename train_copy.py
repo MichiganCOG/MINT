@@ -299,7 +299,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
  
-    for prune_percent in np.arange(0.44, 0.45, step=0.001):
+    for prune_percent in np.arange(0.7, 0.8, step=0.01):
         acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent)
     
     #print('Average accuracy: ', np.mean(acc))

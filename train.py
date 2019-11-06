@@ -34,9 +34,9 @@ from torch.optim.lr_scheduler  import MultiStepLR
  
 from models                    import BasicBlock
 from models                    import Alexnet       as alex
-from models                    import Alexnet_mod2  as alex_mod2
 from models                    import ResNet        as resnet 
 from models                    import MLP           as mlp 
+from models                    import VGG16_bn      as vgg 
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
@@ -93,6 +93,9 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
 
         elif Model == 'mlp':
             model = mlp(num_classes=Dims).to(device)
+
+        elif Model == 'vgg':
+            model = vgg(num_classes=Dims).to(device)
 
         else:
             print('Invalid optimizer selected. Exiting')
