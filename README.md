@@ -1,6 +1,6 @@
 # Results for MINT: MI-based Neuron Trimming
 
-# Experiment 1: [Learning Efficient Convolutional Networks through Network Slimming](http://openaccess.thecvf.com/content_ICCV_2017/papers/Liu_Learning_Efficient_Convolutional_ICCV_2017_paper.pdf)
+### Experiment 1: [Learning Efficient Convolutional Networks through Network Slimming](http://openaccess.thecvf.com/content_ICCV_2017/papers/Liu_Learning_Efficient_Convolutional_ICCV_2017_paper.pdf)
 
 --------------------------------------------------------------
 | Method                       | Params Pruned | Performance |
@@ -11,7 +11,7 @@
 | *MINT (ours)*                |      *87.2*   |   *98.54*   |
 --------------------------------------------------------------
 
-# Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
+### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
 
 --------------------------------------------------------------
@@ -23,7 +23,7 @@
 --------------------------------------------------------------
 
 
-# VGG16 Layer Breakdown (Baseline)
+### VGG16 Layer Breakdown (Baseline)
 ------------------------------------------------
 | Layer pairs      |  Total Number of Params   |
 |:----------------:|:-------------------------:|
@@ -44,7 +44,7 @@
 | Total            |     *14387904*            | 
 ------------------------------------------------
 
-# Results Compilation
+### Results Compilation
 
 ------------------------------------------------------------------------------------------
 | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
@@ -59,5 +59,5 @@
 |     75       |     8        |       500           |    --.--        |     --.--        |
 ------------------------------------------------------------------------------------------
 
-## Notes
+### Notes
 - Between 8 and 15 groups, consistently 15 groups provided higher performance, even when overall params pruned was comparable.
