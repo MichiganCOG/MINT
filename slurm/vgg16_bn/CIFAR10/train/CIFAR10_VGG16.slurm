@@ -13,18 +13,18 @@ cd /z/home/madantrg/scratch_incremental_learning/
 source setup.sh 
 cd /z/home/madantrg/Pruning/
 python train.py \
---Epoch 120 \
+--Epoch 300 \
 --Batch_size 128 \
 --Lr 0.1 \
 --Save_dir CIFAR10_VGG16_BN_BATCH \
 --Dataset CIFAR10 \
 --Dims 10 \
 --Expt_rerun 1 \
---Milestones 40 80 100 \
+--Milestones 90 180 260 \
 --Opt sgd \
---Weight_decay 0.0001 \
+--Weight_decay 0.0005 \
 --Model vgg \
---Gamma 0.1 \
+--Gamma 0.2 \
 --Nesterov \
 --Device_ids 0
 

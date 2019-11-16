@@ -38,6 +38,7 @@ from models                    import Alexnet       as alex
 from models                    import Alexnet_mod2  as alex_mod2
 from models                    import ResNet        as resnet 
 from models                    import MLP           as mlp 
+from models                    import VGG16_bn      as vgg 
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
@@ -72,8 +73,20 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
             children_k = children_key[num_layers]
 
             for child in range(clusters_children[num_layers]):
+
+                # Pre-compute % of weights to be removed in layer
+                layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
+
+                if layer_remove_per >= 0.75:
+                    cutoff_value_local = I_parent[str(num_layers)].reshape(-1)[np.round(0.75 * I_parent[str(num_layers)].reshape(-1).shape[0]).astype('int')]
+
+                else:
+                    cutoff_value_local = cutoff_value
+
+                # END IF
+
                 for group_1 in range(clusters[num_layers]):
-                    if I_parent[str(num_layers)][child, group_1] <= cutoff_value:
+                    if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
                         for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
                             for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
                                 init_weights[children_k][group_c, group_p] = 0.
@@ -92,10 +105,10 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
         if len(parent_key) > 1:
             total_count = 0
             valid_count = 0
+
             for num_layers in range(len(parent_key)):
                 total_count += init_weights[children_key[num_layers]].reshape(-1).shape[0]
                 valid_count += len(np.where(init_weights[children_key[num_layers]].reshape(-1)!=0.)[0])
-            
 
         else:
             valid_count = len(np.where(init_weights[children_key[0]].reshape(-1)!= 0.0)[0])
@@ -105,10 +118,6 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
 
         true_prune_percent = valid_count / float(total_count) * 100.
 
-        ### Save Mask
-        #np.save('logits_29_'+str(prune_percent*10)+'.npy', mask_weights)
-
- 
         return mask_weights, true_prune_percent
 
 
@@ -132,7 +141,7 @@ def set_lr(optimizer, lr_update, utype='const'):
 
     return optimizer
 
-def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Retrain, Retrain_mask, Labels_file, Labels_children_file, prune_percent):
+def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Retrain, Retrain_mask, Labels_file, Labels_children_file, prune_percent, parent_key, children_key, parent_clusters, children_clusters):
 
     #print("Experimental Setup: ", args)
 
@@ -140,11 +149,8 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
     total_acc = []
 
 
-    # Tensorboard Element
-    writer = SummaryWriter() 
-
     # Load Data
-    trainloader, testloader = data_loader(Dataset, Batch_size)
+    trainloader, testloader, extraloader = data_loader(Dataset, Batch_size)
 
    
     # Check if GPU is available (CUDA)
@@ -163,6 +169,9 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
     elif Model == 'mlp':
         model = mlp(num_classes=Dims).to(device)
 
+    elif Model == 'vgg':
+        model = vgg(num_classes=Dims).to(device)
+
     else:
         print('Invalid optimizer selected. Exiting')
         exit(1)
@@ -173,7 +182,7 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
     if Retrain:
         model.load_state_dict(load_checkpoint(Retrain))
 
-        mask, true_prune_percent = gen_mask(Retrain_mask, prune_percent, ['fc1.weight','fc2.weight'], ['fc2.weight','fc3.weight'], [10, 10], [10, 10], Labels_file, Labels_children_file, load_checkpoint(Retrain))
+        mask, true_prune_percent = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain))
 
         model.setup_masks(mask)
 
@@ -193,9 +202,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         running_loss = 0.0
         if not Retrain:
             print('Epoch: ', epoch)
-
-        # Save Current Model
-        save_checkpoint(epoch, 0, model, optimizer, Save_dir+'/'+str(0)+'/logits_'+str(epoch)+'.pkl')
 
         # Setup Model To Train 
         model.train()
@@ -227,7 +233,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
                 running_loss += loss.item()
             
                 ## Add Loss Element
-                writer.add_scalar(Dataset+'/'+Model+'/loss', loss.item(), epoch*len(trainloader) + step)
                 if np.isnan(running_loss):
                     import pdb; pdb.set_trace()
 
@@ -250,7 +255,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
             print("Time for epoch: %f", end_time - start_time)
  
         epoch_acc = 100*accuracy(model, testloader, device)
-        writer.add_scalar(Dataset+'/'+Model+'/accuracy', epoch_acc, epoch)
 
         if not Retrain:
             print('Accuracy of the network on the 10000 test images: %f %%\n' % (epoch_acc))
@@ -258,21 +262,11 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
 
         if best_model_acc < epoch_acc:
             best_model_acc = epoch_acc
-            save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(0)+'/logits_best.pkl')
     
     # END FOR
 
-    # Close Tensorboard Element
-    writer.close()
-
-    # Save Final Model
-    save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(0)+'/logits_final.pkl')
-    total_acc.append(100.*accuracy(model, testloader, device))
-
     print('Highest accuracy obtained for pruning percentage %f is %f\n'%(true_prune_percent, best_model_acc))
         
-    return total_acc 
-
 
 if __name__ == "__main__":
 
@@ -281,7 +275,6 @@ if __name__ == "__main__":
     parser.add_argument('--Epoch',                type=int   ,   default=10)
     parser.add_argument('--Batch_size',           type=int   ,   default=128)
     parser.add_argument('--Lr',                   type=float ,   default=0.001)
-    parser.add_argument('--Save_dir',             type=str   ,   default='.')
     parser.add_argument('--Dataset',              type=str   ,   default='CIFAR10')
     parser.add_argument('--Dims',                 type=int   ,   default=10)
     parser.add_argument('--Expt_rerun',           type=int   ,   default=1)
@@ -296,12 +289,14 @@ if __name__ == "__main__":
     parser.add_argument('--Retrain_mask',         type=str)
     parser.add_argument('--Labels_file',          type=str)
     parser.add_argument('--Labels_children_file',          type=str)
+    parser.add_argument('--parent_key',           nargs='+',     type=str,       default=['conv1.weight'])
+    parser.add_argument('--children_key',         nargs='+',     type=str,       default=['conv2.weight'])
+    parser.add_argument('--parent_clusters',      nargs='+',     type=int,       default=[8])
+    parser.add_argument('--children_clusters',    nargs='+',     type=int,       default=[8])
     
     args = parser.parse_args()
  
-    for prune_percent in np.arange(0.7, 0.8, step=0.01):
-        acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent)
+    #for prune_percent in np.arange(0.1, 0.9, step=0.05):
+    for prune_percent in np.arange(0.9, 1.0, step=0.001):
+        train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters)
     
-    #print('Average accuracy: ', np.mean(acc))
-    #print('Peak accuracy: ',    np.max(acc))
-    #print('Std. of accuracy: ', np.std(acc))

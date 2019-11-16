@@ -75,7 +75,7 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         writer = SummaryWriter() 
 
         # Load Data
-        trainloader, testloader = data_loader(Dataset, Batch_size)
+        trainloader, testloader, extraloader = data_loader(Dataset, Batch_size)
 
    
         # Check if GPU is available (CUDA)

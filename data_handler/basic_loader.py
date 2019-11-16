@@ -20,10 +20,12 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
                                               normalize])
 
         
+        extra_transform = transforms.Compose([transforms.ToTensor(), normalize])
         test_transform = transforms.Compose([transforms.ToTensor(), normalize])
         
-        train_data = datasets.CIFAR10("data", train=True,  transform=train_transform, download=True)
+        train_data = datasets.CIFAR10("data", train=True,  transform=train_transform, download=False)
         test_data  = datasets.CIFAR10("data", train=False, transform=test_transform,  download=False)
+        extra_data = datasets.CIFAR10("data", train=True,  transform=extra_transform, download=False)
 
     elif dataset == 'CIFAR100':
 
@@ -76,5 +78,6 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
     # EDIT TO TRUE for trainloader
     trainloader = torch.utils.data.DataLoader(dataset = train_data, batch_size=Batch_size, shuffle=True,  num_workers=2, pin_memory=True)
     testloader  = torch.utils.data.DataLoader(dataset = test_data,  batch_size=Batch_size, shuffle=False, num_workers=2,pin_memory=True)
+    extraloader = torch.utils.data.DataLoader(dataset = extra_data, batch_size=Batch_size, shuffle=False,  num_workers=2, pin_memory=True)
 
-    return trainloader, testloader
+    return trainloader, testloader, extraloader
