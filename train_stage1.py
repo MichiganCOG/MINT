@@ -102,7 +102,7 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         # Prune-Loop
         params     = [p for p in model.parameters() if p.requires_grad]
 
-        if opt == 'rms':
+        if Opt == 'rms':
             optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
 
         else:

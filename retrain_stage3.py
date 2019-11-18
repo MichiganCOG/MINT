@@ -35,7 +35,6 @@ from torch.optim.lr_scheduler  import MultiStepLR
  
 from models                    import BasicBlock
 from models                    import Alexnet       as alex
-from models                    import Alexnet_mod2  as alex_mod2
 from models                    import ResNet        as resnet 
 from models                    import MLP           as mlp 
 from models                    import VGG16_bn      as vgg 
@@ -168,12 +167,6 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     if Model == 'alexnet':
         model = alex(num_classes=Dims).to(device)
 
-    elif Model == 'alexnet2':
-        model = alex_mod2(num_classes=Dims).to(device)
-
-    elif Model == 'resnet':
-        model = resnet(BasicBlock, [2,2,2,2], num_classes=Dims).to(device)
-
     elif Model == 'mlp':
         model = mlp(num_classes=Dims).to(device)
 
@@ -186,30 +179,34 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     # END IF
 
-    # Retrain option
-    if Retrain:
-        model.load_state_dict(load_checkpoint(Retrain))
+    # Retrain Setup 
+    # Load old state
+    model.load_state_dict(load_checkpoint(Retrain))
 
-        mask, true_prune_percent = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain))
+    # Obtain masks
+    mask, true_prune_percent = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain))
 
-        model.setup_masks(mask)
+    # Apply masks
+    model.setup_masks(mask)
 
     logsoftmax = nn.LogSoftmax()
 
-    # Prune-Loop
     params     = [p for p in model.parameters() if p.requires_grad]
-    optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
-    #optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
-    scheduler  = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
 
+    if Opt == 'rms':
+        optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
 
+    else:
+        optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
+
+    # END IF
+
+    scheduler      = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
     best_model_acc = 0.0
 
     # Training Loop
     for epoch in range(Epoch):
         running_loss = 0.0
-        if not Retrain:
-            print('Epoch: ', epoch)
 
         # Setup Model To Train 
         model.train()
@@ -227,7 +224,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
             y_label                                       = torch.Tensor(one_hot) 
 
 
-            if x_input.shape[0] and x_input.shape[0] >= len(Device_ids):
+            if x_input.shape[0]:
                 x_input, y_label = x_input.to(device), y_label.to(device)
 
                 optimizer.zero_grad()
@@ -238,10 +235,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
                 loss.backward()
                 optimizer.step()
     
-                running_loss += loss.item()
-            
                 ## Add Loss Element
-                if np.isnan(running_loss):
+                if np.isnan(loss.item()):
                     import pdb; pdb.set_trace()
 
                 # END IF
@@ -250,22 +245,12 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
             ########################### Data Loader + Training ##################################
  
-            if step % 100 == 0 and not(Retrain):
-                print('Epoch: ', epoch, '| train loss: %.4f' % (running_loss/100.))
-                running_loss = 0.0
-
-            # END IF
    
         scheduler.step()
 
         end_time = time.time()
-        if not Retrain:
-            print("Time for epoch: %f", end_time - start_time)
  
         epoch_acc = 100*accuracy(model, testloader, device)
-
-        if not Retrain:
-            print('Accuracy of the network on the 10000 test images: %f %%\n' % (epoch_acc))
 
 
         if best_model_acc < epoch_acc:
@@ -273,7 +258,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     
     # END FOR
 
-    print('Highest accuracy obtained for pruning percentage %f is %f\n'%(true_prune_percent, best_model_acc))
+    print('Requested prune percentage is %f'%(prune_percent))
+    print('Highest accuracy for true pruning percentage %f is %f\n'%(true_prune_percent, best_model_acc))
         
 
 if __name__ == "__main__":
@@ -304,8 +290,8 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
  
-    #for prune_percent in np.arange(0.1, 0.9, step=0.05):
-    for prune_percent in np.arange(0.9, 1.0, step=0.001):
+    for prune_percent in np.arange(0.1, 0.9, step=0.05):
+    #for prune_percent in np.arange(0.9, 1.0, step=0.001):
     #for prune_percent in [0.985]:
         train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters)
     

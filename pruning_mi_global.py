@@ -131,7 +131,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     act_end_time   = time.time()
 
     print("Time taken to collect activations is : %f seconds\n"%(act_end_time - act_start_time))
-    import pdb; pdb.set_trace()
 
 
     for idx in range(nlayers):
@@ -199,8 +198,8 @@ if __name__=='__main__':
     parser.add_argument('--dataset',              type=str)
     parser.add_argument('--weights_dir',          type=str)
     parser.add_argument('--cores',                type=int)
+    parser.add_argument('--key_id',               type=int)
     parser.add_argument('--samples_per_class',    type=int,      default=250)
-    parser.add_argument('--parent_key',           nargs='+',     type=str,       default=['conv1.weight'])
     parser.add_argument('--children_key',         nargs='+',     type=str,       default=['conv2.weight'])
     parser.add_argument('--parent_clusters',      nargs='+',     type=int,       default=[8])
     parser.add_argument('--children_clusters',    nargs='+',     type=int,       default=[8])
@@ -208,6 +207,15 @@ if __name__=='__main__':
 
     args = parser.parse_args()
 
-    calc_perf(args.model, args.dataset, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.weights_dir, args.cores, args.name_postfix, args.samples_per_class)
+    if args.model == 'mlp':
+        parents  = ['fc1.weight','fc2.weight']
+        children = ['fc2.weight','fc3.weight']
+
+    elif args.model == 'vgg':
+        parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight','conv11.weight','conv12.weight','conv13.weight', 'linear1.weight']
+        children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight','conv10.weight','conv11.weight','conv12.weight','conv13.weight','linear1.weight', 'linear3.weight']
+        
+    
+    calc_perf(args.model, args.dataset, [parents[args.key_id-1]], [children[args.key_id-1]], args.parent_clusters, args.children_clusters, args.weights_dir, args.cores, args.name_postfix +'_'+parents[args.key_id-1]+'_'+children[args.key_id-1], args.samples_per_class)
 
     print('Code Execution Complete')
