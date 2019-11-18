@@ -190,8 +190,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
 
         print('Highest accuracy obtained is %f'%(best_model_acc))
         
-    return total_acc 
-
 
 if __name__ == "__main__":
 
@@ -214,8 +212,4 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
  
-    acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids)
-    
-    #print('Average accuracy: ', np.mean(acc))
-    #print('Peak accuracy: ',    np.max(acc))
-    #print('Std. of accuracy: ', np.std(acc))
+    train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids)

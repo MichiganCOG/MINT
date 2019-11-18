@@ -1,8 +1,88 @@
 import torch
 import copy
 
-import numpy as np
+import numpy    as np
+import torch.nn as nn
 
+
+visualisation = {}
+
+#### Hook Function
+def hook_fn(m, i, o):
+    visualisation[m] = o 
+
+
+#### Return Forward Hooks To All Layers
+def get_all_layers(net, hook_handles, item_key):
+    for name, layer in net._modules.items():
+        if name in item_key.split('.')[0]:
+            if isinstance(layer, nn.Sequential):
+                get_all_layers(layer)
+
+            else:
+                hook_handles.append(layer.register_forward_hook(hook_fn))
+            # END IF
+
+        # END IF
+
+    # END FOR
+
+#### Activation function ####
+def activations(data_loader, model, device, item_key):
+    temp_op     = None
+    parents_op  = None
+    labels_op   = None
+    handles     = []
+
+    get_all_layers(model, handles, item_key)
+
+    print('Collecting Activations for Layer %s'%(item_key))
+
+    with torch.no_grad():
+        for step, data in enumerate(data_loader):
+            x_input, y_label = data
+            model(x_input.to(device))
+
+            if temp_op is None:
+                temp_op   = visualisation[visualisation.keys()[0]].cpu().numpy()
+                labels_op = y_label.numpy()
+
+            else:
+                temp_op   = np.vstack((visualisation[visualisation.keys()[0]].cpu().numpy(), temp_op))
+                labels_op = np.hstack((y_label.numpy(), labels_op))
+
+            # END IF 
+
+            if step % 100 == 0:
+                if parents_op is None:
+                    parents_op = copy.deepcopy(temp_op)
+                    temp_op = None
+                else:
+                    parents_op = np.vstack((temp_op, parents_op))
+                    temp_op = None
+
+        # END FOR
+
+    # END FOR
+
+    if parents_op is None:
+        parents_op = copy.deepcopy(temp_op)
+        temp_op = None
+
+    else:
+        parents_op = np.vstack((temp_op, parents_op))
+        temp_op = None
+
+    # Remove all hook handles
+    for handle in handles:
+        handle.remove()    
+    
+    del visualisation[visualisation.keys()[0]]
+
+    if len(parents_op.shape) > 2:
+        parents_op  = np.mean(parents_op, axis=(2,3))
+
+    return parents_op, labels_op
 
 #### Activation function ####
 def activations_mlp(data_loader, model, device, item_key):
@@ -152,6 +232,4 @@ def sub_sample(activations, labels, num_samples_per_class=250):
 
     
     return activations[chosen_sample_idxs]
-
-
 

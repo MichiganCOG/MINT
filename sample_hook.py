@@ -44,8 +44,8 @@ def get_all_layers(net):
 get_all_layers(net)
 
   
+import pdb; pdb.set_trace()
 out = net(torch.randn(2,3,8,8))
 
 # Just to check whether we got all layers
-import pdb; pdb.set_trace()
 print visualisation.keys()      #output includes sequential layers

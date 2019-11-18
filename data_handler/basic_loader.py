@@ -67,6 +67,7 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
                                             train=False, 
                                             transform=transforms.ToTensor())
         
+        extra_data = datasets.MNIST("./data", train=True,  transform=transforms.ToTensor(), download=False)
         
 
     else:
