@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name="CIFAR10_VGG16_BN_BATCH_7l_15g"
+#SBATCH --job-name="CIFAR10_VGG16_BN_BATCH_p_25g"
 #SBATCH -N 1
 #SBATCH --partition=lgns
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=7200  # Time in Minutes
-#SBATCH --output="CIFAR10_VGG16_BN_BATCH_7l_15g.out"
+#SBATCH --output="CIFAR10_VGG16_BN_BATCH_p_25g.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 echo "start"
@@ -21,13 +21,13 @@ python retrain.py \
 --Model vgg \
 --Nesterov \
 --Milestones 100 \
---Retrain /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/logits_best.pkl \
---Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/I_parent_7l_15g.npy \
---Labels_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/Labels_7l_15g.npy \
---Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/Labels_children_7l_15g.npy \
+--Retrain /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH_PARALLEL/0/logits_best.pkl \
+--Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH_PARALLEL/0/I_parent_p_25g.npy \
+--Labels_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH_PARALLEL/0/Labels_p_25g.npy \
+--Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH_PARALLEL/0/Labels_children_p_25g.npy \
 --parent_key conv1.weight conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
 --children_key conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight linear3.weight \
---parent_clusters 15 15 15 15 15 15 15 15 15 15 15 15 15 15 \
---children_clusters 15 15 15 15 15 15 15 15 15 15 15 15 15 10
+--parent_clusters 25 25 25 25 25 25 25 25 25 25 25 25 25 25 \
+--children_clusters 25 25 25 25 25 25 25 25 25 25 25 25 25 10
 
 echo "end"

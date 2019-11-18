@@ -62,7 +62,7 @@ def set_lr(optimizer, lr_update, utype='const'):
 
     return optimizer
 
-def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Retrain, Retrain_mask):
+def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids):
 
     print("Experimental Setup: ", args)
 
@@ -85,12 +85,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         if Model == 'alexnet':
             model = alex(num_classes=Dims).to(device)
 
-        elif Model == 'alexnet2':
-            model = alex_mod2(num_classes=Dims).to(device)
-
-        elif Model == 'resnet':
-            model = resnet(BasicBlock, [2,2,2,2], num_classes=Dims).to(device)
-
         elif Model == 'mlp':
             model = mlp(num_classes=Dims).to(device)
 
@@ -103,30 +97,26 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
 
         # END IF
 
-        # Retrain option
-        if Retrain:
-            model.load_state_dict(load_checkpoint(Retrain))
-            mask = np.load(Retrain_mask).item()
-            model.setup_masks(mask)
-
         logsoftmax = nn.LogSoftmax()
 
         # Prune-Loop
         params     = [p for p in model.parameters() if p.requires_grad]
-        optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
-        #optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
-        scheduler  = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
 
+        if opt == 'rms':
+            optimizer  = optim.RMSprop(model.parameters(), lr=Lr)
 
+        else:
+            optimizer  = optim.SGD(params, lr=Lr, momentum=0.9, weight_decay=Weight_decay, nesterov=Nesterov)
+
+        # END IF
+
+        scheduler      = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
         best_model_acc = 0.0
 
         # Training Loop
         for epoch in range(Epoch):
             running_loss = 0.0
             print('Epoch: ', epoch)
-
-            # Save Current Model
-            save_checkpoint(epoch, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_'+str(epoch)+'.pkl')
 
             # Setup Model To Train 
             model.train()
@@ -144,7 +134,7 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
                 y_label                                       = torch.Tensor(one_hot) 
 
 
-                if x_input.shape[0] and x_input.shape[0] >= len(Device_ids):
+                if x_input.shape[0]:
                     x_input, y_label = x_input.to(device), y_label.to(device)
 
                     optimizer.zero_grad()
@@ -221,12 +211,10 @@ if __name__ == "__main__":
     parser.add_argument('--Gamma',                type=float ,   default=0.1)
     parser.add_argument('--Nesterov',             action='store_true' , default=False)
     parser.add_argument('--Device_ids',           nargs='+',     type=int,       default=[0])
-    parser.add_argument('--Retrain',              type=str)
-    parser.add_argument('--Retrain_mask',          type=str)
     
     args = parser.parse_args()
  
-    acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask)
+    acc = train(args.Epoch, args.Batch_size, args.Lr, args.Save_dir, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids)
     
     #print('Average accuracy: ', np.mean(acc))
     #print('Peak accuracy: ',    np.max(acc))

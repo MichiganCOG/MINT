@@ -61,6 +61,10 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
             else:
                 sorted_weights =  np.concatenate((sorted_weights, I_parent[str(looper_idx)].reshape(-1)))
 
+
+        # Compute unique values
+        sorted_weights = np.unique(sorted_weights)
+
         sorted_weights = np.sort(sorted_weights)
         cutoff_index   = np.round(prune_percent * sorted_weights.shape[0]).astype('int')
         cutoff_value   = sorted_weights[cutoff_index]
@@ -78,8 +82,9 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
                 if layer_remove_per >= 0.75:
-                    cutoff_value_local = I_parent[str(num_layers)].reshape(-1)[np.round(0.75 * I_parent[str(num_layers)].reshape(-1).shape[0]).astype('int')]
-
+                    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
+                    cutoff_value_local   = local_sorted_weights[np.round(0.75 * local_sorted_weights.shape[0]).astype('int')]
+                
                 else:
                     cutoff_value_local = cutoff_value
 
@@ -107,8 +112,11 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
             valid_count = 0
 
             for num_layers in range(len(parent_key)):
+                #total_count = 0
+                #valid_count = 0
                 total_count += init_weights[children_key[num_layers]].reshape(-1).shape[0]
                 valid_count += len(np.where(init_weights[children_key[num_layers]].reshape(-1)!=0.)[0])
+                #print('Compression percentage in layer %s is %f'%(children_key[num_layers], valid_count))
 
         else:
             valid_count = len(np.where(init_weights[children_key[0]].reshape(-1)!= 0.0)[0])
@@ -298,5 +306,6 @@ if __name__ == "__main__":
  
     #for prune_percent in np.arange(0.1, 0.9, step=0.05):
     for prune_percent in np.arange(0.9, 1.0, step=0.001):
+    #for prune_percent in [0.985]:
         train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters)
     
