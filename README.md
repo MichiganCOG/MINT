@@ -8,8 +8,18 @@
 | Baseline                     |       N/A     |    98.57    |
 | Structured Sparsity Learning |       83.5    |    98.47    |
 | Network Slimming             |       84.4    |    98.51    |
-| *MINT (ours)*                |      *87.2*   |   *98.54*   |
+| *MINT (ours)*                |      *88.2*   |   *98.56*   |
 --------------------------------------------------------------
+
+### Results Compilation
+
+------------------------------------------------------------------------------------------
+| Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
+|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
+|     N/A      |     10       |       250           |    88.23        |     98.56        | (Requested Prune Percent: 0.443) 
+|     N/A      |     20       |       250           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
+------------------------------------------------------------------------------------------
+
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 

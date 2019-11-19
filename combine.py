@@ -14,7 +14,7 @@ def combine(directory, prefix, load_keys):
         res_Labels_dict[str(looper)]          = np.load(directory+'Labels_'+prefix+load_keys[looper]+'.npy').item()['0']
         res_Labels_children_dict[str(looper)] = np.load(directory+'Labels_children_'+prefix+load_keys[looper]+'.npy').item()['0']
     
-    np.save(directory+'I_parents_'+prefix+'.npy', res_I_dict)
+    np.save(directory+'I_parent_'+prefix+'.npy', res_I_dict)
     np.save(directory+'Labels_'+prefix+'.npy', res_Labels_dict)
     np.save(directory+'Labels_children_'+prefix+'.npy', res_Labels_children_dict)
 

@@ -18,7 +18,7 @@ from models                  import VGG16_bn      as vgg
 
 
 # Custom Imports
-from utils import activations, sub_sample, mi
+from utils import activations, sub_sample_uniform, mi
 
 # Global Variable
 
@@ -121,7 +121,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     for item_key in unique_keys:
         act[item_key], lab[item_key] = activations(extraloader, model, device, item_key)
 
-
     for item_idx in range(len(parent_key)):
         # Sub-sample activations
         p1_op[str(item_idx)] = copy.deepcopy(act[parent_key[item_idx]]) 
@@ -164,8 +163,8 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
     for item_idx in range(len(parent_key)):
         # Sub-sample activations
-        p1_op[str(item_idx)] = sub_sample(copy.deepcopy(act[parent_key[item_idx]]),   lab[parent_key[item_idx]], num_samples_per_class=samples_per_class)
-        c1_op[str(item_idx)] = sub_sample(copy.deepcopy(act[children_key[item_idx]]), lab[parent_key[item_idx]], num_samples_per_class=samples_per_class)
+        p1_op[str(item_idx)] = sub_sample_uniform(copy.deepcopy(act[parent_key[item_idx]]),   lab[parent_key[item_idx]], num_samples_per_class=samples_per_class)
+        c1_op[str(item_idx)] = sub_sample_uniform(copy.deepcopy(act[children_key[item_idx]]), lab[parent_key[item_idx]], num_samples_per_class=samples_per_class)
 
     del act, lab
 
@@ -215,7 +214,9 @@ if __name__=='__main__':
         parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight','conv11.weight','conv12.weight','conv13.weight', 'linear1.weight']
         children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight','conv10.weight','conv11.weight','conv12.weight','conv13.weight','linear1.weight', 'linear3.weight']
         
-    
+    if args.key_id ==len(parents):
+        args.children_clusters = [10]
+ 
     calc_perf(args.model, args.dataset, [parents[args.key_id-1]], [children[args.key_id-1]], args.parent_clusters, args.children_clusters, args.weights_dir, args.cores, args.name_postfix +'_'+parents[args.key_id-1]+'_'+children[args.key_id-1], args.samples_per_class)
 
     print('Code Execution Complete')

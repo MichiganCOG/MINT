@@ -15,20 +15,18 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.fc1_drop = nn.Dropout(0.2)
         self.fc2_drop = nn.Dropout(0.2)
-        self.fc1 = MaskedLinear(28*28, 500)
-        self.fc2 = MaskedLinear(500, 300)
-        self.fc3 = MaskedLinear(300, num_classes)
+        self.fc1 = MaskedLinear(28*28, 500, act='relu')
+        self.fc2 = MaskedLinear(500, 300,   act='relu')
+        self.fc3 = MaskedLinear(300,        num_classes)
 
     def forward(self, x, labels=False, fc1=False, fc2=False):
         x = x.view(-1, 28*28)
         x = self.fc1(x)
-        x = F.relu(x)
         if fc1:
             return x
 
         x = self.fc1_drop(x)
         x = self.fc2(x)
-        x = F.relu(x)
         if fc2:
             return x
 

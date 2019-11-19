@@ -1,11 +1,16 @@
 import torch
 import copy
+import random 
 
 import numpy    as np
 import torch.nn as nn
 
 
 visualisation = {}
+
+"""
+Code Acknowledgement: https://blog.paperspace.com/pytorch-hooks-gradient-clipping-debugging/
+"""
 
 #### Hook Function
 def hook_fn(m, i, o):
@@ -29,9 +34,12 @@ def get_all_layers(net, hook_handles, item_key):
 
 #### Activation function ####
 def activations(data_loader, model, device, item_key):
-    temp_op     = None
+    temp_op       = None
+    temp_label_op = None
+
     parents_op  = None
     labels_op   = None
+
     handles     = []
 
     get_all_layers(model, handles, item_key)
@@ -44,22 +52,29 @@ def activations(data_loader, model, device, item_key):
             model(x_input.to(device))
 
             if temp_op is None:
-                temp_op   = visualisation[visualisation.keys()[0]].cpu().numpy()
-                labels_op = y_label.numpy()
+                temp_op        = visualisation[visualisation.keys()[0]].cpu().numpy()
+                temp_labels_op = y_label.numpy()
 
             else:
-                temp_op   = np.vstack((visualisation[visualisation.keys()[0]].cpu().numpy(), temp_op))
-                labels_op = np.hstack((y_label.numpy(), labels_op))
+                temp_op        = np.vstack((visualisation[visualisation.keys()[0]].cpu().numpy(), temp_op))
+                temp_labels_op = np.hstack((y_label.numpy(), temp_labels_op))
 
             # END IF 
 
             if step % 100 == 0:
                 if parents_op is None:
                     parents_op = copy.deepcopy(temp_op)
-                    temp_op = None
+                    labels_op  = copy.deepcopy(temp_labels_op)
+
+                    temp_op        = None
+                    temp_labels_op = None
+
                 else:
                     parents_op = np.vstack((temp_op, parents_op))
-                    temp_op = None
+                    labels_op  = np.hstack((temp_labels_op, labels_op))
+
+                    temp_op        = None
+                    temp_labels_op = None
 
         # END FOR
 
@@ -67,11 +82,17 @@ def activations(data_loader, model, device, item_key):
 
     if parents_op is None:
         parents_op = copy.deepcopy(temp_op)
-        temp_op = None
+        labels_op  = copy.deepcopy(temp_labels_op)
+
+        temp_op        = None
+        temp_labels_op = None
 
     else:
         parents_op = np.vstack((temp_op, parents_op))
-        temp_op = None
+        labels_op  = np.hstack((temp_labels_op, labels_op))
+
+        temp_op        = None
+        temp_labels_op = None
 
     # Remove all hook handles
     for handle in handles:
@@ -103,3 +124,18 @@ def sub_sample(activations, labels, num_samples_per_class=250):
     
     return activations[chosen_sample_idxs]
 
+#### Sub-sample function (Uniform sampling)####
+def sub_sample_uniform(activations, labels, num_samples_per_class=250):
+
+    chosen_sample_idxs = []
+
+    # Basic Implementation of Nearest Mean Classifier
+    unique_labels = np.unique(labels)
+
+    for idxs in range(len(unique_labels)):
+        chosen_idxs     = np.random.choice(np.where(labels==unique_labels[idxs])[0],num_samples_per_class)
+        chosen_sample_idxs.extend(chosen_idxs)
+
+    random.shuffle(chosen_sample_idxs)
+
+    return activations[chosen_sample_idxs]
