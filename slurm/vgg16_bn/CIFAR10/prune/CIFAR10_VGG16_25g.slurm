@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name="CIFAR10_VGG16_BN_BATCH_PRUNE_15g"
+#SBATCH --job-name="CIFAR10_VGG16_BN_BATCH_PRUNE_25g"
 #SBATCH -N 1
 #SBATCH --array=1-14
 #SBATCH --partition=lgns
 #SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
-#SBATCH --time=1500  # Time in Minutes
-#SBATCH --output="CIFAR10_VGG16_BN_BATCH_PRUNE_15g_%A_%a.out"
+#SBATCH --time=7200  # Time in Minutes
+#SBATCH --output="CIFAR10_VGG16_BN_BATCH_PRUNE_25g_%A_%a.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 echo "start"
@@ -20,8 +20,8 @@ python pruning_mi_global.py \
 --weights_dir /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/ \
 --cores 20 \
 --key_id $SLURM_ARRAY_TASK_ID \
---parent_clusters 15 \
---children_clusters 15 \
---name_postfix 15g
+--parent_clusters 25 \
+--children_clusters 25 \
+--name_postfix 25g
  
 echo "end"

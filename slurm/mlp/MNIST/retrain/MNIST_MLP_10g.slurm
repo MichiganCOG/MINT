@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="MNIST_MLP_BATCH_10g"
 #SBATCH -N 1
-#SBATCH --nodelist=focus
+#SBATCH --nodelist=cmos
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=7200  # Time in Minutes
@@ -31,7 +31,7 @@ python retrain_stage3.py \
 --children_clusters 10 10 \
 --upper_prune_limit 1.1 \
 --upper_prune_per 0.45 \
---lower_prune_per 0.43 \
+--lower_prune_per 0.44 \
 --prune_per_step 0.001
 
 echo "end"

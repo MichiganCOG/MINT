@@ -20,7 +20,7 @@ def hook_fn(m, i, o):
 #### Return Forward Hooks To All Layers
 def get_all_layers(net, hook_handles, item_key):
     for name, layer in net._modules.items():
-        if name in item_key.split('.')[0]:
+        if name == item_key.split('.')[0]:
             if isinstance(layer, nn.Sequential):
                 get_all_layers(layer)
 
