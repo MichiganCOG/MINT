@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="CIFAR10_RESNET56_BATCH"
 #SBATCH -N 1
-#SBATCH --nodelist=lgn2
+#SBATCH --partition=lgns
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=330  # Time in Minutes
@@ -12,7 +12,7 @@ echo "start"
 cd /z/home/madantrg/scratch_incremental_learning/
 source setup.sh 
 cd /z/home/madantrg/Pruning/
-python train.py \
+python train_stage1.py \
 --Epoch 200 \
 --Batch_size 128 \
 --Lr 0.1 \

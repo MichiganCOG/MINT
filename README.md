@@ -68,12 +68,12 @@
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (a)   |     75       |     8        |       250           |    34.58        |     93.45        | 
-|   (a)   |     75       |     15       |       250           |    74.59        |     93.54        | 
-|   (a)   |     75       |     20       |       250           |    48.45        |     93.45        | 
-|   (a)   |     75       |     25       |       250           |    71.65        |     93.47        | 
+|   (a)   |     75       |     8        |       250           |    --.--        |     --.--        | 
+|   (a)   |     75       |     15       |       250           |    --.--        |     --.--        | 
+|   (a)   |     75       |     20       |       250           |    --.--        |     --.--        | 
+|   (a)   |     75       |     25       |       250           |    --.--        |     --.--        | 
 |   ---   |     --       |     --       |       ---           |    -----        |     -----        | 
-|   (b)   |     75       |     8        |       250           |    56.19        |     93.46        | 
+|   (b)   |     75       |     8        |       250           |    --.--        |     --.--        | 
 |   (b)   |     75       |     15       |       250           |    --.--        |     --.--        | 
 |   (b)   |     75       |     20       |       250           |    --.--        |     --.--        | 
 |   (b)   |     75       |     25       |       250           |    --.--        |     --.--        | 
@@ -84,4 +84,5 @@
 - Why is 0.999 equating to only 39.53 or 44.61 of the params? The number of unique I\_parent values is smaller than the number of repeat values, Re-running with unique values used to compute percentage.
 - > 70 % params pruned with performance > 93.40 achieved on vgg16 on CIFAR-10.
 - Updating upper limit to 80% to observe results. Doesn't matter its a question of optimal parameters.
-- Updating results with algorithm version b.
+- Updating results with algorithm version b
+- Found  bug in setup masks which used only 7 layers. Redid it to include all layers and rerunning vgg16 results.
