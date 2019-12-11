@@ -92,6 +92,7 @@ class ResNet(nn.Module):
         self.bn1 = nn.BatchNorm2d(16)
         self.layer1 = self._make_layer(block, 16, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 32, num_blocks[1], stride=2)
+        import pdb; pdb.set_trace()
         self.layer3 = self._make_layer(block, 64, num_blocks[2], stride=2)
         self.linear = nn.Linear(64, num_classes)
 
@@ -108,7 +109,6 @@ class ResNet(nn.Module):
 
     def forward(self, x):
         out = F.relu(self.bn1(self.conv1(x)))
-        import pdb; pdb.set_trace()
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
