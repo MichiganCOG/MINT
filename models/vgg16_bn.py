@@ -102,12 +102,12 @@ class VGG16_bn(nn.Module):
         # Leave it for the future
 
         self.conv2.set_mask(torch.Tensor(masks['conv2.weight']))
-        #self.conv3.set_mask(torch.Tensor(masks['conv3.weight']))
-        #self.conv4.set_mask(torch.Tensor(masks['conv4.weight']))
-        #self.conv5.set_mask(torch.Tensor(masks['conv5.weight']))
-        #self.conv6.set_mask(torch.Tensor(masks['conv6.weight']))
-        #self.conv7.set_mask(torch.Tensor(masks['conv7.weight']))
-        #self.conv8.set_mask(torch.Tensor(masks['conv8.weight']))
+        self.conv3.set_mask(torch.Tensor(masks['conv3.weight']))
+        self.conv4.set_mask(torch.Tensor(masks['conv4.weight']))
+        self.conv5.set_mask(torch.Tensor(masks['conv5.weight']))
+        self.conv6.set_mask(torch.Tensor(masks['conv6.weight']))
+        self.conv7.set_mask(torch.Tensor(masks['conv7.weight']))
+        self.conv8.set_mask(torch.Tensor(masks['conv8.weight']))
         self.conv9.set_mask(torch.Tensor(masks['conv9.weight']))
 
         self.conv10.set_mask(torch.Tensor(masks['conv10.weight']))
@@ -116,8 +116,7 @@ class VGG16_bn(nn.Module):
         self.conv13.set_mask(torch.Tensor(masks['conv13.weight']))
 
         self.linear1.set_mask(torch.Tensor(masks['linear1.weight']))
-        #self.linear2.set_mask(torch.Tensor(masks['linear2.weight'])
-        #self.linear3.set_mask(torch.Tensor(masks['linear3.weight']))
+        self.linear3.set_mask(torch.Tensor(masks['linear3.weight']))
 
     def forward(self, x, labels=False, conv1=False, conv2=False, conv3=False, conv4=False, conv5=False, conv6=False, conv7=False, conv8=False, conv9=False, conv10=False, conv11=False, conv12=False, conv13=False, linear1=False, linear2=False, linear3=False):
         # ----
@@ -178,17 +177,12 @@ class VGG16_bn(nn.Module):
             return out
 
         # ----
-        #out = self.avgpool(out)
         out = out.view(-1, 512)
         out = self.relu(self.bn14(self.linear1(out)))
         if linear1:
             return out
 
         out = self.linear3(out)
-        #if linear2:
-        #    return out
-
-        #out = self.linear3(out)
 
         if labels:
             out = F.softmax(out, dim=1)
