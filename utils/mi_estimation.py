@@ -4,8 +4,6 @@ import sklearn
 
 import numpy             as np
 import scipy.spatial     as ss
-import statsmodels.api   as sm
-import matplotlib.pyplot as plt
 
 from math                 import log, sqrt
 from scipy                import stats

@@ -45,23 +45,24 @@
 ----------------------------------------------------------------------------
 | Layer pairs      |  Total Number of Params   |  Reduced Number of Params |
 |:----------------:|:-------------------------:|:-------------------------:|
-| Input - Conv1    |         = 1728            |                           |
+| Input - Conv1    |         = 1728            |         1728              |
 |*Conv1 - Conv2*   |         = 36864           |                           |
-| Conv2 - Conv3    |         = 73728           |                           |
-| Conv3 - Conv4    |         = 147456          |                           | 
-| Conv4 - Conv5    |         = 294912          |                           |
-| Conv5 - Conv6    |         = 589824          |                           | 
-| Conv6 - Conv7    |         = 589824          |                           | 
-| Conv7 - Conv8    |         = 1179648         |                           | 
+| Conv2 - Conv3    |         = 73728           |         73728             |
+| Conv3 - Conv4    |         = 147456          |         147456            | 
+| Conv4 - Conv5    |         = 294912          |         294912            |
+| Conv5 - Conv6    |         = 589824          |         589824            | 
+| Conv6 - Conv7    |         = 589824          |         589824            | 
+| Conv7 - Conv8    |         = 1179648         |         1179648           | 
 |*Conv8 - Conv9*   |         = 2359296         |                           | 
 |*Conv9 - Conv10*  |         = 2359296         |                           | 
 |*Conv10 - Conv11* |         = 2359296         |                           | 
 |*Conv11 - Conv12* |         = 2359296         |                           | 
 |*Conv12 - Conv13* |         = 2359296         |                           | 
 |*Conv13 - Linear1*|         = 262144          |                           |
-| Linear1- Linear2 |         = 5120            |                           |
+| Linear1- Linear2 |         = 5120            |         5120              |
 | Total            |       **14977728**        |                           | 
 ----------------------------------------------------------------------------
+Untouched params = 2882240/14977728 = 19.24\%
 
 ### Results Compilation
 
@@ -86,3 +87,4 @@
 - Updating upper limit to 80% to observe results. Doesn't matter its a question of optimal parameters.
 - Updating results with algorithm version b
 - Found  bug in setup masks which used only 7 layers. Redid it to include all layers and rerunning vgg16 results.
+- All layers seems to be worse, moving back to 7 layer, modified combine.py and rerunning for final results

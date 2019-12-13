@@ -139,3 +139,66 @@ def sub_sample_uniform(activations, labels, num_samples_per_class=250):
     random.shuffle(chosen_sample_idxs)
 
     return activations[chosen_sample_idxs]
+
+#### Temp Activation function ####
+def activations_temp(data_loader, model, device, item_key):
+    temp_op       = None
+    temp_label_op = None
+
+    parents_op  = None
+    labels_op   = None
+
+    print('Collecting Activations for Layer %s'%(item_key))
+
+    with torch.no_grad():
+        for step, data in enumerate(data_loader):
+            x_input, y_label = data
+            
+
+            if temp_op is None:
+                temp_op        = model(x_input.to(device), conv2=True).cpu().numpy()
+                temp_labels_op = y_label.numpy()
+
+            else:
+                temp_op        = np.vstack((model(x_input.to(device), conv2=True).cpu().numpy(), temp_op))
+                temp_labels_op = np.hstack((y_label.numpy(), temp_labels_op))
+
+            # END IF 
+
+            if step % 100 == 0:
+                if parents_op is None:
+                    parents_op = copy.deepcopy(temp_op)
+                    labels_op  = copy.deepcopy(temp_labels_op)
+
+                    temp_op        = None
+                    temp_labels_op = None
+
+                else:
+                    parents_op = np.vstack((temp_op, parents_op))
+                    labels_op  = np.hstack((temp_labels_op, labels_op))
+
+                    temp_op        = None
+                    temp_labels_op = None
+
+        # END FOR
+
+    # END FOR
+
+    if parents_op is None:
+        parents_op = copy.deepcopy(temp_op)
+        labels_op  = copy.deepcopy(temp_labels_op)
+
+        temp_op        = None
+        temp_labels_op = None
+
+    else:
+        parents_op = np.vstack((temp_op, parents_op))
+        labels_op  = np.hstack((temp_labels_op, labels_op))
+
+        temp_op        = None
+        temp_labels_op = None
+
+    if len(parents_op.shape) > 2:
+        parents_op  = np.mean(parents_op, axis=(2,3))
+
+    return parents_op, labels_op
