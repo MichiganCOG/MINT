@@ -29,9 +29,9 @@ python retrain_stage3.py \
 --children_key conv2.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
 --parent_clusters 8 8 8 8 8 8 8 \
 --children_clusters 8 8 8 8 8 8 8 \
---upper_prune_limit 0.80 \
---upper_prune_per 0.65 \
---lower_prune_per 0.60 \
---prune_per_step 0.001
+--upper_prune_limit 0.85 \
+--upper_prune_per 0.95 \
+--lower_prune_per 0.10 \
+--prune_per_step 0.01
 
 echo "end"
