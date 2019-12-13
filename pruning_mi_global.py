@@ -1,3 +1,4 @@
+import time
 import copy
 import torch
 import argparse
@@ -5,16 +6,15 @@ import multiprocessing
 
 import numpy             as np
 import torch.nn          as nn
-import matplotlib.pyplot as plt
 
 from data_handler            import data_loader
 from utils                   import save_checkpoint, load_checkpoint, accuracy
-from hpmi                    import *
 from tqdm                    import tqdm
 
 from models                  import Alexnet       as alex
 from models                  import MLP           as mlp 
 from models                  import VGG16_bn      as vgg 
+from models                  import Resnet56      as resnet 
 
 
 # Custom Imports
@@ -83,7 +83,10 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
     elif model == 'vgg':
         model = vgg(num_classes=10).to(device)
-    
+
+    elif model == 'resnet':
+        model = resnet(num_classes=10).to(device) 
+
     else:
         print('Invalid model selected')
 
@@ -125,7 +128,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
         # Sub-sample activations
         p1_op[str(item_idx)] = copy.deepcopy(act[parent_key[item_idx]]) 
         c1_op[str(item_idx)] = copy.deepcopy(act[children_key[item_idx]])
-
 
     act_end_time   = time.time()
 
@@ -214,6 +216,10 @@ if __name__=='__main__':
         parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight','conv11.weight','conv12.weight','conv13.weight', 'linear1.weight']
         children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight','conv10.weight','conv11.weight','conv12.weight','conv13.weight','linear1.weight', 'linear3.weight']
         
+    elif args.model == 'resnet':
+        parents  = ['conv2.weight']
+        children = ['conv2.weight']
+
     if args.key_id ==len(parents):
         args.children_clusters = [10]
  
