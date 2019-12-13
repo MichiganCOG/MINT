@@ -125,7 +125,7 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
 
         true_prune_percent = valid_count / float(total_count) * 100.
 
-        return mask_weights, true_prune_percent
+        return mask_weights, true_prune_percent, total_count
 
 
 def set_lr(optimizer, lr_update, utype='const'):
@@ -184,7 +184,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     model.load_state_dict(load_checkpoint(Retrain))
 
     # Obtain masks
-    mask, true_prune_percent = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
+    mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
 
     # Apply masks
     model.setup_masks(mask)
@@ -259,7 +259,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # END FOR
 
     print('Requested prune percentage is %f'%(prune_percent))
-    print('Highest accuracy for true pruning percentage %f is %f\n'%(true_prune_percent, best_model_acc))
+    print('Highest accuracy for true pruning percentage %f is %f'%(true_prune_percent, best_model_acc))
+    print('Total number of parameters is %d\n'%(total_count))
         
 
 if __name__ == "__main__":
