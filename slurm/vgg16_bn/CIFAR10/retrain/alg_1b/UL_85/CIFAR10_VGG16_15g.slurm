@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="CIFAR10_VGG16_BN_BATCH_15g_1b"
 #SBATCH -N 1
-#SBATCH --nodelist=focus
+#SBATCH --partition=lgns
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=7200  # Time in Minutes
@@ -25,13 +25,13 @@ python retrain_stage3.py \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/I_parent_15g_1b.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/Labels_15g_1b.npy \
 --Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/Labels_children_15g_1b.npy \
---parent_key conv1.weight conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
---children_key conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight linear3.weight \
---parent_clusters 15 15 15 15 15 15 15 15 15 15 15 15 15 15 \
---children_clusters 15 15 15 15 15 15 15 15 15 15 15 15 15 10 \
---upper_prune_limit 0.80 \
---upper_prune_per 0.849 \
---lower_prune_per 0.80 \
---prune_per_step 0.001
+--parent_key conv1.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
+--children_key conv2.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
+--parent_clusters 15 15 15 15 15 15 15 \
+--children_clusters 15 15 15 15 15 15 15 \
+--upper_prune_limit 0.85 \
+--upper_prune_per 0.95 \
+--lower_prune_per 0.10 \
+--prune_per_step 0.01
 
 echo "end"
