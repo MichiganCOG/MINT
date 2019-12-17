@@ -25,10 +25,10 @@ python retrain_stage3.py \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/I_parent_20g.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/Labels_20g.npy \
 --Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/Labels_children_20g.npy \
---parent_key conv1.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
---children_key conv2.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
---parent_clusters 20 20 20 20 20 20 20 \
---children_clusters 20 20 20 20 20 20 20 \
+--parent_key conv1.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
+--children_key conv2.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
+--parent_clusters 20 20 20 20 20 20 20 20 \
+--children_clusters 20 20 20 20 20 20 20 20 \
 --upper_prune_limit 0.85 \
 --upper_prune_per 0.95 \
 --lower_prune_per 0.10 \

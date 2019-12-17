@@ -14,7 +14,7 @@ cd /z/home/madantrg/scratch_incremental_learning/
 source setup.sh 
 cd /z/home/madantrg/Pruning/
 
-python pruning_mi_global.py \
+python pruning_mi_global_1b.py \
 --model vgg \
 --dataset CIFAR10 \
 --weights_dir /z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/ \
@@ -22,6 +22,6 @@ python pruning_mi_global.py \
 --key_id $SLURM_ARRAY_TASK_ID \
 --parent_clusters 25 \
 --children_clusters 25 \
---name_postfix 25g
+--name_postfix 25g_b
  
 echo "end"
