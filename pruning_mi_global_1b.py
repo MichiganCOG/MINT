@@ -81,8 +81,8 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     elif model == 'vgg':
         model = vgg(num_classes=10).to(device)
     
-    elif Model == 'resnet':
-        model = resnet56(num_classes=Dims).to(device)
+    elif model == 'resnet':
+        model = resnet56(num_classes=10).to(device)
     
     else:
         print('Invalid model selected')
