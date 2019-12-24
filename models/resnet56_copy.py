@@ -255,7 +255,7 @@ class Resnet56(nn.Module):
         self.conv54.set_mask(torch.Tensor(masks['conv54.weight']))
         self.conv55.set_mask(torch.Tensor(masks['conv55.weight']))
         
-        self.linear1.set_mask(torch.Tensor(masks['linear1.weight']))
+        #self.linear1.set_mask(torch.Tensor(masks['linear1.weight']))
 
     def forward(self, x, labels=False, 
                 conv1=False, conv2=False, conv3=False, conv4=False, conv5=False, 
