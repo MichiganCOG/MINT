@@ -167,10 +167,12 @@ def train(Dims, Model, Device_ids):
 
     # END IF
 
+    total = 0
     for name, layer in model._modules.items():
         if 'conv' in name or 'linear' in name:
             print('Number of parameters in layer %s is %d'%(name, model.state_dict()[name+'.weight'].reshape(-1).shape[0]))
-
+            total += model.state_dict()[name+'.weight'].reshape(-1).shape[0]
+    print('Total number of parameters is %d', total)
         
 
 if __name__ == "__main__":
