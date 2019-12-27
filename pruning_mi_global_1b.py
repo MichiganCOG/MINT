@@ -230,28 +230,28 @@ if __name__=='__main__':
                     'conv51.weight','conv52.weight','conv53.weight','conv54.weight','conv55.weight', 'linear1.weight']
 
         if args.key_id >=20 and args.key_id <=37:
-            if args.parent_clusters == 8:
-                args.parent_clusters = 16
+            if args.parent_clusters[0] == 8:
+                args.parent_clusters[0] = 16
             else:
-                args.parent_clusters = 32
+                args.parent_clusters[0] = 32
 
         if args.key_id >=38:
-            if args.parent_clusters == 8:
-                args.parent_clusters = 32
+            if args.parent_clusters[0] == 8:
+                args.parent_clusters[0] = 32
             else:
-                args.parent_clusters = 64
+                args.parent_clusters[0] = 64
 
         if args.key_id >=19 and args.key_id <=36:
-            if args.children_clusters == 8:
-                args.children_clusters = 16
+            if args.children_clusters[0] == 8:
+                args.children_clusters[0] = 16
             else:
-                args.children_clusters = 32
+                args.children_clusters[0] = 32
 
         if args.key_id >=37:
-            if args.children_clusters == 8:
-                args.children_clusters = 32
+            if args.children_clusters[0] == 8:
+                args.children_clusters[0] = 32
             else:
-                args.children_clusters = 64
+                args.children_clusters[0] = 64
 
     if args.key_id ==len(parents):
         args.children_clusters = [10]
