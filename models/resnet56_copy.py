@@ -213,9 +213,9 @@ class Resnet56(nn.Module):
         self.conv16.set_mask(torch.Tensor(masks['conv16.weight']))
         self.conv17.set_mask(torch.Tensor(masks['conv17.weight']))
         self.conv18.set_mask(torch.Tensor(masks['conv18.weight']))
-        self.conv19.set_mask(torch.Tensor(masks['conv19.weight']))
+        #self.conv19.set_mask(torch.Tensor(masks['conv19.weight']))
 
-        #self.conv20.set_mask(torch.Tensor(masks['conv20.weight']))
+        self.conv20.set_mask(torch.Tensor(masks['conv20.weight']))
         self.conv21.set_mask(torch.Tensor(masks['conv21.weight']))
         self.conv22.set_mask(torch.Tensor(masks['conv22.weight']))
         self.conv23.set_mask(torch.Tensor(masks['conv23.weight']))
@@ -233,8 +233,8 @@ class Resnet56(nn.Module):
         self.conv34.set_mask(torch.Tensor(masks['conv34.weight']))
         self.conv35.set_mask(torch.Tensor(masks['conv35.weight']))
         self.conv36.set_mask(torch.Tensor(masks['conv36.weight']))
-        self.conv37.set_mask(torch.Tensor(masks['conv37.weight']))
-        #self.conv38.set_mask(torch.Tensor(masks['conv38.weight']))
+        #self.conv37.set_mask(torch.Tensor(masks['conv37.weight']))
+        self.conv38.set_mask(torch.Tensor(masks['conv38.weight']))
         self.conv39.set_mask(torch.Tensor(masks['conv39.weight']))
 
         self.conv40.set_mask(torch.Tensor(masks['conv40.weight']))
