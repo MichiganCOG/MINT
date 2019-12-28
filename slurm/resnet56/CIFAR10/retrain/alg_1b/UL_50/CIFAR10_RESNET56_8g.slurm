@@ -14,12 +14,12 @@ source setup.sh
 cd /z/home/madantrg/Pruning/
 
 python retrain_stage3.py \
---Epoch 200 \
+--Epoch 40 \
 --Batch_size 128 \
 --Lr 0.001 \
 --Dataset CIFAR10 \
 --Model resnet \
---Milestones 100150 \
+--Milestones 100 \
 --Retrain /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/logits_best.pkl \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/I_parent_8g_1b.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_8g_1b.npy \
@@ -29,8 +29,8 @@ python retrain_stage3.py \
 --parent_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 \
 --children_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 \
 --upper_prune_limit 0.50 \
---upper_prune_per 0.95 \
---lower_prune_per 0.10 \
---prune_per_step 0.01
+--upper_prune_per 0.10 \
+--lower_prune_per 0.001 \
+--prune_per_step 0.001
 
 echo "end"
