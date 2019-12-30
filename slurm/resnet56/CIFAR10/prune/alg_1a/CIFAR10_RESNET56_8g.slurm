@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name="CIFAR10_RESNET56_BATCH_PRUNE_8g_1b"
+#SBATCH --job-name="CIFAR10_RESNET56_BATCH_PRUNE_8g"
 #SBATCH -N 1
 #SBATCH --array=1-54
 #SBATCH --partition=lgns
 #SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
 #SBATCH --time=1500  # Time in Minutes
-#SBATCH --output="CIFAR10_RESNET56_BATCH_PRUNE_8g_1b_%A_%a.out"
+#SBATCH --output="CIFAR10_RESNET56_BATCH_PRUNE_8g_%A_%a.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 echo "start"
