@@ -70,7 +70,7 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
         #print('Cutoff index %d wrt total number of elements %d' %(cutoff_index, sorted_weights.shape[0])) 
         #print('Cutoff value %f' %(cutoff_value)) 
 
-
+        
         for num_layers in range(len(parent_key)):
             parent_k   = parent_key[num_layers]
             children_k = children_key[num_layers]
