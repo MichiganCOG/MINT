@@ -16,7 +16,7 @@ cd /z/home/madantrg/Pruning/
 python retrain_stage3.py \
 --Epoch 40 \
 --Batch_size 128 \
---Lr 0.001 \
+--Lr 0.01 \
 --Dataset CIFAR10 \
 --Model resnet \
 --Milestones 100 \
