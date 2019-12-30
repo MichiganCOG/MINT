@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name="CIFAR10_RESNET56_BATCH_8g_1b"
+#SBATCH --job-name="CIFAR10_RESNET56_BATCH_8g_1b_nesterov"
 #SBATCH -N 1
-#SBATCH --nodelist=focus
+#SBATCH --nodelist=cmos
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=7200  # Time in Minutes
-#SBATCH --output="CIFAR10_RESNET56_BATCH_8g_1b.out"
+#SBATCH --output="CIFAR10_RESNET56_BATCH_8g_1b_neterov.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 echo "start"
@@ -19,6 +19,7 @@ python retrain_stage3.py \
 --Lr 0.01 \
 --Dataset CIFAR10 \
 --Model resnet \
+--Nesterov \
 --Milestones 100 \
 --Retrain /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/logits_best.pkl \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/I_parent_8g_1b.npy \

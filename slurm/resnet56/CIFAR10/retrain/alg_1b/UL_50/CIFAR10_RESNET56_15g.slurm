@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="CIFAR10_RESNET56_BATCH_15g_1b"
 #SBATCH -N 1
-#SBATCH --partition=lgns
+#SBATCH --nodelist=harmonicdrive
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=7200  # Time in Minutes
@@ -15,7 +15,7 @@ cd /z/home/madantrg/Pruning/
 
 python retrain_stage3.py \
 --Epoch 40 \
---Batch_size 128 \
+--Batch_size 256 \
 --Lr 0.01 \
 --Dataset CIFAR10 \
 --Model resnet \
@@ -30,7 +30,7 @@ python retrain_stage3.py \
 --children_clusters 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
 --upper_prune_limit 0.50 \
 --upper_prune_per 0.20 \
---lower_prune_per 0.001 \
+--lower_prune_per 0.05 \
 --prune_per_step 0.001
 
 echo "end"
