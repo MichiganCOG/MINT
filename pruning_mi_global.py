@@ -217,8 +217,43 @@ if __name__=='__main__':
         children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight','conv10.weight','conv11.weight','conv12.weight','conv13.weight','linear1.weight', 'linear3.weight']
         
     elif args.model == 'resnet':
-        parents  = ['conv2.weight']
-        children = ['conv2.weight']
+        parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight',
+                    'conv11.weight','conv12.weight','conv13.weight','conv14.weight','conv15.weight','conv16.weight','conv17.weight','conv18.weight','conv19.weight', 'conv20.weight',
+                    'conv21.weight','conv22.weight','conv23.weight','conv24.weight','conv25.weight','conv26.weight','conv27.weight','conv28.weight','conv29.weight', 'conv30.weight',
+                    'conv31.weight','conv32.weight','conv33.weight','conv34.weight','conv35.weight','conv36.weight','conv37.weight','conv38.weight','conv39.weight', 'conv40.weight',
+                    'conv41.weight','conv42.weight','conv43.weight','conv44.weight','conv45.weight','conv46.weight','conv47.weight','conv48.weight','conv49.weight', 'conv50.weight',
+                    'conv51.weight','conv52.weight','conv53.weight','conv54.weight', 'conv55.weight']
+
+        children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight',
+                    'conv11.weight','conv12.weight','conv13.weight','conv14.weight','conv15.weight','conv16.weight','conv17.weight','conv18.weight','conv19.weight', 'conv20.weight',
+                    'conv21.weight','conv22.weight','conv23.weight','conv24.weight','conv25.weight','conv26.weight','conv27.weight','conv28.weight','conv29.weight', 'conv30.weight',
+                    'conv31.weight','conv32.weight','conv33.weight','conv34.weight','conv35.weight','conv36.weight','conv37.weight','conv38.weight','conv39.weight', 'conv40.weight',
+                    'conv41.weight','conv42.weight','conv43.weight','conv44.weight','conv45.weight','conv46.weight','conv47.weight','conv48.weight','conv49.weight', 'conv50.weight',
+                    'conv51.weight','conv52.weight','conv53.weight','conv54.weight','conv55.weight', 'linear1.weight']
+
+        if args.key_id >=20 and args.key_id <=37:
+            if args.parent_clusters[0] == 8:
+                args.parent_clusters[0] = 16
+            else:
+                args.parent_clusters[0] = 32
+
+        if args.key_id >=38:
+            if args.parent_clusters[0] == 8:
+                args.parent_clusters[0] = 32
+            else:
+                args.parent_clusters[0] = 64
+
+        if args.key_id >=19 and args.key_id <=36:
+            if args.children_clusters[0] == 8:
+                args.children_clusters[0] = 16
+            else:
+                args.children_clusters[0] = 32
+
+        if args.key_id >=37:
+            if args.children_clusters[0] == 8:
+                args.children_clusters[0] = 32
+            else:
+                args.children_clusters[0] = 64
 
     if args.key_id ==len(parents):
         args.children_clusters = [10]
