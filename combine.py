@@ -65,6 +65,6 @@ if __name__=='__main__':
                       '_conv38.weight_conv39.weight', '_conv39.weight_conv40.weight', '_conv40.weight_conv41.weight',
                       '_conv41.weight_conv42.weight', '_conv42.weight_conv43.weight', '_conv43.weight_conv44.weight', '_conv44.weight_conv45.weight',  '_conv45.weight_conv46.weight',
                       '_conv46.weight_conv47.weight', '_conv47.weight_conv48.weight', '_conv48.weight_conv49.weight', '_conv49.weight_conv50.weight', '_conv50.weight_conv51.weight',
-                      '_conv51.weight_conv52.weight']
+                      '_conv51.weight_conv52.weight', '_conv52.weight_conv53.weight']
 
     combine(args.directory, args.prefix, load_keys)
