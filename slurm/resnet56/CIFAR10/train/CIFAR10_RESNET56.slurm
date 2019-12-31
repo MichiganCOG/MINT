@@ -13,14 +13,14 @@ cd /z/home/madantrg/scratch_incremental_learning/
 source setup.sh 
 cd /z/home/madantrg/Pruning/
 python train_stage1.py \
---Epoch 200 \
---Batch_size 128 \
+--Epoch 250 \
+--Batch_size 256 \
 --Lr 0.1 \
 --Save_dir CIFAR10_RESNET56_BATCH \
 --Dataset CIFAR10 \
 --Dims 10 \
 --Expt_rerun 1 \
---Milestones 100 150 \
+--Milestones 125 187 \
 --Opt sgd \
 --Weight_decay 0.0001 \
 --Model resnet \

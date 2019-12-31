@@ -14,23 +14,24 @@ source setup.sh
 cd /z/home/madantrg/Pruning/
 
 python retrain_stage3.py \
---Epoch 40 \
+--Epoch 200 \
 --Batch_size 256 \
 --Lr 0.01 \
 --Dataset CIFAR10 \
 --Model resnet \
---Milestones 100 \
+--Milestones 100 150 \
+--Weight_decay 0.0001 \
 --Retrain /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/logits_best.pkl \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/I_parent_8g_1b.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_8g_1b.npy \
 --Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_children_8g_1b.npy \
---parent_key conv1.weight  conv2.weight  conv3.weight  conv4.weight  conv5.weight  conv6.weight  conv7.weight  conv8.weight  conv9.weight  conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv20.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv35.weight conv38.weight conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight \
---children_key conv2.weight  conv3.weight  conv4.weight  conv5.weight  conv6.weight  conv7.weight  conv8.weight  conv9.weight  conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv36.weight conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight \
---parent_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 16 16 16 16 16 16 16 16 16 16 16 16 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 \
---children_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 16 16 16 16 16 16 16 16 16 16 16 16 16 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 \
+--parent_key conv1.weight  conv2.weight  conv3.weight  conv4.weight  conv5.weight  conv6.weight  conv7.weight  conv8.weight  conv9.weight  conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight \
+--children_key conv2.weight  conv3.weight  conv4.weight  conv5.weight  conv6.weight  conv7.weight  conv8.weight  conv9.weight  conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight conv19.weight \
+--parent_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 \
+--children_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 \
 --upper_prune_limit 0.50 \
---upper_prune_per 0.20 \
---lower_prune_per 0.1 \
+--upper_prune_per 0.30 \
+--lower_prune_per 0.2 \
 --prune_per_step 0.001
 
 echo "end"

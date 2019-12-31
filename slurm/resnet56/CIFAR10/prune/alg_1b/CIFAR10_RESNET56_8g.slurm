@@ -22,6 +22,7 @@ python pruning_mi_global_1b.py \
 --key_id $SLURM_ARRAY_TASK_ID \
 --parent_clusters 8 \
 --children_clusters 8 \
---name_postfix 8g_1b
+--name_postfix 8g_1b \
+--samples_per_class 500
  
 echo "end"
