@@ -25,13 +25,13 @@ python retrain_stage3.py \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/I_parent_8g_1b.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_8g_1b.npy \
 --Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_children_8g_1b.npy \
---parent_key conv1.weight  conv2.weight  conv3.weight  conv4.weight  conv5.weight  conv6.weight  conv7.weight  conv8.weight  conv9.weight  conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight conv20.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight \
---children_key conv2.weight  conv3.weight  conv4.weight  conv5.weight  conv6.weight  conv7.weight  conv8.weight  conv9.weight  conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight conv19.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight conv37.weight \
---parent_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 \
---children_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 \
+--parent_key conv20.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight \
+--children_key conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight conv37.weight \
+--parent_clusters 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 \
+--children_clusters 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 \
 --upper_prune_limit 0.50 \
 --upper_prune_per 0.8 \
---lower_prune_per 0.2 \
+--lower_prune_per 0.1 \
 --prune_per_step 0.1
 
 echo "end"
