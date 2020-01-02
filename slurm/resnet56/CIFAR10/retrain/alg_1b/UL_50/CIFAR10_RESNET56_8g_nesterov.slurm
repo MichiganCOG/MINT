@@ -14,9 +14,9 @@ source setup.sh
 cd /z/home/madantrg/Pruning/
 
 python retrain_stage3.py \
---Epoch 200 \
+--Epoch 40 \
 --Batch_size 256 \
---Lr 0.01 \
+--Lr 0.001 \
 --Dataset CIFAR10 \
 --Model resnet \
 --Nesterov \
@@ -31,8 +31,8 @@ python retrain_stage3.py \
 --parent_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 \
 --children_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 \
 --upper_prune_limit 0.50 \
---upper_prune_per 0.3 \
+--upper_prune_per 0.9 \
 --lower_prune_per 0.2 \
---prune_per_step 0.001
+--prune_per_step 0.1
 
 echo "end"

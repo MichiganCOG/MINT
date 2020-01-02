@@ -30,8 +30,8 @@ python retrain_stage3.py \
 --parent_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 \
 --children_clusters 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 16 \
 --upper_prune_limit 0.50 \
---upper_prune_per 0.30 \
+--upper_prune_per 0.8 \
 --lower_prune_per 0.2 \
---prune_per_step 0.001
+--prune_per_step 0.1
 
 echo "end"
