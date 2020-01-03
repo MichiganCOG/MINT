@@ -25,10 +25,10 @@ python retrain_stage3.py \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/I_parent_15g_1b.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_15g_1b.npy \
 --Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_children_15g_1b.npy \
---parent_key conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight \
---children_key conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight conv54.weight \
---parent_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
---children_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
+--parent_key conv38.weight conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight \
+--children_key conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight conv54.weight \
+--parent_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
+--children_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
 --upper_prune_limit 0.40 \
 --upper_prune_per 0.8 \
 --lower_prune_per 0.1 \
