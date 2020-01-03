@@ -59,9 +59,9 @@ if __name__=='__main__':
         #              '_conv6.weight_conv7.weight', '_conv7.weight_conv8.weight', '_conv8.weight_conv9.weight', '_conv9.weight_conv10.weight', '_conv10.weight_conv11.weight',
         #              '_conv11.weight_conv12.weight', '_conv12.weight_conv13.weight', '_conv13.weight_conv14.weight', '_conv14.weight_conv15.weight', '_conv15.weight_conv16.weight',
         #              '_conv16.weight_conv17.weight', '_conv17.weight_conv18.weight', '_conv18.weight_conv19.weight', '_conv20.weight_conv21.weight',
-        load_keys   =['_conv20.weight_conv21.weight', '_conv21.weight_conv22.weight', '_conv22.weight_conv23.weight', '_conv23.weight_conv24.weight', '_conv24.weight_conv25.weight',  '_conv25.weight_conv26.weight',
-                      '_conv26.weight_conv27.weight', '_conv27.weight_conv28.weight', '_conv28.weight_conv29.weight', '_conv29.weight_conv30.weight', '_conv30.weight_conv31.weight',
-                      '_conv31.weight_conv32.weight', '_conv32.weight_conv33.weight', '_conv33.weight_conv34.weight', '_conv34.weight_conv35.weight', '_conv35.weight_conv36.weight',
-                      '_conv36.weight_conv37.weight']
+        load_keys   =['_conv39.weight_conv40.weight', '_conv40.weight_conv41.weight',
+                      '_conv41.weight_conv42.weight', '_conv42.weight_conv43.weight', '_conv43.weight_conv44.weight', '_conv44.weight_conv45.weight',  '_conv45.weight_conv46.weight',
+                      '_conv46.weight_conv47.weight', '_conv47.weight_conv48.weight', '_conv48.weight_conv49.weight', '_conv49.weight_conv50.weight', '_conv50.weight_conv51.weight',
+                      '_conv51.weight_conv52.weight', '_conv52.weight_conv53.weight', '_conv53.weight_conv54.weight']
 
     combine(args.directory, args.prefix, load_keys)

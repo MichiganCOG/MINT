@@ -29,7 +29,7 @@ python retrain_stage3.py \
 --children_key conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight conv54.weight \
 --parent_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
 --children_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
---upper_prune_limit 0.50 \
+--upper_prune_limit 0.30 \
 --upper_prune_per 0.8 \
 --lower_prune_per 0.1 \
 --prune_per_step 0.1
