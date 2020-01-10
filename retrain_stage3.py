@@ -7,6 +7,12 @@ LEGACY:
     matplotlib
     numpy
 """
+"""
+TODO:
+1. Add option to save the best performing model after pruning, with a request for directory to save this file in. File needs to be named logits_best.pkl so that this is compatible with retraining multiple times.
+    1 a. Secondary check to ensure certain weights are zeroed out when retraining multiple times and observe what variables get affected and how.
+
+"""
 import os
 import cv2
 import time
@@ -264,7 +270,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     print('Requested prune percentage is %f'%(prune_percent))
     print('Highest accuracy for true pruning percentage %f is %f'%(true_prune_percent, best_model_acc))
     print('Total number of parameters is %d\n'%(total_count))
-        
+
+    return true_prune_percent, best_model_acc        
 
 if __name__ == "__main__":
 
@@ -296,12 +303,22 @@ if __name__ == "__main__":
     parser.add_argument('--lower_prune_per',      type=float,    default=0.9)
     parser.add_argument('--prune_per_step',       type=float,    default=0.001)
     
+    # Keywords to save best re-trained file
+    parser.add_argument('--Save_dir',             type=str   ,   default='.')
+
     args = parser.parse_args()
  
-    #for prune_percent in np.arange(0.1, 0.9, step=0.05):
-    #for prune_percent in np.arange(0.7, 0.8, step=0.01):
-    #for prune_percent in np.arange(0.9, 1.0, step=0.001):
-    #for prune_percent in [0.985]:
+    global_true_prune_percent = 0.0
+    global_best_model_acc     = 0.0
+
     for prune_percent in np.arange(args.lower_prune_per, args.upper_prune_per, step=args.prune_per_step):
-        train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
-    
+        true_prune_percent, best_model_acc, model, optimizer = train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
+
+        if ((best_model_acc >= global_best_model_acc) and (true_prune_percent >= global_true_prune_percent)):
+            global_best_model_acc     = best_model_acc
+            global_true_prune_percent = true_prune_percent
+            print('Saving best model: True prune percent %f, Best Acc. %f'%(global_true_prune_percent, global_best_model_acc))
+
+            save_checkpoint(args.Epoch, 0, model, optimizer, args.Save_dir+'/0/logits_best.pkl')
+            
+        

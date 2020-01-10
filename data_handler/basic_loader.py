@@ -5,7 +5,6 @@ import numpy             as np
 import torch.utils.data  as Data
 
 from torchvision  import datasets, transforms
-from cifarDataset import CIFAR10, CIFAR100
 
 def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
 
