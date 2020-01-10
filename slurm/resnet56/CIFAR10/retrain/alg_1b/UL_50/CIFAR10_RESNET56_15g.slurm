@@ -37,13 +37,13 @@ conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.wei
 conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight conv37.weight conv39.weight \
 conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight \
 conv50.weight conv51.weight conv52.weight conv53.weight conv54.weight \
---parent_clusters 16 16 16 16 16 16 16 16 16 16 \
-16 16 16 16 16 16 16 16 \
+--parent_clusters 15 15 15 15 15 15 15 15 15 15 \
+15 15 15 15 15 15 15 15 \
 32 32 32 32 32 32 32 32 32 32 \
 32 32 32 32 32 32 32 32 64 64 \
 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
---children_clusters 16 16 16 16 16 16 16 16 16 16 \
-16 16 16 16 16 16 16 16 \
+--children_clusters 15 15 15 15 15 15 15 15 15 15 \
+15 15 15 15 15 15 15 15 \
 32 32 32 32 32 32 32 32 32 32 \
 32 32 32 32 32 32 32 64 64 \
 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
