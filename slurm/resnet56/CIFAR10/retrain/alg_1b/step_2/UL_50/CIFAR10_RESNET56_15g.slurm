@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name="CIFAR10_RESNET56_BATCH_15g_1b"
+#SBATCH --job-name="CIFAR10_RESNET56_BATCH_15g_1b_step_2"
 #SBATCH -N 1
 #SBATCH --partition=lgns
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=7200  # Time in Minutes
-#SBATCH --output="CIFAR10_RESNET56_BATCH_15g_1b.out"
+#SBATCH --output="CIFAR10_RESNET56_BATCH_15g_1b_step_2.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 echo "start"
@@ -21,10 +21,10 @@ python retrain_stage3.py \
 --Model resnet \
 --Milestones 100 150 \
 --Weight_decay 0.0001 \
---Retrain /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/logits_best.pkl \
---Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/I_parent_15g_1b.npy \
---Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_15g_1b.npy \
---Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_BATCH/0/Labels_children_15g_1b.npy \
+--Retrain /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_RETRAIN_1_BATCH/0/logits_best.pkl \
+--Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_RETRAIN_1_BATCH/0/I_parent_15g_1b.npy \
+--Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_RETRAIN_1_BATCH/0/Labels_15g_1b.npy \
+--Labels_children_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_RETRAIN_1_BATCH/0/Labels_children_15g_1b.npy \
 --parent_key conv1.weight conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight \
 conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight \
 conv20.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight \
@@ -48,8 +48,9 @@ conv50.weight conv51.weight conv52.weight conv53.weight conv54.weight \
 32 32 32 32 32 32 32 64 64 \
 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 \
 --upper_prune_limit 0.50 \
---upper_prune_per 0.8 \
---lower_prune_per 0.1 \
---prune_per_step 0.1
+--upper_prune_per 0.1 \
+--lower_prune_per 0.01 \
+--prune_per_step 0.01 \
+--Save_dir CIFAR10_RESNET56_RETRAIN_2_BATCH 
 
 echo "end"

@@ -212,6 +212,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     scheduler      = MultiStepLR(optimizer, milestones=Milestones, gamma=Gamma)    
     best_model_acc = 0.0
+    best_model     = None
 
     # Training Loop
     for epoch in range(Epoch):
@@ -264,6 +265,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
         if best_model_acc < epoch_acc:
             best_model_acc = epoch_acc
+            best_model     = copy.deepcopy(model)
     
     # END FOR
 
@@ -271,7 +273,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     print('Highest accuracy for true pruning percentage %f is %f'%(true_prune_percent, best_model_acc))
     print('Total number of parameters is %d\n'%(total_count))
 
-    return true_prune_percent, best_model_acc        
+    return true_prune_percent, best_model_acc, best_model, optimizer  
 
 if __name__ == "__main__":
 
@@ -308,13 +310,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
  
-    global_true_prune_percent = 0.0
+    global_true_prune_percent = 100.0
     global_best_model_acc     = 0.0
 
     for prune_percent in np.arange(args.lower_prune_per, args.upper_prune_per, step=args.prune_per_step):
         true_prune_percent, best_model_acc, model, optimizer = train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, prune_percent, args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
 
-        if ((best_model_acc >= global_best_model_acc) and (true_prune_percent >= global_true_prune_percent)):
+        if ((best_model_acc >= global_best_model_acc) and (true_prune_percent <= global_true_prune_percent)):
             global_best_model_acc     = best_model_acc
             global_true_prune_percent = true_prune_percent
             print('Saving best model: True prune percent %f, Best Acc. %f'%(global_true_prune_percent, global_best_model_acc))

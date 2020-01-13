@@ -1,3 +1,4 @@
+import time
 import copy
 import torch
 import argparse
@@ -8,8 +9,7 @@ import torch.nn          as nn
 import matplotlib.pyplot as plt
 
 from data_handler            import data_loader
-from utils                   import save_checkpoint, load_checkpoint, accuracy
-from hpmi                    import *
+from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
 from tqdm                    import tqdm
 
 from models                  import Alexnet       as alex
