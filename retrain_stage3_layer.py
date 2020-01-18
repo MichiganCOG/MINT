@@ -86,9 +86,9 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
-                if layer_remove_per >= upper_prune_limit:
+                if layer_remove_per >= upper_prune_limit[num_layers]:
                     local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
-                    cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
+                    cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit[num_layers] * local_sorted_weights.shape[0]).astype('int')]
                 
                 else:
                     cutoff_value_local = cutoff_value
@@ -304,7 +304,7 @@ if __name__ == "__main__":
     parser.add_argument('--children_key',         nargs='+',     type=str,       default=['conv2.weight'])
     parser.add_argument('--parent_clusters',      nargs='+',     type=int,       default=[8])
     parser.add_argument('--children_clusters',    nargs='+',     type=int,       default=[8])
-    parser.add_argument('--upper_prune_limit',    type=float,    default=0.75)
+    parser.add_argument('--upper_prune_limit',    nargs='+',     type=float)
     parser.add_argument('--upper_prune_per',      type=float,    default=0.1)
     parser.add_argument('--lower_prune_per',      type=float,    default=0.9)
     parser.add_argument('--prune_per_step',       type=float,    default=0.001)

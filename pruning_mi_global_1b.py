@@ -15,7 +15,8 @@ from tqdm                    import tqdm
 from models                  import Alexnet       as alex
 from models                  import MLP           as mlp 
 from models                  import VGG16_bn      as vgg 
-from models                  import Resnet56      as resnet56 
+from models                  import Resnet56_A    as resnet56_a
+from models                  import Resnet56_B    as resnet56_b 
 
 
 # Custom Imports
@@ -81,9 +82,12 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     elif model == 'vgg':
         model = vgg(num_classes=10).to(device)
     
-    elif model == 'resnet':
-        model = resnet56(num_classes=10).to(device)
-    
+    elif model == 'resnet_a':
+        model = resnet56_a(num_classes=10).to(device)
+
+    elif model == 'resnet_b':
+        model = resnet56_b(num_classes=10).to(device)
+
     else:
         print('Invalid model selected')
 
@@ -214,7 +218,7 @@ if __name__=='__main__':
         parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight','conv11.weight','conv12.weight','conv13.weight', 'linear1.weight']
         children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight','conv10.weight','conv11.weight','conv12.weight','conv13.weight','linear1.weight', 'linear3.weight']
         
-    elif args.model == 'resnet':
+    elif 'resnet' in args.model:
         parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight',
                     'conv11.weight','conv12.weight','conv13.weight','conv14.weight','conv15.weight','conv16.weight','conv17.weight','conv18.weight','conv19.weight', 'conv20.weight',
                     'conv21.weight','conv22.weight','conv23.weight','conv24.weight','conv25.weight','conv26.weight','conv27.weight','conv28.weight','conv29.weight', 'conv30.weight',

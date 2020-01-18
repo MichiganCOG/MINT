@@ -37,7 +37,8 @@ from models                    import Alexnet       as alex
 from models                    import ResNet        as resnet 
 from models                    import MLP           as mlp 
 from models                    import VGG16_bn      as vgg 
-from models                    import Resnet56      as resnet56 
+from models                    import Resnet56_A    as resnet56_a
+from models                    import Resnet56_B    as resnet56_b 
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
@@ -92,8 +93,11 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         elif Model == 'vgg':
             model = vgg(num_classes=Dims).to(device)
 
-        elif Model == 'resnet':
-            model = resnet56(num_classes=Dims).to(device)
+        elif Model == 'resnet_a':
+            model = resnet56_a(num_classes=Dims).to(device)
+
+        elif Model == 'resnet_b':
+            model = resnet56_b(num_classes=Dims).to(device)
 
         else:
             print('Invalid optimizer selected. Exiting')
