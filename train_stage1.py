@@ -32,13 +32,12 @@ from torch.autograd            import Variable
 from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
-from models                    import BasicBlock
-from models                    import Alexnet       as alex
-from models                    import ResNet        as resnet 
+from models                    import alexnet       as alex
 from models                    import MLP           as mlp 
 from models                    import VGG16_bn      as vgg 
 from models                    import Resnet56_A    as resnet56_a
 from models                    import Resnet56_B    as resnet56_b 
+from models                    import ResNet56      as resnet56 
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
@@ -99,11 +98,15 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         elif Model == 'resnet_b':
             model = resnet56_b(num_classes=Dims).to(device)
 
+        elif Model == 'resnet':
+            model = resnet56(num_classes=Dims).to(device)
+
         else:
             print('Invalid optimizer selected. Exiting')
             exit(1)
 
         # END IF
+        import pdb; pdb.set_trace()
 
         logsoftmax = nn.LogSoftmax()
 

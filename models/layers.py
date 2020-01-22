@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from utils import to_var
+from .utils import to_var
 
 
 class MaskedLinear(nn.Linear):

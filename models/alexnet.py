@@ -8,7 +8,9 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 from torch.autograd import Variable
-from layers import *
+
+from torch.utils.model_zoo import load_url as load_state_dict_from_url
+from .layers import *
 __all__ = ['AlexNet', 'alexnet']
 
 
@@ -61,42 +63,60 @@ class Alexnet(nn.Module):
         self.linear2.set_mask(masks[6])
         self.linear3.set_mask(masks[7])
 
-    def forward(self, x, labels=False, conv1=False, conv2=False, conv3=False, conv4=False, conv5=False, linear1=False, linear2=False, linear3=False):
+    def forward(self, x, labels=False):
         out = self.pool1(self.relu1(self.conv1(x)))
-        if conv1:
-            return out
 
         out = self.pool2(self.relu2(self.conv2(out)))
-        if conv2:
-            return out
 
         out = self.relu3(self.conv3(out))
-        if conv3:
-            return out
 
         out = self.relu4(self.conv4(out))
-        if conv4:
-            return out
 
         out = self.pool3(self.relu5(self.conv5(out)))
-        if conv5:
-            return out
 
         out = self.avgpool(out)
  
         out = self.relu6(self.linear1(self.drop1(out.view(-1, 256*6*6))))
-        if linear1:
-            return out
 
         out = self.relu7(self.linear2(self.drop2(out)))
-        if linear2:
-            return out
 
         out = self.linear3(out)
-        if linear3:
-            return out
 
         if labels:
             out = F.softmax(out, dim=1)
 
         return out
+
+def alexnet(num_classes):
+    r"""AlexNet model architecture from the
+    `"One weird trick..." <https://arxiv.org/abs/1404.5997>`_ paper.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    """
+    model = Alexnet(num_classes=num_classes)
+    state_dict = load_state_dict_from_url(model_urls['alexnet'],
+                                          progress=True)
+
+    new_state_dict = {}
+    new_state_dict['conv1.weight'] = state_dict['features.0.weight']
+    new_state_dict['conv1.bias']   = state_dict['features.0.bias']
+    new_state_dict['conv2.weight'] = state_dict['features.3.weight']
+    new_state_dict['conv2.bias']   = state_dict['features.3.bias']
+    new_state_dict['conv3.weight'] = state_dict['features.6.weight']
+    new_state_dict['conv3.bias']   = state_dict['features.6.bias']
+    new_state_dict['conv4.weight'] = state_dict['features.8.weight']
+    new_state_dict['conv4.bias']   = state_dict['features.8.bias']
+    new_state_dict['conv5.weight'] = state_dict['features.10.weight']
+    new_state_dict['conv5.bias']   = state_dict['features.10.bias']
+
+    new_state_dict['linear1.weight'] = state_dict['classifier.1.weight']
+    new_state_dict['linear1.bias']   = state_dict['classifier.1.bias']
+    new_state_dict['linear2.weight'] = state_dict['classifier.4.weight']
+    new_state_dict['linear2.bias']   = state_dict['classifier.4.bias']
+    new_state_dict['linear3.weight'] = state_dict['classifier.6.weight']
+    new_state_dict['linear3.bias']   = state_dict['classifier.6.bias']
+    del state_dict
+
+    model.load_state_dict(new_state_dict)
+    return model

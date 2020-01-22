@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 from torch.autograd import Variable
-from layers import *
+from .layers import *
 
 class Resnet56_A(nn.Module):
 

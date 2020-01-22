@@ -10,11 +10,14 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
 
 
     if dataset == 'CIFAR10':
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
+        #normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+        #                                 std=[0.229, 0.224, 0.225])
 
-        train_transform = transforms.Compose([transforms.RandomHorizontalFlip(),
-                                              transforms.RandomCrop(32, 4),
+        normalize = transforms.Normalize(mean=[0.4914, 0.4822, 0.4465],
+                                         std=[0.2470, 0.2435, 0.2616])
+
+        train_transform = transforms.Compose([transforms.RandomCrop(32, 4),
+                                              transforms.RandomHorizontalFlip(),
                                               transforms.ToTensor(),
                                               normalize])
 
@@ -22,23 +25,41 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
         extra_transform = transforms.Compose([transforms.ToTensor(), normalize])
         test_transform = transforms.Compose([transforms.ToTensor(), normalize])
         
-        train_data = datasets.CIFAR10("data", train=True,  transform=train_transform, download=False)
-        test_data  = datasets.CIFAR10("data", train=False, transform=test_transform,  download=False)
-        extra_data = datasets.CIFAR10("data", train=True,  transform=extra_transform, download=False)
+        train_data = datasets.CIFAR10("data", train=True,  transform=train_transform, download=True)
+        test_data  = datasets.CIFAR10("data", train=False, transform=test_transform,  download=True)
+        extra_data = datasets.CIFAR10("data", train=True,  transform=extra_transform, download=True)
+
+    #elif dataset == 'IMAGENET':
+
+    #    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    #                                     std=[0.229, 0.224, 0.225])
+
+    #    train_transform = transforms.Compose([transforms.RandomResizedCrp(224),
+    #                                          transforms.RandomHorizontalFlip(),
+    #                                          transforms.ToTensor(),
+    #                                          normalize])
+
+    #    extra_transform = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
+    #    test_transform  = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
+    #    
+    #    train_data = datasets.ImageFolder(DIR,  transform=train_transform)
+    #    extra_data = datasets.ImageFolder(DIR,  transform=extra_transform)
+    #    test_data  = datasets.ImageFolder(DIR2, transform=test_transform)
 
     elif dataset == 'CIFAR100':
 
         mean = [0.5071, 0.4867, 0.4408]
         std  = [0.2675, 0.2275, 0.2761]
 
-        train_transform = transforms.Compose([transforms.Resize((227,227)),
+        train_transform = transforms.Compose([transforms.Resize((224,224)),
                                               transforms.RandomHorizontalFlip(),
                                               transforms.ToTensor(),
                                               transforms.Normalize(mean, std)])
 
-        test_transform = transforms.Compose([transforms.Resize((227,227)), transforms.ToTensor(), transforms.Normalize(mean, std)])
+        test_transform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor(), transforms.Normalize(mean, std)])
         
         train_data = datasets.CIFAR100("data", train=True,  transform=train_transform, download=True)
+        extra_data = datasets.CIFAR100("data", train=True,  transform=test_transform,  download=True)
         test_data  = datasets.CIFAR100("data", train=False, transform=test_transform,  download=True)
         
     elif dataset == 'STL10':
@@ -77,7 +98,7 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
 
     # EDIT TO TRUE for trainloader
     trainloader = torch.utils.data.DataLoader(dataset = train_data, batch_size=Batch_size, shuffle=True,  num_workers=2, pin_memory=True)
-    testloader  = torch.utils.data.DataLoader(dataset = test_data,  batch_size=Batch_size, shuffle=False, num_workers=2,pin_memory=True)
-    extraloader = torch.utils.data.DataLoader(dataset = extra_data, batch_size=Batch_size, shuffle=False,  num_workers=2, pin_memory=True)
+    testloader  = torch.utils.data.DataLoader(dataset = test_data,  batch_size=Batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    extraloader = torch.utils.data.DataLoader(dataset = extra_data, batch_size=Batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
     return trainloader, testloader, extraloader

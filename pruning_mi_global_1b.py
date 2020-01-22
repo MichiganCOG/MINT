@@ -12,7 +12,7 @@ from data_handler            import data_loader
 from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
 from tqdm                    import tqdm
 
-from models                  import Alexnet       as alex
+#from models                  import Alexnet       as alex
 from models                  import MLP           as mlp 
 from models                  import VGG16_bn      as vgg 
 from models                  import Resnet56_A    as resnet56_a
@@ -93,8 +93,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
     model.load_state_dict(init_weights)
     model.eval()
-
-    
 
     #### Load Data ####
     trainloader, testloader, extraloader = data_loader(dataset, 128)
@@ -209,6 +207,10 @@ if __name__=='__main__':
     parser.add_argument('--name_postfix',         type=str)
 
     args = parser.parse_args()
+
+    print('Selected key id is %d'%(args.key_id))
+
+    args.key_id = args.key_id + 1
 
     if args.model == 'mlp':
         parents  = ['fc1.weight','fc2.weight']
