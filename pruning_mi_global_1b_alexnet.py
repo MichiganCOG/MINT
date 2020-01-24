@@ -69,8 +69,8 @@ def alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, cluste
 def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_children, weights_dir, cores, name_postfix, samples_per_class, dims):
 
 
-    #### Load Model ####
-    init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')
+    ##### Load Model ####
+    #init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')
 
     # Check if GPU is available (CUDA)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -80,7 +80,7 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
         model = mlp(num_classes=dims).to(device)
 
     elif model == 'alexnet':
-        model = alexnet(num_classes=dims).to(device)
+        model = alex(num_classes=dims).to(device)
     
     elif model == 'vgg':
         model = vgg(num_classes=dims).to(device)
@@ -94,6 +94,7 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     else:
         print('Invalid model selected')
 
+    init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')
     model.load_state_dict(init_weights)
     model.eval()
 
@@ -138,7 +139,11 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
 
     for idx in range(nlayers):
-        labels[str(idx)]          = np.zeros((init_weights[children_key[idx]].shape[1],))
+        if children_key[idx] == 'linear1.weight':
+            labels[str(idx)]          = np.zeros((256,))
+        else:
+            labels[str(idx)]          = np.zeros((init_weights[children_key[idx]].shape[1],))
+        
         labels_children[str(idx)] = np.zeros((init_weights[children_key[idx]].shape[0],))
         I_parent[str(idx)]        = np.zeros((clusters_children[idx], clusters[idx]))
 
@@ -214,7 +219,7 @@ if __name__=='__main__':
 
     print('Selected key id is %d'%(args.key_id))
 
-    #args.key_id = args.key_id + 1
+    args.key_id = args.key_id + 1
 
     if args.model == 'mlp':
         parents  = ['fc1.weight','fc2.weight']
@@ -269,7 +274,7 @@ if __name__=='__main__':
                 args.children_clusters[0] = 64
 
     if args.key_id ==len(parents):
-        args.children_clusters = [args.dims]
+        args.children_clusters = [10]
  
     calc_perf(args.model, args.dataset, [parents[args.key_id-1]], [children[args.key_id-1]], args.parent_clusters, args.children_clusters, args.weights_dir, args.cores, args.name_postfix +'_'+parents[args.key_id-1]+'_'+children[args.key_id-1], args.samples_per_class, args.dims)
 

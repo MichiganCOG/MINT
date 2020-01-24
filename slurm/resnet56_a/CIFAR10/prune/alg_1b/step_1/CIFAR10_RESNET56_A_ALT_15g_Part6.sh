@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name="CIFAR10_RESNET56_A_ALT_BATCH_PRUNE_15g_1b_Part6"
 #SBATCH --output="CIFAR10_RESNET56_A_ALT_BATCH_PRUNE_15g_1b_%j_Part6.out"
-#SBATCH -N 1               # number of nodes requested
-#SBATCH -n 4               # total number of mpi tasks requested
+#SBATCH -N 4               # number of nodes requested
+#SBATCH -n 20               # total number of mpi tasks requested
 #SBATCH -p gtx             # queue (partition) -- normal, development, etc.
 #SBATCH --gres=gpu:1
 #SBATCH -t 18:00:00         # run time (hh:mm:ss) - 1.5 hours

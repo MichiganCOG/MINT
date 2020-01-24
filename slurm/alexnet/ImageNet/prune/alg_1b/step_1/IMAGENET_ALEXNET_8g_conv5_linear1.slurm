@@ -1,0 +1,1 @@
+cd /work/07080/salimeh/maverick2/MINT/;source setup.sh;cd MINT; python pruning_mi_global_1b_alexnet.py --model alexnet --dataset IMAGENET --weights_dir /work/07080/salimeh/maverick2/MINT/MINT/results/IMAGENET_ALEXNET_BATCH/0/ --cores 10 --key_id 4 --parent_clusters 8 --children_clusters 8 --name_postfix 8g_1b --samples_per_class 5 --dims 1000 

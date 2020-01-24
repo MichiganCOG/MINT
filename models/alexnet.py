@@ -49,19 +49,18 @@ class Alexnet(nn.Module):
         self.relu7   = nn.ReLU(inplace=True)
         self.linear3 = MaskedLinear(4096, 1000)
 
-    def set_masks(self, masks):
+    def setup_masks(self, masks):
         # Should be a less manual way to set masks
         # Leave it for the future
 
-        self.conv1.set_mask(masks[0])
-        self.conv2.set_mask(masks[1])
-        self.conv3.set_mask(masks[2])
-        self.conv4.set_mask(masks[3])
-        self.conv5.set_mask(masks[4])
+        self.conv2.set_mask(torch.Tensor(masks['conv2.weight']))
+        self.conv3.set_mask(torch.Tensor(masks['conv3.weight']))
+        self.conv4.set_mask(torch.Tensor(masks['conv4.weight']))
+        self.conv5.set_mask(torch.Tensor(masks['conv5.weight']))
 
-        self.linear1.set_mask(masks[5])
-        self.linear2.set_mask(masks[6])
-        self.linear3.set_mask(masks[7])
+        self.linear1.set_mask(torch.Tensor(masks['linear1.weight']))
+        self.linear2.set_mask(torch.Tensor(masks['linear2.weight']))
+        self.linear3.set_mask(torch.Tensor(masks['linear3.weight']))
 
     def forward(self, x, labels=False):
         out = self.pool1(self.relu1(self.conv1(x)))
@@ -116,6 +115,8 @@ def alexnet(num_classes):
     new_state_dict['linear2.bias']   = state_dict['classifier.4.bias']
     new_state_dict['linear3.weight'] = state_dict['classifier.6.weight']
     new_state_dict['linear3.bias']   = state_dict['classifier.6.bias']
+
+    #torch.save({'state_dict': new_state_dict}, 'results/IMAGENET_ALEXNET_BATCH/0/logits_best.pkl') 
     del state_dict
 
     model.load_state_dict(new_state_dict)
