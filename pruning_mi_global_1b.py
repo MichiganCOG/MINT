@@ -210,7 +210,7 @@ if __name__=='__main__':
 
     print('Selected key id is %d'%(args.key_id))
 
-    args.key_id = args.key_id + 1
+    #args.key_id = args.key_id + 1
 
     if args.model == 'mlp':
         parents  = ['fc1.weight','fc2.weight']

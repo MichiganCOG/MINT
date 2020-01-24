@@ -39,8 +39,7 @@ from torch.autograd            import Variable
 from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
-from models                    import BasicBlock
-from models                    import Alexnet       as alex
+from models                    import alexnet       as alex
 from models                    import MLP           as mlp 
 from models                    import VGG16_bn      as vgg 
 from models                    import Resnet56_A    as resnet56_a
@@ -50,9 +49,9 @@ torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
 
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
-        I_parent        = np.load(I_parent_file).item()
-        labels          = np.load(Labels_file).item()
-        labels_children = np.load(Labels_children_file).item()
+        I_parent        = np.load(I_parent_file, allow_pickle=True).item()
+        labels          = np.load(Labels_file, allow_pickle=True).item()
+        labels_children = np.load(Labels_children_file, allow_pickle=True).item()
 
         # Create a copy
         init_weights   = copy.deepcopy(final_weights)
@@ -108,7 +107,7 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
             # END FOR
 
             mask_weights[children_k] = np.ones(init_weights[children_k].shape)
-            mask_weights[children_k][np.where(init_weights[children_k]==0)] = 0
+            mask_weights[children_k][np.where(init_weights[children_k].detach().cpu()==0)] = 0
 
         # END FOR
 
@@ -120,11 +119,11 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 #total_count = 0
                 #valid_count = 0
                 total_count += init_weights[children_key[num_layers]].reshape(-1).shape[0]
-                valid_count += len(np.where(init_weights[children_key[num_layers]].reshape(-1)!=0.)[0])
+                valid_count += len(np.where(init_weights[children_key[num_layers]].detach().cpu().reshape(-1)!=0.)[0])
                 #print('Compression percentage in layer %s is %f'%(children_key[num_layers], valid_count))
 
         else:
-            valid_count = len(np.where(init_weights[children_key[0]].reshape(-1)!= 0.0)[0])
+            valid_count = len(np.where(init_weights[children_key[0]].detach().cpu().reshape(-1)!= 0.0)[0])
             total_count = float(init_weights[children_key[0]].reshape(-1).shape[0])
 
 
