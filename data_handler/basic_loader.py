@@ -29,22 +29,22 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
         test_data  = datasets.CIFAR10("data", train=False, transform=test_transform,  download=True)
         extra_data = datasets.CIFAR10("data", train=True,  transform=extra_transform, download=True)
 
-    #elif dataset == 'IMAGENET':
+    elif dataset == 'IMAGENET':
 
-    #    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-    #                                     std=[0.229, 0.224, 0.225])
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
 
-    #    train_transform = transforms.Compose([transforms.RandomResizedCrp(224),
-    #                                          transforms.RandomHorizontalFlip(),
-    #                                          transforms.ToTensor(),
-    #                                          normalize])
+        train_transform = transforms.Compose([transforms.RandomResizedCrop(224),
+                                              transforms.RandomHorizontalFlip(),
+                                              transforms.ToTensor(),
+                                              normalize])
 
-    #    extra_transform = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
-    #    test_transform  = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
-    #    
-    #    train_data = datasets.ImageFolder(DIR,  transform=train_transform)
-    #    extra_data = datasets.ImageFolder(DIR,  transform=extra_transform)
-    #    test_data  = datasets.ImageFolder(DIR2, transform=test_transform)
+        extra_transform = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
+        test_transform  = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
+    
+        train_data = datasets.ImageFolder('/work/07080/salimeh/maverick2/MINT/ImageNet/train/',  transform=train_transform)
+        extra_data = datasets.ImageFolder('/work/07080/salimeh/maverick2/MINT/ImageNet/val/',  transform=extra_transform)
+        test_data  = datasets.ImageFolder('/work/07080/salimeh/maverick2/MINT/ImageNet/val/', transform=test_transform)
 
     elif dataset == 'CIFAR100':
 
