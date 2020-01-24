@@ -1,8 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="CIFAR10_RESNET56_A_ALT_BATCH_15g_1b_step_1"
 #SBATCH -N 1
-#SBATCH --array=1-9
-#SBATCH --partition=lgns
+#SBATCH --array=1-12
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=1200  # Time in Minutes
@@ -10,18 +9,19 @@
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 echo "start"
-cd /z/home/madantrg/scratch_incremental_learning/
+cd /z/home/madantrg/ViP/
 source setup.sh 
 cd /z/home/madantrg/Pruning/
 
 python retrain_stage3.py \
---Epoch 200 \
---Batch_size 256 \
---Lr 0.01 \
+--Epoch 300 \
+--Batch_size 128 \
+--Lr 0.1 \
 --Dataset CIFAR10 \
 --Model resnet_a \
---Milestones 100 150 \
---Weight_decay 0.0001 \
+--Milestones 90 180 260 \
+--Weight_decay 0.0005 \
+--Gamma 0.2 \
 --Retrain /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_A_ALT_BATCH/0/logits_best.pkl \
 --Retrain_mask /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_A_ALT_BATCH/0/I_parent_15g_1b.npy \
 --Labels_file /z/home/madantrg/Pruning/results/CIFAR10_RESNET56_A_ALT_BATCH/0/Labels_15g_1b.npy \
@@ -51,8 +51,8 @@ conv51.weight conv52.weight conv53.weight conv55.weight \
 64 64 64 64 64 64 64 64 64 64 \
 64 64 64 64 \
 --upper_prune_limit 0.50 \
---upper_prune_per 0.1 \
---lower_prune_per 0.01 \
+--upper_prune_per 0.2 \
+--lower_prune_per 0.09 \
 --prune_per_step 0.01 \
 --Save_dir CIFAR10_RESNET56_A_ALT_RETRAIN_1_BATCH \
 --key_id $SLURM_ARRAY_TASK_ID
