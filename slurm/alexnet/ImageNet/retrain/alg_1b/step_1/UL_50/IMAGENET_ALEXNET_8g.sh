@@ -1,10 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name="IMAGENET_ALEXNET_BATCH_RETRAIN_8g_1b"
 #SBATCH --output="IMAGENET_ALEXNET_BATCH_RETRAIN_8g_1b_%j.out"
-#SBATCH -N 2               # number of nodes requested
-#SBATCH -n 9              # total number of mpi tasks requested
+#SBATCH -N 1               # number of nodes requested
+#SBATCH -n 1              # total number of mpi tasks requested
 #SBATCH -p gtx    # queue (partition) -- normal, development, etc.
 #SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
 #SBATCH -t 15:00:00         # run time (hh:mm:ss) - 1.5 hours
 
 cd /work/07080/salimeh/maverick2/MINT/

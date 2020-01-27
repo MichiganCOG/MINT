@@ -53,14 +53,14 @@ class Alexnet(nn.Module):
         # Should be a less manual way to set masks
         # Leave it for the future
 
-        self.conv2.set_mask(torch.Tensor(masks['conv2.weight']))
-        self.conv3.set_mask(torch.Tensor(masks['conv3.weight']))
-        self.conv4.set_mask(torch.Tensor(masks['conv4.weight']))
-        self.conv5.set_mask(torch.Tensor(masks['conv5.weight']))
+        self.conv2.set_mask(torch.Tensor(masks['conv2.weight']).cuda())
+        self.conv3.set_mask(torch.Tensor(masks['conv3.weight']).cuda())
+        self.conv4.set_mask(torch.Tensor(masks['conv4.weight']).cuda())
+        self.conv5.set_mask(torch.Tensor(masks['conv5.weight']).cuda())
 
-        self.linear1.set_mask(torch.Tensor(masks['linear1.weight']))
-        self.linear2.set_mask(torch.Tensor(masks['linear2.weight']))
-        self.linear3.set_mask(torch.Tensor(masks['linear3.weight']))
+        self.linear1.set_mask(torch.Tensor(masks['linear1.weight']).cuda())
+        self.linear2.set_mask(torch.Tensor(masks['linear2.weight']).cuda())
+        self.linear3.set_mask(torch.Tensor(masks['linear3.weight']).cuda())
 
     def forward(self, x, labels=False):
         out = self.pool1(self.relu1(self.conv1(x)))
