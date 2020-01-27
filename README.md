@@ -5,11 +5,11 @@
 --------------------------------------------------------------
 | Method                       | Params Pruned | Performance |
 |:----------------------------:|:-------------:|:-----------:|
-| Baseline                     |       N/A     |    98.57    |
+| Baseline  (ours)             |       N/A     |    98.59    |
 | Structured Sparsity Learning |       83.5    |    98.47    |
 | Network Slimming             |       84.4    |    98.51    |
-|**MINT (a) (ours)**           |     **93.87** |  **98.54**  |
-|**MINT (b) (ours)**           |     **93.63** |  **98.47**  |
+| MINT (a) (ours)              |       --.-    |    --.--    |
+| MINT (b) (ours)              |       --.-    |    --.--    |
 --------------------------------------------------------------
 
 ### Results Compilation
@@ -17,15 +17,11 @@
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (a)   |     N/A      |     10       |       250           |    88.23        |     98.56        | (Requested Prune Percent: 0.443) 
-|   (a)   |     N/A      |     20       |       250           |  **93.87**      |     98.54        | (Requested Prune Percent: 0.631)
-|   ---   |     ---      |     --       |       ---           |    -----        |     -----        | 
-|   (b)   |     N/A      |     10       |       250           |    90.20        |     98.55        | (Requested Prune Percent: 0.413) 
-|   (b)   |     N/A      |     20       |       250           |    93.63        |     98.47        | (Requested Prune Percent: -.---)
+|   (b)   |     N/A      |     10       |       250           |    --.--        |     --.--        | (Requested Prune Percent: -.---) 
+|   (b)   |     N/A      |     20       |       250           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
 ----------------------------------------------------------------------------------------------------
 
 ### Notes
-- Algorithm 1b is able to outperform the table values and is very close to 1 a. It would be interesting to explore what differentiates their performance and if lower groups helps 1b since the estimator has a relatively lower number of nodes to compare against.
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
