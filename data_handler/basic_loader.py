@@ -97,8 +97,8 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
     # END IF
 
     # EDIT TO TRUE for trainloader
-    trainloader = torch.utils.data.DataLoader(dataset = train_data, batch_size=Batch_size, shuffle=True,  num_workers=2, pin_memory=True)
-    testloader  = torch.utils.data.DataLoader(dataset = test_data,  batch_size=Batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    trainloader = torch.utils.data.DataLoader(dataset = train_data, batch_size=Batch_size, shuffle=True,  num_workers=8, pin_memory=True)
+    testloader  = torch.utils.data.DataLoader(dataset = test_data,  batch_size=Batch_size, shuffle=False, num_workers=6, pin_memory=True)
     extraloader = torch.utils.data.DataLoader(dataset = extra_data, batch_size=Batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
     return trainloader, testloader, extraloader

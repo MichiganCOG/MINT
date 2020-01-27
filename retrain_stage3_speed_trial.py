@@ -196,7 +196,6 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # Load old state
     model.load_state_dict(load_checkpoint(Retrain))
 
-
     # Obtain masks
     mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
 
@@ -204,6 +203,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     model.setup_masks(mask)
 
     model = torch.nn.DataParallel(model, device_ids=Device_ids)
+
     logsoftmax = nn.LogSoftmax()
 
     params     = [p for p in model.parameters() if p.requires_grad]
