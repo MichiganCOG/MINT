@@ -1,20 +1,20 @@
 #!/bin/bash
-#SBATCH --job-name="IMAGENET_ALEXNET_BATCH_15g_1b_step_1"
+#SBATCH --job-name="IMAGENET_ALEXNET_BATCH_15g_1b_step_1_4gpu"
 #SBATCH -N 1
 #SBATCH --array=1-10
 #SBATCH --cpus-per-task=4
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:4
 #SBATCH --time=3000  # Time in Minutes
-#SBATCH --output="IMAGENET_ALEXNET_BATCH_15g_1b_%A_%a.out"
+#SBATCH --output="IMAGENET_ALEXNET_BATCH_15g_1b_%A_%a_4gpu.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 
 cd /z/home/madantrg/ViP/ 
 source setup.sh 
 cd /z/home/madantrg/Pruning
-python retrain_stage3.py \
+python retrain_stage3_speed_trial.py \
 --Epoch 20 \
---Batch_size 64 \
+--Batch_size 1024 \
 --Lr 0.0005 \
 --Dataset IMAGENET \
 --Model alexnet \
@@ -34,4 +34,5 @@ python retrain_stage3.py \
 --prune_per_step 0.1 \
 --Save_dir /z/home/madantrg/Pruning/results/IMAGENET_ALEXNET_RETRAIN_1_BATCH \
 --key_id $SLURM_ARRAY_TASK_ID \
---Dims 1000
+--Dims 1000 \
+--Device_ids 0 1 2 3

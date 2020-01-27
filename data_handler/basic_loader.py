@@ -42,9 +42,9 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
         extra_transform = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
         test_transform  = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
     
-        train_data = datasets.ImageFolder('/work/07080/salimeh/maverick2/MINT/ImageNet/train/',  transform=train_transform)
-        extra_data = datasets.ImageFolder('/work/07080/salimeh/maverick2/MINT/ImageNet/val/',  transform=extra_transform)
-        test_data  = datasets.ImageFolder('/work/07080/salimeh/maverick2/MINT/ImageNet/val/', transform=test_transform)
+        train_data = datasets.ImageFolder('/z/dat/ImageNet_2012/train/',  transform=train_transform)
+        extra_data = datasets.ImageFolder('/z/dat/ImageNet_2012/val/',  transform=extra_transform)
+        test_data  = datasets.ImageFolder('/z/dat/ImageNet_2012/val/', transform=test_transform)
 
     elif dataset == 'CIFAR100':
 
