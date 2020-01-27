@@ -9,14 +9,12 @@ import torch.nn          as nn
 
 from tqdm                    import tqdm
 
-
-
 # Custom Imports
 from data_handler            import data_loader
 from utils                   import activations, sub_sample_uniform, mi
 from utils                   import save_checkpoint, load_checkpoint, accuracy
 
-from models                  import MLP           as mlp 
+from model                  import MLP           as mlp 
 
 # Global Variable
 

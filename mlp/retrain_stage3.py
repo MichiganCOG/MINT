@@ -39,7 +39,7 @@ from torch.autograd            import Variable
 from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
-from models                    import MLP           as mlp 
+from model                     import MLP           as mlp 
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)

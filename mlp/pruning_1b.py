@@ -15,7 +15,7 @@ from data_handler            import data_loader
 from utils                   import activations, sub_sample_uniform, mi
 from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
 
-from models                  import MLP           as mlp 
+from model                   import MLP           as mlp 
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
 def cmi(data):
