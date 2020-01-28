@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name="ALG1B_MNIST_MLP_10g_PRUNE"
-#SBATCH --output="ALG1B_MNIST_MLP_10g_%j_PRUNE.out"
+#SBATCH --job-name="ALG1B_MNIST_MLP_50g_PRUNE"
+#SBATCH --output="ALG1B_MNIST_MLP_50g_%j_PRUNE.out"
 #SBATCH --tasks-per-node=1
 #SBATCH -N 2               # number of nodes requested
 #SBATCH -n 2               # total number of mpi tasks requested
@@ -16,7 +16,7 @@ module load launcher_gpu
 export LAUNCHER_WORKDIR=$LAUNCHER_DIR
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_RMI=SLURM
-export LAUNCHER_JOB_FILE="/work/07080/salimeh/maverick2/MINT/MINT/mlp/slurm/prune/alg_1b/tacc/ALG1B_10g.slurm"
+export LAUNCHER_JOB_FILE="/work/07080/salimeh/maverick2/MINT/MINT/mlp/slurm/prune/alg_1b/tacc/ALG1B_50g.slurm"
  
 #$LAUNCHER_DIR/paramrun
 #export LAUNCHER_JOB_FILE=Set-Your-Launcher-Job-File-here

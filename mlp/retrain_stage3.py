@@ -45,9 +45,9 @@ torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
 
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
-        I_parent        = np.load(I_parent_file, allow_pickle=True).item()
-        labels          = np.load(Labels_file, allow_pickle=True).item()
-        labels_children = np.load(Labels_children_file, allow_pickle=True).item()
+        I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
+        labels          = np.load('results/'+Labels_file, allow_pickle=True).item()
+        labels_children = np.load('results/'+Labels_children_file, allow_pickle=True).item()
 
         # Create a copy
         init_weights   = copy.deepcopy(final_weights)
