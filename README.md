@@ -13,15 +13,32 @@
 --------------------------------------------------------------
 
 ### Results Compilation
-
+#### Group variations
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     10       |       250           |    --.--        |     --.--        | (Requested Prune Percent: -.---) 
-|   (b)   |     N/A      |     20       |       250           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
+|   (b)   |     N/A      |     5        |       250           |    90.19        |     98.53        | (Requested Prune Percent: 0.307) 
+|   (b)   |     N/A      |     10       |       250           |    83.33        |     98.55        | (Requested Prune Percent: 0.340) 
+|   (b)   |     N/A      |     20       |       250           |    84.07        |     98.53        | (Requested Prune Percent: 0.324)
+|   (b)   |     N/A      |     30       |       250           |    84.49        |     98.50        | (Requested Prune Percent: 0.398)
+|   (b)   |     N/A      |     40       |       250           |    89.45        |     98.65        | (Requested Prune Percent: 0.848)
+|   (b)   |     N/A      |     50       |       250           |    92.81        |     98.50        | (Requested Prune Percent: 0.460)
 ----------------------------------------------------------------------------------------------------
 
+#### Sample variations
+----------------------------------------------------------------------------------------------------
+| Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
+|:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
+|   (b)   |     N/A      |     50       |       100           |    --.--        |     --.--        | (Requested Prune Percent: 0.307) 
+|   (b)   |     N/A      |     50       |       150           |    --.--        |     --.--        | (Requested Prune Percent: 0.340) 
+|   (b)   |     N/A      |     50       |       200           |    --.--        |     --.--        | (Requested Prune Percent: 0.324)
+|   (b)   |     N/A      |     50       |       250           |    84.49        |     98.50        | (Requested Prune Percent: 0.398)
+|   (b)   |     N/A      |     50       |       300           |    --.--        |     --.--        | (Requested Prune Percent: 0.848)
+|   (b)   |     N/A      |     50       |       350           |    --.--        |     --.--        | (Requested Prune Percent: 0.460)
+----------------------------------------------------------------------------------------------------
 ### Notes
+- Anomaly is Groups=5 result since that doesn't follow the trend.
+
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
