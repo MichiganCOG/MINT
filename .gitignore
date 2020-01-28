@@ -5,3 +5,4 @@ data/*
 *.pyc
 *.npy
 *.pdf
+*.tar*
