@@ -157,9 +157,9 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
     alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children, cores)
 
-    np.save(weights_dir+'/I_parent_'+name_postfix+'.npy', I_parent)
-    np.save(weights_dir+'/Labels_'+name_postfix+'.npy', labels)
-    np.save(weights_dir+'/Labels_children_'+name_postfix+'.npy', labels_children)
+    np.save('results/'+weights_dir+'I_parent_'+name_postfix+'.npy', I_parent)
+    np.save('results/'+weights_dir+'Labels_'+name_postfix+'.npy', labels)
+    np.save('results/'+weights_dir+'Labels_children_'+name_postfix+'.npy', labels_children)
 
 
 if __name__=='__main__':
