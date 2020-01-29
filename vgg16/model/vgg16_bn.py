@@ -101,22 +101,15 @@ class VGG16_bn(nn.Module):
         # Should be a less manual way to set masks
         # Leave it for the future
 
-        self.conv2.set_mask(torch.Tensor(masks['conv2.weight']))
-        #self.conv3.set_mask(torch.Tensor(masks['conv3.weight']))
-        #self.conv4.set_mask(torch.Tensor(masks['conv4.weight']))
-        #self.conv5.set_mask(torch.Tensor(masks['conv5.weight']))
-        #self.conv6.set_mask(torch.Tensor(masks['conv6.weight']))
-        #self.conv7.set_mask(torch.Tensor(masks['conv7.weight']))
-        #self.conv8.set_mask(torch.Tensor(masks['conv8.weight']))
-        self.conv9.set_mask(torch.Tensor(masks['conv9.weight']))
+        self.conv2.set_mask(torch.Tensor(masks['conv2.weight']).cuda())
+        self.conv9.set_mask(torch.Tensor(masks['conv9.weight']).cuda())
+        self.conv10.set_mask(torch.Tensor(masks['conv10.weight']).cuda())
 
-        self.conv10.set_mask(torch.Tensor(masks['conv10.weight']))
-        self.conv11.set_mask(torch.Tensor(masks['conv11.weight']))
-        self.conv12.set_mask(torch.Tensor(masks['conv12.weight']))
-        self.conv13.set_mask(torch.Tensor(masks['conv13.weight']))
+        self.conv11.set_mask(torch.Tensor(masks['conv11.weight']).cuda())
+        self.conv12.set_mask(torch.Tensor(masks['conv12.weight']).cuda())
+        self.conv13.set_mask(torch.Tensor(masks['conv13.weight']).cuda())
 
-        self.linear1.set_mask(torch.Tensor(masks['linear1.weight']))
-        #self.linear3.set_mask(torch.Tensor(masks['linear3.weight']))
+        self.linear1.set_mask(torch.Tensor(masks['linear1.weight']).cuda())
 
     def forward(self, x, labels=False, conv1=False, conv2=False, conv3=False, conv4=False, conv5=False, conv6=False, conv7=False, conv8=False, conv9=False, conv10=False, conv11=False, conv12=False, conv13=False, linear1=False, linear2=False, linear3=False):
         # ----

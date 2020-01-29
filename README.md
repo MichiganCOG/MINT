@@ -46,7 +46,7 @@
 --------------------------------------------------------------
 | Model                        | Params Pruned | Performance |
 |:----------------------------:|:-------------:|:-----------:|
-| VGG16                        |       N/A     |    93.25    |
+| VGG16                        |       N/A     |    93.98    |
 | VGG16-pruned-A               |      64.00    |    93.40    |
 |**MINT (a) (ours)**           |      --.--    |    --.--    | (My own baseline: 94.01)
 |**MINT (b) (ours)**           |      --.--    |    --.--    | (My own baseline: 94.01)
@@ -78,26 +78,24 @@
 Untouched params = 2882240/14977728 = 19.24\%
 
 ### Results Compilation
-
+#### Group variations
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (a)   |     75       |     8        |       250           |    --.--        |     --.--        | 
-|   (a)   |     75       |     15       |       250           |    --.--        |     --.--        | 
-|   (a)   |     75       |     20       |       250           |    --.--        |     --.--        | 
-|   (a)   |     75       |     25       |       250           |    --.--        |     --.--        | 
-|   ---   |     --       |     --       |       ---           |    -----        |     -----        | 
-|   (b)   |     75       |     8        |       250           |    --.--        |     --.--        | 
-|   (b)   |     75       |     15       |       250           |    --.--        |     --.--        | 
-|   (b)   |     75       |     20       |       250           |    --.--        |     --.--        | 
-|   (b)   |     75       |     25       |       250           |    --.--        |     --.--        | 
+|   (b)   |     85       |     8        |       250           |    47.05        |     93.51        | (Requested prune percent: 0.508) 
+|   (b)   |     85       |     16       |       250           |    48.58        |     93.43        | (Requested prune percent: 0.592) 
+|   (b)   |     85       |     32       |       250           |    26.85        |     93.46        | (Requested prune percent: 0.376)
+|   (b)   |     85       |     64       |       250           |    --.--        |     --.--        | 
+----------------------------------------------------------------------------------------------------
+
+#### Sample variations
+----------------------------------------------------------------------------------------------------
+| Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
+|:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
+|   (b)   |     85       |     64       |       150           |    --.--        |     --.--        | (Requested prune percent: -.---) 
+|   (b)   |     85       |     64       |       250           |    --.--        |     --.--        | (Requested prune percent: -.---) 
+|   (b)   |     85       |     64       |       350           |    --.--        |     --.--        | (Requested prune percent: -.---)
+|   (b)   |     85       |     64       |       450           |    --.--        |     --.--        | 
 ----------------------------------------------------------------------------------------------------
 
 ### Notes
-- Between 8 and 15 groups, consistently 15 groups provided higher performance, even when overall params pruned was comparable.
-- Why is 0.999 equating to only 39.53 or 44.61 of the params? The number of unique I\_parent values is smaller than the number of repeat values, Re-running with unique values used to compute percentage.
-- > 70 % params pruned with performance > 93.40 achieved on vgg16 on CIFAR-10.
-- Updating upper limit to 80% to observe results. Doesn't matter its a question of optimal parameters.
-- Updating results with algorithm version b
-- Found  bug in setup masks which used only 7 layers. Redid it to include all layers and rerunning vgg16 results.
-- All layers seems to be worse, moving back to 7 layer, modified combine.py and rerunning for final results
