@@ -29,12 +29,12 @@
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     50       |       100           |    --.--        |     --.--        | (Requested Prune Percent: 0.307) 
-|   (b)   |     N/A      |     50       |       150           |    --.--        |     --.--        | (Requested Prune Percent: 0.340) 
-|   (b)   |     N/A      |     50       |       200           |    --.--        |     --.--        | (Requested Prune Percent: 0.324)
-|   (b)   |     N/A      |     50       |       250           |    84.49        |     98.50        | (Requested Prune Percent: 0.398)
-|   (b)   |     N/A      |     50       |       300           |    --.--        |     --.--        | (Requested Prune Percent: 0.848)
-|   (b)   |     N/A      |     50       |       350           |    --.--        |     --.--        | (Requested Prune Percent: 0.460)
+|   (b)   |     N/A      |     50       |       100           |    --.--        |     --.--        | (Requested Prune Percent: -.---) 
+|   (b)   |     N/A      |     50       |       150           |    --.--        |     --.--        | (Requested Prune Percent: -.---) 
+|   (b)   |     N/A      |     50       |       200           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
+|   (b)   |     N/A      |     50       |       250           |    92.81        |     98.50        | (Requested Prune Percent: 0.460)
+|   (b)   |     N/A      |     50       |       300           |    --.--        |     98.50        | (Requested Prune Percent: -.---)
+|   (b)   |     N/A      |     50       |       350           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
 ----------------------------------------------------------------------------------------------------
 ### Notes
 - Anomaly is Groups=5 result since that doesn't follow the trend.
