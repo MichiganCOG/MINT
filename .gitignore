@@ -5,3 +5,5 @@ data/*
 *.pyc
 *.npy
 *.pdf
+*.tar*
+vgg16/data/*
