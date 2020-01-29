@@ -17,7 +17,7 @@ module load launcher_gpu
 export LAUNCHER_WORKDIR=$LAUNCHER_DIR
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_RMI=SLURM
-export LAUNCHER_JOB_FILE="/work/07080/salimeh/maverick2/MINT/MINT/mlp/slurm/retrain/alg_1b/step_1/ul_none/tacc/ALG1B_200s.slurm"
+export LAUNCHER_JOB_FILE="/work/07080/salimeh/maverick2/MINT/MINT/mlp/scripts/retrain/alg_1b/step_1/samples/ul_none/tacc/ALG1B_200s.slurm"
  
 #$LAUNCHER_DIR/paramrun
 #export LAUNCHER_JOB_FILE=Set-Your-Launcher-Job-File-here
