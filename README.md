@@ -17,28 +17,28 @@
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     5        |       250           |    90.19        |     98.53        | (Requested Prune Percent: 0.307) 
-|   (b)   |     N/A      |     10       |       250           |    83.33        |     98.55        | (Requested Prune Percent: 0.340) 
-|   (b)   |     N/A      |     20       |       250           |    84.07        |     98.53        | (Requested Prune Percent: 0.324)
+|   (b)   |     N/A      |     5        |       250           |    90.19        |     98.51        | (Requested Prune Percent: 0.304) 
+|   (b)   |     N/A      |     10       |       250           |    90.19        |     98.50        | (Requested Prune Percent: 0.376) 
+|   (b)   |     N/A      |     20       |       250           |    86.03        |     98.55        | (Requested Prune Percent: 0.340)
 |   (b)   |     N/A      |     30       |       250           |    84.49        |     98.50        | (Requested Prune Percent: 0.398)
-|   (b)   |     N/A      |     40       |       250           |    89.45        |     98.65        | (Requested Prune Percent: 0.848)
-|   (b)   |     N/A      |     50       |       250           |    92.81        |     98.50        | (Requested Prune Percent: 0.460)
+|   (b)   |     N/A      |     40       |       250           |    89.67        |     98.68        | (Requested Prune Percent: 0.996)
+|   (b)   |     N/A      |     50       |       250           |    91.75        |     98.52        | (Requested Prune Percent: 0.448)
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     50       |       100           |    --.--        |     --.--        | (Requested Prune Percent: -.---) 
-|   (b)   |     N/A      |     50       |       150           |    --.--        |     --.--        | (Requested Prune Percent: -.---) 
-|   (b)   |     N/A      |     50       |       200           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
-|   (b)   |     N/A      |     50       |       250           |    92.81        |     98.50        | (Requested Prune Percent: 0.460)
-|   (b)   |     N/A      |     50       |       300           |    --.--        |     98.50        | (Requested Prune Percent: -.---)
-|   (b)   |     N/A      |     50       |       350           |    --.--        |     --.--        | (Requested Prune Percent: -.---)
+|   (b)   |     N/A      |     50       |       100           |    88.62        |     98.59        | (Requested Prune Percent: 0.244) 
+|   (b)   |     N/A      |     50       |       150           |    91.10        |     98.51        | (Requested Prune Percent: 0.328) 
+|   (b)   |     N/A      |     50       |       200           |    92.12        |     98.51        | (Requested Prune Percent: 0.436)
+|   (b)   |     N/A      |     50       |       250           |    91.75        |     98.52        | (Requested Prune Percent: 0.448)
+|   (b)   |     N/A      |     50       |       300           |    80.72        |     98.52        | (Requested Prune Percent: 0.412)
+|   (b)   |     N/A      |     50       |       350           |    80.45        |     98.52        | (Requested Prune Percent: 0.400)
 ----------------------------------------------------------------------------------------------------
 ### Notes
-- Anomaly is Groups=5 result since that doesn't follow the trend.
-
+- Anomaly is that increasing groups doesn't linearly help. There is a slight dip in params pruned. 
+- There is almost a point afterwhich adding samples DOES NOT help. Instead of being stable it decreases, which is very interesting. Also, it is low by quite a margin.
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
@@ -92,10 +92,11 @@ Untouched params = 2882240/14977728 = 19.24\%
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     85       |     64       |       150           |    59.97        |     93.45        | (Requested prune percent: -.---) 
-|   (b)   |     85       |     64       |       250           |    --.--        |     --.--        | (Requested prune percent: -.---) 
-|   (b)   |     85       |     64       |       350           |    --.--        |     --.--        | (Requested prune percent: -.---)
+|   (b)   |     85       |     64       |       150           |    59.97        |     93.45        | (Requested prune percent: 0.472) 
+|   (b)   |     85       |     64       |       250           |    50.72        |     93.49        | (Requested prune percent: 0.388) 
+|   (b)   |     85       |     64       |       350           |    07.30        |     93.42        | (Requested prune percent: 0.112)
 |   (b)   |     85       |     64       |       450           |    --.--        |     --.--        | 
 ----------------------------------------------------------------------------------------------------
 
 ### Notes
+- Big red flag in both group variations and sample variations. There is a sudden dip in performance (params pruned) which buckle the expected trend.
