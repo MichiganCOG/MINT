@@ -1,0 +1,36 @@
+#!/bin/bash
+#PBS -N ALG1B_MNIST_MLP_TRIAL_5_50g_PRUNE
+#PBS -t 1-2
+#PBS -j oe
+#PBS -l walltime=10:00:00
+#PBS -l nodes=1:ppn=16:gpus=1
+
+IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))
+echo I got allocated the following gpus
+for g in "${allocatedgpus[@]}"; do
+    echo "gpu: $g"
+done
+
+
+export CUDA_VISIBLE_DEVICES="${allocatedgpus[0]}"
+echo "Start Job"
+
+cd ~/MINT/
+source setup.sh 
+
+cd MINT/mlp
+
+python pruning_1b.py \
+--model mlp \
+--dataset MNIST \
+--weights_dir BASELINE_MNIST_MLP/0/ \
+--cores 16 \
+--dims 10 \
+--key_id $PBS_ARRAYID \
+--samples_per_class 250 \
+--parent_clusters 50 \
+--children_clusters 50 \
+--name_postfix trial_5_50g_1b
+
+
+echo "end"

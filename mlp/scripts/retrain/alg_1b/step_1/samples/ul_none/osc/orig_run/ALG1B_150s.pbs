@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N ALG1B_MNIST_MLP_350s_RETRAIN
+#PBS -N ALG1B_MNIST_MLP_150s_RETRAIN
 #PBS -t 1-71%10
 #PBS -j oe
 #PBS -l walltime=00:10:00
@@ -35,9 +35,9 @@ python retrain_stage3.py \
 --Nesterov \
 --Device_ids 0 \
 --Retrain BASELINE_MNIST_MLP/0/logits_best.pkl \
---Retrain_mask BASELINE_MNIST_MLP/0/I_parent_350s_1b.npy \
---Labels_file BASELINE_MNIST_MLP/0/Labels_350s_1b.npy \
---Labels_children_file BASELINE_MNIST_MLP/0/Labels_children_350s_1b.npy \
+--Retrain_mask BASELINE_MNIST_MLP/0/I_parent_150s_1b.npy \
+--Labels_file BASELINE_MNIST_MLP/0/Labels_150s_1b.npy \
+--Labels_children_file BASELINE_MNIST_MLP/0/Labels_children_150s_1b.npy \
 --parent_key   fc1.weight fc2.weight \
 --children_key fc2.weight fc3.weight \
 --parent_clusters   50 50 \

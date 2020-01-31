@@ -39,6 +39,20 @@
 ### Notes
 - Anomaly is that increasing groups doesn't linearly help. There is a slight dip in params pruned. 
 - There is almost a point afterwhich adding samples DOES NOT help. Instead of being stable it decreases, which is very interesting. Also, it is low by quite a margin.
+- Trial 1 (100s) = 94.73\% Prune 98.51\% Acc.
+- Trial 2 (100s) = 93.64\% Prune 98.53\% Acc.
+- Trial 3 (100s) = 85.11\% Prune 98.51\% Acc.
+- Trial 4 (100s) = 92.23\% Prune 98.53\% Acc.
+- Trial 5 (100s) = 92.94\% Prune 98.51\% Acc.
+- Average performance for 100s experiments = 91.73\% but how can we compare the accuracy portion?
+- Possibly average the MI estimates over the runs and then compute accuracy. Maybe that will be stable...er?
+- Average of MI estimates from previous 5 (100s) trials = 91.66\% prune with acc. at 98.54\%.
+- Average of MI estimates from previous 5 (150s) trials = --.--\% prune with acc. at 98.5-\%.
+- Average of MI estimates from previous 5 (200s) trials = --.--\% prune with acc. at 98.5-\%.
+- Average of MI estimates from previous 5 (250s) trials = --.--\% prune with acc. at 98.5-\%.
+- Average of MI estimates from previous 5 (300s) trials = --.--\% prune with acc. at 98.5-\%.
+- Average of MI estimates from previous 5 (350s) trials = --.--\% prune with acc. at 98.5-\%.
+
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
