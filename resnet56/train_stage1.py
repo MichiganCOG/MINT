@@ -32,13 +32,11 @@ from torch.autograd            import Variable
 from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
-from model                     import MLP           as mlp 
+from model                     import Resnet56_A    as resnet56_a
 
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(999)
-random.seed(999)
-torch.manual_seed(999)
-np.random.seed(999)
+
 
 def set_lr(optimizer, lr_update, utype='const'):
     for param_group in optimizer.param_groups:
@@ -80,8 +78,8 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         
         # Load Network
-        if Model == 'mlp':
-            model = mlp(num_classes=Dims).to(device)
+        if Model == 'resnet_a':
+            model = resnet56_a(num_classes=Dims).to(device)
 
         else:
             print('Invalid optimizer selected. Exiting')

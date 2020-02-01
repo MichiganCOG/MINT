@@ -39,13 +39,10 @@ from torch.autograd            import Variable
 from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
-from model                     import MLP           as mlp 
+from model                     import Resnet56_A    as resnet56_a
 
 torch.backends.cudnn.deterministic = True
-torch.manual_seed(1000)
-random.seed(1000)
-torch.manual_seed(1000)
-np.random.seed(1000)
+torch.manual_seed(999)
 
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
         I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
@@ -68,6 +65,7 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
 
         # Compute unique values
         sorted_weights = np.unique(sorted_weights)
+
         sorted_weights = np.sort(sorted_weights)
         cutoff_index   = np.round(prune_percent * sorted_weights.shape[0]).astype('int')
         cutoff_value   = sorted_weights[cutoff_index]
@@ -162,8 +160,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     # Load Network
-    if Model == 'mlp':
-        model = mlp(num_classes=Dims).to(device)
+    if Model == 'resnet_a':
+        model = resnet56_a(num_classes=Dims).to(device)
 
     else:
         print('Invalid optimizer selected. Exiting')
@@ -172,7 +170,6 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # END IF
 
     # Retrain Setup 
-
     # Load old state
     model.load_state_dict(load_checkpoint(Retrain))
 

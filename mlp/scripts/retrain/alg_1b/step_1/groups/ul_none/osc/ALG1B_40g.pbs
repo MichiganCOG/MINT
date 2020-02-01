@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N ALG1B_MNIST_MLP_40g_RETRAIN
-#PBS -t 1-11
+#PBS -t 51-71%10
 #PBS -j oe
 #PBS -l walltime=00:10:00
 #PBS -l nodes=1:ppn=16:gpus=1
@@ -43,9 +43,9 @@ python retrain_stage3.py \
 --parent_clusters   40 40 \
 --children_clusters 40 10 \
 --upper_prune_limit 1.1 \
---upper_prune_per 1.0 \
---lower_prune_per 0.99 \
---prune_per_step 0.001 \
+--upper_prune_per 0.95 \
+--lower_prune_per 0.1 \
+--prune_per_step 0.012 \
 --Save_dir BASELINE_MNIST_MLP_RETRAIN_1 \
 --key_id $PBS_ARRAYID
 

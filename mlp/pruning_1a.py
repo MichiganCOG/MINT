@@ -16,7 +16,12 @@ from utils                   import save_checkpoint, load_checkpoint, accuracy
 
 from model                  import MLP           as mlp 
 
-# Global Variable
+# Fixed Backend To Force Dataloader To Be Consistent
+torch.backends.cudnn.deterministic = True
+random.seed(1)
+torch.manual_seed(1)
+torch.cuda.manual_seed(1)
+np.random.seed(1)
 
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
@@ -66,7 +71,9 @@ def alg1a_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, cluste
 #### Main Code Executor 
 def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_children, weights_dir, cores, name_postfix, samples_per_class):
 
-
+    #### Load Data ####
+    trainloader, testloader, extraloader = data_loader(dataset, 128)
+ 
     #### Load Model ####
     init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')
 
@@ -85,12 +92,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     model.load_state_dict(init_weights)
     model.eval()
 
-    
-
-    #### Load Data ####
-    trainloader, testloader, extraloader = data_loader(dataset, 128)
- 
-    
     # Original Accuracy 
     acc = 100.*accuracy(model, testloader, device)
     print('Accuracy of the original network: %f %%\n' %(acc))
@@ -126,6 +127,7 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     print("Time taken to collect activations is : %f seconds\n"%(act_end_time - act_start_time))
 
 
+    import pdb; pdb.set_trace()
     for idx in range(nlayers):
         labels[str(idx)]          = np.zeros((init_weights[children_key[idx]].shape[1],))
         labels_children[str(idx)] = np.zeros((init_weights[children_key[idx]].shape[0],))

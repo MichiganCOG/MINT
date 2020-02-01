@@ -17,42 +17,29 @@
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     5        |       250           |    90.19        |     98.51        | (Requested Prune Percent: 0.304) 
-|   (b)   |     N/A      |     10       |       250           |    90.19        |     98.50        | (Requested Prune Percent: 0.376) 
-|   (b)   |     N/A      |     20       |       250           |    86.03        |     98.55        | (Requested Prune Percent: 0.340)
-|   (b)   |     N/A      |     30       |       250           |    84.49        |     98.50        | (Requested Prune Percent: 0.398)
-|   (b)   |     N/A      |     40       |       250           |    89.67        |     98.68        | (Requested Prune Percent: 0.996)
-|   (b)   |     N/A      |     50       |       250           |    91.75        |     98.52        | (Requested Prune Percent: 0.448)
+|   (b)   |     N/A      |     5        |       250           |    86.27        |     98.58        | (Requested Prune Percent: 0.292) 
+|   (b)   |     N/A      |     10       |       250           |    89.21        |     98.50        | (Requested Prune Percent: 0.424) 
+|   (b)   |     N/A      |     20       |       250           |    82.84        |     98.55        | (Requested Prune Percent: 0.316)
+|   (b)   |     N/A      |     50       |       250           |    87.89        |     98.51        | (Requested Prune Percent: 0.352)
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     50       |       100           |    88.62        |     98.59        | (Requested Prune Percent: 0.244) 
-|   (b)   |     N/A      |     50       |       150           |    91.10        |     98.51        | (Requested Prune Percent: 0.328) 
-|   (b)   |     N/A      |     50       |       200           |    92.12        |     98.51        | (Requested Prune Percent: 0.436)
-|   (b)   |     N/A      |     50       |       250           |    91.75        |     98.52        | (Requested Prune Percent: 0.448)
-|   (b)   |     N/A      |     50       |       300           |    80.72        |     98.52        | (Requested Prune Percent: 0.412)
-|   (b)   |     N/A      |     50       |       350           |    80.45        |     98.52        | (Requested Prune Percent: 0.400)
+|   (b)   |     N/A      |     20       |       150           |    85.35        |     98.58        | (Requested Prune Percent: 0.352) 
+|   (b)   |     N/A      |     20       |       250           |    82.84        |     98.55        | (Requested Prune Percent: 0.316)
+|   (b)   |     N/A      |     20       |       350           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
+|   (b)   |     N/A      |     20       |       450           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
 ----------------------------------------------------------------------------------------------------
 ### Notes
 - Anomaly is that increasing groups doesn't linearly help. There is a slight dip in params pruned. 
 - There is almost a point afterwhich adding samples DOES NOT help. Instead of being stable it decreases, which is very interesting. Also, it is low by quite a margin.
-- Trial 1 (100s) = 94.73\% Prune 98.51\% Acc.
-- Trial 2 (100s) = 93.64\% Prune 98.53\% Acc.
-- Trial 3 (100s) = 85.11\% Prune 98.51\% Acc.
-- Trial 4 (100s) = 92.23\% Prune 98.53\% Acc.
-- Trial 5 (100s) = 92.94\% Prune 98.51\% Acc.
 - Average performance for 100s experiments = 91.73\% but how can we compare the accuracy portion?
 - Possibly average the MI estimates over the runs and then compute accuracy. Maybe that will be stable...er?
-- Average of MI estimates from previous 5 (100s) trials = 91.66\% prune with acc. at 98.54\%.
-- Average of MI estimates from previous 5 (150s) trials = --.--\% prune with acc. at 98.5-\%.
-- Average of MI estimates from previous 5 (200s) trials = --.--\% prune with acc. at 98.5-\%.
-- Average of MI estimates from previous 5 (250s) trials = --.--\% prune with acc. at 98.5-\%.
-- Average of MI estimates from previous 5 (300s) trials = --.--\% prune with acc. at 98.5-\%.
-- Average of MI estimates from previous 5 (350s) trials = --.--\% prune with acc. at 98.5-\%.
-
+- Group variation patterns seem non existent, possible due to conflict with number of samples.
+- Sample variations seem to show opposite of expected trend, i.e., including more samples would be beneficial but in our case including makes us remove less nodes. Why?
+- 1 possible explanation is that for 30 and 40 groups, they don't divide the number of nodes evenly and hence their results need to be discounted.
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 

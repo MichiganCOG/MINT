@@ -1,7 +1,6 @@
 import time
 import copy
 import torch
-import random
 import argparse
 import multiprocessing
 
@@ -9,21 +8,18 @@ import numpy             as np
 import torch.nn          as nn
 import matplotlib.pyplot as plt
 
+from data_handler            import data_loader
+from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
 from tqdm                    import tqdm
 
+from model                   import Resnet56_A    as resnet56_a
+
+
 # Custom Imports
-from data_handler            import data_loader
-from utils                   import activations, sub_sample_uniform, mi
-from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
+from utils import activations, sub_sample_uniform, mi
 
-from model                   import MLP           as mlp 
+# Global Variable
 
-# Fixed Backend To Force Dataloader To Be Consistent
-torch.backends.cudnn.deterministic = True
-random.seed(1)
-torch.manual_seed(1)
-torch.cuda.manual_seed(1)
-np.random.seed(1)
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
 def cmi(data):
@@ -76,13 +72,12 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     # Load Network
-    if model == 'mlp':
-        model = mlp(num_classes=dims).to(device)
+    
+    if model == 'resnet_a':
+        model = resnet56_a(num_classes=dims).to(device)
 
     else:
         print('Invalid model selected')
-
-    # END IF
 
     model.load_state_dict(init_weights)
     model.eval()
@@ -165,9 +160,9 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
     alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children, cores)
 
-    np.save('results/'+weights_dir+'I_parent_'+name_postfix+'.npy', I_parent)
-    np.save('results/'+weights_dir+'Labels_'+name_postfix+'.npy', labels)
-    np.save('results/'+weights_dir+'Labels_children_'+name_postfix+'.npy', labels_children)
+    np.save(weights_dir+'/I_parent_'+name_postfix+'.npy', I_parent)
+    np.save(weights_dir+'/Labels_'+name_postfix+'.npy', labels)
+    np.save(weights_dir+'/Labels_children_'+name_postfix+'.npy', labels_children)
 
 
 if __name__=='__main__':
@@ -203,10 +198,87 @@ if __name__=='__main__':
 
     print('Selected key id is %d'%(args.key_id))
 
-    parents  = ['fc1.weight','fc2.weight']
-    children = ['fc2.weight','fc3.weight']
+    parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight',
+                'conv11.weight','conv12.weight','conv13.weight','conv14.weight','conv15.weight','conv16.weight','conv17.weight','conv18.weight','conv19.weight', 'conv20.weight',
+                'conv21.weight','conv22.weight','conv23.weight','conv24.weight','conv25.weight','conv26.weight','conv27.weight','conv28.weight','conv29.weight', 'conv30.weight',
+                'conv31.weight','conv32.weight','conv33.weight','conv34.weight','conv35.weight','conv36.weight','conv37.weight','conv38.weight','conv39.weight', 'conv40.weight',
+                'conv41.weight','conv42.weight','conv43.weight','conv44.weight','conv45.weight','conv46.weight','conv47.weight','conv48.weight','conv49.weight', 'conv50.weight',
+                'conv51.weight','conv52.weight','conv53.weight','conv54.weight', 'conv55.weight']
 
-    if args.key_id == len(parents):
+    children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight',
+                'conv11.weight','conv12.weight','conv13.weight','conv14.weight','conv15.weight','conv16.weight','conv17.weight','conv18.weight','conv19.weight', 'conv20.weight',
+                'conv21.weight','conv22.weight','conv23.weight','conv24.weight','conv25.weight','conv26.weight','conv27.weight','conv28.weight','conv29.weight', 'conv30.weight',
+                'conv31.weight','conv32.weight','conv33.weight','conv34.weight','conv35.weight','conv36.weight','conv37.weight','conv38.weight','conv39.weight', 'conv40.weight',
+                'conv41.weight','conv42.weight','conv43.weight','conv44.weight','conv45.weight','conv46.weight','conv47.weight','conv48.weight','conv49.weight', 'conv50.weight',
+                'conv51.weight','conv52.weight','conv53.weight','conv54.weight','conv55.weight', 'linear1.weight']
+
+
+    # Set 1
+    if args.key_id <= 19:
+        if args.parent_clusters[0] == 0:
+            args.parent_clusters[0] = 2
+        elif args.parent_clusters[0] == 1:
+            args.parent_clusters[0] = 4 
+        elif args.parent_clusters[0] == 2:
+            args.parent_clusters[0] = 8
+        else:
+            args.parent_clusters[0] = 16 
+
+    if args.key_id <= 18:
+        if args.children_clusters[0] == 0:
+            args.children_clusters[0] = 2
+        elif args.children_clusters[0] == 1:
+            args.children_clusters[0] = 4 
+        elif args.children_clusters[0] == 2:
+            args.children_clusters[0] = 8
+        else:
+            args.children_clusters[0] = 16 
+
+
+    # Set 2
+    if args.key_id > 19 and args.key_id <= 37:
+        if args.parent_clusters[0] == 0:
+            args.parent_clusters[0] = 4
+        elif args.parent_clusters[0] == 1:
+            args.parent_clusters[0] = 8 
+        elif args.parent_clusters[0] == 2:
+            args.parent_clusters[0] = 16
+        else:
+            args.parent_clusters[0] = 32 
+ 
+    if args.key_id > 18 and args.key_id <= 36:
+        if args.children_clusters[0] == 0:
+            args.children_clusters[0] = 4
+        elif args.children_clusters[0] == 1:
+            args.children_clusters[0] = 8 
+        elif args.children_clusters[0] == 2:
+            args.children_clusters[0] = 16
+        else:
+            args.children_clusters[0] = 32 
+
+    # Set 3
+    if args.key_id > 37:
+        if args.parent_clusters[0] == 0:
+            args.parent_clusters[0] = 8
+        elif args.parent_clusters[0] == 1:
+            args.parent_clusters[0] = 16 
+        elif args.parent_clusters[0] == 2:
+            args.parent_clusters[0] = 32
+        else:
+            args.parent_clusters[0] = 64
+
+    if args.key_id > 36: 
+        if args.children_clusters[0] == 0:
+            args.children_clusters[0] = 8
+        elif args.children_clusters[0] == 1:
+            args.children_clusters[0] = 16 
+        elif args.children_clusters[0] == 2:
+            args.children_clusters[0] = 32
+        else:
+            args.children_clusters[0] = 64 
+        
+
+    if args.key_id ==len(parents):
         args.children_clusters = [args.dims]
  
     calc_perf(args.model, args.dataset, [parents[args.key_id-1]], [children[args.key_id-1]], args.parent_clusters, args.children_clusters, args.weights_dir, args.cores, args.name_postfix +'_'+parents[args.key_id-1]+'_'+children[args.key_id-1], args.samples_per_class, args.dims)
