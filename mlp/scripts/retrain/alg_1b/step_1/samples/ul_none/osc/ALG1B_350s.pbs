@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N ALG1B_MNIST_MLP_350s_RETRAIN
-#PBS -t 1-71%10
+#PBS -t 20-30%10
 #PBS -j oe
 #PBS -l walltime=00:10:00
 #PBS -l nodes=1:ppn=16:gpus=1
