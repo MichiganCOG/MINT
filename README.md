@@ -18,9 +18,9 @@
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
 |   (b)   |     N/A      |     5        |       250           |    86.27        |     98.58        | (Requested Prune Percent: 0.292) 
-|   (b)   |     N/A      |     10       |       250           |    89.21        |     98.50        | (Requested Prune Percent: 0.424) 
-|   (b)   |     N/A      |     20       |       250           |    82.84        |     98.55        | (Requested Prune Percent: 0.316)
-|   (b)   |     N/A      |     50       |       250           |    87.89        |     98.51        | (Requested Prune Percent: 0.352)
+|   (b)   |     N/A      |     10       |       250           |    88.23        |     98.56        | (Requested Prune Percent: 0.415) 
+|   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
+|   (b)   |     N/A      |     50       |       250           |    91.87        |     98.52        | (Requested Prune Percent: 0.376)
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
@@ -28,9 +28,11 @@
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
 |   (b)   |     N/A      |     20       |       150           |    85.35        |     98.58        | (Requested Prune Percent: 0.352) 
-|   (b)   |     N/A      |     20       |       250           |    82.84        |     98.55        | (Requested Prune Percent: 0.316)
-|   (b)   |     N/A      |     20       |       350           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
-|   (b)   |     N/A      |     20       |       450           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
+|   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
+|   (b)   |     N/A      |     20       |       350           |    88.48        |     98.55        | (Requested Prune Percent: 0.364)
+|   (b)   |     N/A      |     20       |       450           |    88.72        |     98.51        | (Requested Prune Percent: 0.405)
+|   (b)   |     N/A      |     20       |       550           |    79.41        |     98.54        | (Requested Prune Percent: 0.335)
+|   (b)   |     N/A      |     20       |       650           |    --.--        |     98.5-        | (Requested Prune Percent: 0.---)
 ----------------------------------------------------------------------------------------------------
 ### Notes
 - Anomaly is that increasing groups doesn't linearly help. There is a slight dip in params pruned. 
@@ -40,6 +42,8 @@
 - Group variation patterns seem non existent, possible due to conflict with number of samples.
 - Sample variations seem to show opposite of expected trend, i.e., including more samples would be beneficial but in our case including makes us remove less nodes. Why?
 - 1 possible explanation is that for 30 and 40 groups, they don't divide the number of nodes evenly and hence their results need to be discounted.
+- Removed 30 and 40 groups and ran results on 1 system, hyaloidcanal. Results seem more consistent. 
+- Current weird trend is that in increasing samples beyond a point, number of params to prune seems to dip. Confirming this by running 650samples/class experiment.
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
