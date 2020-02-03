@@ -18,6 +18,13 @@ from utils                   import save_checkpoint, load_checkpoint, accuracy, 
 
 from model                   import VGG16_bn      as vgg 
 
+# Fixed Backend To Force Dataloader To Be Consistent
+torch.backends.cudnn.deterministic = True
+random.seed(1)
+torch.manual_seed(1)
+torch.cuda.manual_seed(1)
+np.random.seed(1)
+
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
 def cmi(data):
     clusters, c1_op, child, p1_op, num_layers, labels, labels_children = data 
