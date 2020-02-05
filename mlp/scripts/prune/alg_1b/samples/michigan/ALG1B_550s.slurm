@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="ALG1B_MNIST_MLP_550s_PRUNE"
 #SBATCH --array=1-2
-#SBATCH --nodelist=lgn1
+#SBATCH --partition=lgns
 #SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00

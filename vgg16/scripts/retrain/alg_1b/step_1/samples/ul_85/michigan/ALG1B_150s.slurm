@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name="ALG1B_CIFAR10_VGG16_BN_32g_RETRAIN"
+#SBATCH --job-name="ALG1B_CIFAR10_VGG16_BN_150s_RETRAIN"
 #SBATCH -N 1
 #SBATCH --nodelist=fovea
-#SBATCH --array=30-45
+#SBATCH --array=20-40
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --time=01:00:00  # Time in Minutes
-#SBATCH --output="ALG1B_CIFAR10_VGG16_BN_32g_%A_%a_RETRAIN.out"
+#SBATCH --output="ALG1B_CIFAR10_VGG16_BN_150s_%A_%a_RETRAIN.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 
@@ -32,13 +32,13 @@ python retrain_stage3.py \
 --Nesterov \
 --Device_ids 0 \
 --Retrain BASELINE_CIFAR10_VGG16_BN/0/logits_best.pkl \
---Retrain_mask BASELINE_CIFAR10_VGG16_BN/0/I_parent_32g_1b.npy \
---Labels_file BASELINE_CIFAR10_VGG16_BN/0/Labels_32g_1b.npy \
---Labels_children_file BASELINE_CIFAR10_VGG16_BN/0/Labels_children_32g_1b.npy \
+--Retrain_mask BASELINE_CIFAR10_VGG16_BN/0/I_parent_150s_1b.npy \
+--Labels_file BASELINE_CIFAR10_VGG16_BN/0/Labels_150s_1b.npy \
+--Labels_children_file BASELINE_CIFAR10_VGG16_BN/0/Labels_children_150s_1b.npy \
 --parent_key conv1.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
 --children_key conv2.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
---parent_clusters 32 32 32 32 32 32 32 32 \
---children_clusters 32 32 32 32 32 32 32 32 \
+--parent_clusters 64 64 64 64 64 64 64 64 \
+--children_clusters 64 64 64 64 64 64 64 64 \
 --upper_prune_limit 0.85 \
 --upper_prune_per 0.95 \
 --lower_prune_per 0.1 \

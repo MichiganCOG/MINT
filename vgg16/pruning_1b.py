@@ -69,7 +69,9 @@ def alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, cluste
 #### Main Code Executor 
 def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_children, weights_dir, cores, name_postfix, samples_per_class, dims):
 
-
+    #### Load Data ####
+    trainloader, testloader, extraloader = data_loader(dataset, 64)
+ 
     #### Load Model ####
     init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')
 
@@ -86,9 +88,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     model.load_state_dict(init_weights)
     model.eval()
 
-    #### Load Data ####
-    trainloader, testloader, extraloader = data_loader(dataset, 64)
- 
     
     # Original Accuracy 
     acc = 100.*accuracy(model, testloader, device)

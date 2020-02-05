@@ -2,11 +2,11 @@
 #SBATCH --job-name="ALG1B_CIFAR10_VGG16_BN_64g_RETRAIN"
 #SBATCH -N 1
 #SBATCH --nodelist=fovea
-#SBATCH --array=30-45
+#SBATCH --array=20-29
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --time=01:00:00  # Time in Minutes
-#SBATCH --output="ALG1B_CIFAR10_VGG16_BN_64g_RETRAIN.out"
+#SBATCH --output="ALG1B_CIFAR10_VGG16_BN_64g_%A_%a_RETRAIN.out"
 
 export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
 
