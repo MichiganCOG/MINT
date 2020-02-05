@@ -8,17 +8,21 @@ import numpy             as np
 import torch.nn          as nn
 import matplotlib.pyplot as plt
 
-from data_handler            import data_loader
-from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
 from tqdm                    import tqdm
+
+# Custom Imports
+from data_handler            import data_loader
+from utils                   import activations, sub_sample_uniform, mi
+from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
 
 from model                   import Resnet56_A    as resnet56_a
 
-
-# Custom Imports
-from utils import activations, sub_sample_uniform, mi
-
-# Global Variable
+# Fixed Backend To Force Dataloader To Be Consistent
+torch.backends.cudnn.deterministic = True
+random.seed(1)
+torch.manual_seed(1)
+torch.cuda.manual_seed(1)
+np.random.seed(1)
 
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
@@ -65,6 +69,9 @@ def alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, cluste
 def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_children, weights_dir, cores, name_postfix, samples_per_class, dims):
 
 
+    #### Load Data ####
+    trainloader, testloader, extraloader = data_loader(dataset, 64)
+ 
     #### Load Model ####
     init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')
 
@@ -82,10 +89,6 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     model.load_state_dict(init_weights)
     model.eval()
 
-    #### Load Data ####
-    trainloader, testloader, extraloader = data_loader(dataset, 64)
- 
-    
     # Original Accuracy 
     acc = 100.*accuracy(model, testloader, device)
     print('Accuracy of the original network: %f %%\n' %(acc))
@@ -160,9 +163,9 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
     alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children, cores)
 
-    np.save(weights_dir+'/I_parent_'+name_postfix+'.npy', I_parent)
-    np.save(weights_dir+'/Labels_'+name_postfix+'.npy', labels)
-    np.save(weights_dir+'/Labels_children_'+name_postfix+'.npy', labels_children)
+    np.save('results/'+weights_dir+'I_parent_'+name_postfix+'.npy', I_parent)
+    np.save('results/'+weights_dir+'Labels_'+name_postfix+'.npy', labels)
+    np.save('results/'+weights_dir+'Labels_children_'+name_postfix+'.npy', labels_children)
 
 
 if __name__=='__main__':

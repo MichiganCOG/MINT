@@ -42,7 +42,10 @@ from torch.optim.lr_scheduler  import MultiStepLR
 from model                     import Resnet56_A    as resnet56_a
 
 torch.backends.cudnn.deterministic = True
-torch.manual_seed(999)
+torch.manual_seed(1000)
+random.seed(1000)
+torch.manual_seed(1000)
+np.random.seed(1000)
 
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
         I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
