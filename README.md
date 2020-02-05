@@ -31,8 +31,8 @@
 |   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
 |   (b)   |     N/A      |     20       |       350           |    88.48        |     98.55        | (Requested Prune Percent: 0.364)
 |   (b)   |     N/A      |     20       |       450           |    88.72        |     98.51        | (Requested Prune Percent: 0.405)
-|   (b)   |     N/A      |     20       |       550           |    79.41        |     98.54        | (Requested Prune Percent: 0.335)
-|   (b)   |     N/A      |     20       |       650           |    --.--        |     98.5-        | (Requested Prune Percent: 0.---)
+|   (b)   |     N/A      |     20       |       550           |    79.41        |     98.54        | (Requested Prune Percent: 0.333)
+|   (b)   |     N/A      |     20       |       650           |    89.70        |     98.53        | (Requested Prune Percent: 0.429)
 ----------------------------------------------------------------------------------------------------
 ### Notes
 - Anomaly is that increasing groups doesn't linearly help. There is a slight dip in params pruned. 
@@ -43,7 +43,7 @@
 - Sample variations seem to show opposite of expected trend, i.e., including more samples would be beneficial but in our case including makes us remove less nodes. Why?
 - 1 possible explanation is that for 30 and 40 groups, they don't divide the number of nodes evenly and hence their results need to be discounted.
 - Removed 30 and 40 groups and ran results on 1 system, hyaloidcanal. Results seem more consistent. 
-- Current weird trend is that in increasing samples beyond a point, number of params to prune seems to dip. Confirming this by running 650samples/class experiment.
+- Current weird trend is that in increasing samples beyond a point, number of params to prune seems to dip. Confirming this by running 650samples/class experiment. 550samples/class seems to an anomaly rather than the trend.
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
@@ -87,21 +87,21 @@ Untouched params = 2882240/14977728 = 19.24\%
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     85       |     8        |       250           |    47.05        |     93.51        | (Requested prune percent: 0.508) 
-|   (b)   |     85       |     16       |       250           |    48.58        |     93.43        | (Requested prune percent: 0.592) 
-|   (b)   |     85       |     32       |       250           |    26.85        |     93.46        | (Requested prune percent: 0.376)
-|   (b)   |     85       |     64       |       250           |    50.72        |     93.49        | (Requested prune percent: 0.388) 
+|   (b)   |     85       |     8        |       250           |    50.16        |     93.44        | (Requested prune percent: 0.549) 
+|   (b)   |     85       |     16       |       250           |    31.65        |     93.53        | (Requested prune percent: 0.453) 
+|   (b)   |     85       |     32       |       250           |    37.41        |     93.45        | (Requested prune percent: 0.448)
+|   (b)   |     85       |     64       |       250           |    44.52        |     93.44        | (Requested prune percent: 0.328) 
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     85       |     64       |       150           |    59.97        |     93.45        | (Requested prune percent: 0.472) 
-|   (b)   |     85       |     64       |       250           |    50.72        |     93.49        | (Requested prune percent: 0.388) 
-|   (b)   |     85       |     64       |       350           |    07.30        |     93.42        | (Requested prune percent: 0.112)
-|   (b)   |     85       |     64       |       450           |    --.--        |     --.--        | 
+|   (b)   |     85       |     64       |       150           |    45.19        |     93.41        | (Requested prune percent: 0.364) 
+|   (b)   |     85       |     64       |       250           |    44.52        |     93.44        | (Requested prune percent: 0.328) 
+|   (b)   |     85       |     64       |       350           |    60.47        |     93.55        | (Requested prune percent: 0.496)
+|   (b)   |     85       |     64       |       450           |    --.--        |     --.--        | (Requested prune percent: 0.496)
 ----------------------------------------------------------------------------------------------------
 
 ### Notes
-- Big red flag in both group variations and sample variations. There is a sudden dip in performance (params pruned) which buckle the expected trend.
+- Still compiling results for Samples and Groups variations for VGG16. Slightly delayed but we are moving ahead with ResNet56 setup for CIFAR-10. 
