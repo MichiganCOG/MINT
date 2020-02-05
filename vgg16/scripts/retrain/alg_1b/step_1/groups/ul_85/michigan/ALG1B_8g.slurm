@@ -2,7 +2,7 @@
 #SBATCH --job-name="ALG1B_CIFAR10_VGG16_BN_8g_RETRAIN"
 #SBATCH -N 1
 #SBATCH --nodelist=fovea
-#SBATCH --array=40-45
+#SBATCH --array=25-45
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --time=01:00:00  # Time in Minutes
