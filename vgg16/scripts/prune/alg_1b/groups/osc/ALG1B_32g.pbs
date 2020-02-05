@@ -1,8 +1,8 @@
 #!/bin/bash
-#PBS -N BASELINE_CIFAR10_VGG16_BN_450s_PRUNE
+#PBS -N BASELINE_CIFAR10_VGG16_BN_32g_PRUNE
 #PBS -t 1-14
 #PBS -j oe
-#PBS -l walltime=40:00:00
+#PBS -l walltime=15:00:00
 #PBS -l nodes=1:ppn=10:gpus=1
 
 IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))
@@ -27,10 +27,9 @@ python pruning_1b.py \
 --cores 10 \
 --dims 10 \
 --key_id $PBS_ARRAYID \
---samples_per_class 450 \
---parent_clusters 64 \
---children_clusters 64 \
---name_postfix 450s_1b
+--parent_clusters 32 \
+--children_clusters 32 \
+--name_postfix 32g_1b
 
 
 echo "end"
