@@ -6,4 +6,4 @@ results/*
 *.npy
 *.pdf
 *.tar*
-vgg16/data/*
+data/*
