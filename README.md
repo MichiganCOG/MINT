@@ -13,7 +13,7 @@
 --------------------------------------------------------------
 
 ### Results Compilation
-#### Group variations
+#### Group variations 
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
@@ -21,6 +21,10 @@
 |   (b)   |     N/A      |     10       |       250           |    88.23        |     98.56        | (Requested Prune Percent: 0.415) 
 |   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
 |   (b)   |     N/A      |     50       |       250           |    91.87        |     98.52        | (Requested Prune Percent: 0.376)
+|   (b)   |     0.8      |     5        |       250           |    86.27        |     98.58        | (Requested Prune Percent: 0.340) 
+|   (b)   |     0.8      |     10       |       250           |    --.--        |     98.--        | (Requested Prune Percent: 0.---) 
+|   (b)   |     0.8      |     20       |       250           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
+|   (b)   |     0.8      |     50       |       250           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
@@ -44,6 +48,7 @@
 - 1 possible explanation is that for 30 and 40 groups, they don't divide the number of nodes evenly and hence their results need to be discounted.
 - Removed 30 and 40 groups and ran results on 1 system, hyaloidcanal. Results seem more consistent. 
 - Current weird trend is that in increasing samples beyond a point, number of params to prune seems to dip. Confirming this by running 650samples/class experiment. 550samples/class seems to an anomaly rather than the trend.
+- Imposing an 80% limit still gives 13\% pruning somehow! Look into this ASAP. Although this ceiling seems to hold, in terms of fixed upper limit (whatever is computed) 
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 
@@ -70,7 +75,7 @@
 | Conv4 - Conv5    |         = 294912          |         294912            |
 | Conv5 - Conv6    |         = 589824          |         589824            | 
 | Conv6 - Conv7    |         = 589824          |         589824            | 
-| Conv7 - Conv8    |         = 1179648         |         1179648           | 
+| Conv7 - Conv8    |         = 1179648         |                           | 
 |*Conv8 - Conv9*   |         = 2359296         |                           | 
 |*Conv9 - Conv10*  |         = 2359296         |                           | 
 |*Conv10 - Conv11* |         = 2359296         |                           | 
@@ -105,3 +110,5 @@ Untouched params = 2882240/14977728 = 19.24\%
 
 ### Notes
 - Still compiling results for Samples and Groups variations for VGG16. Slightly delayed but we are moving ahead with ResNet56 setup for CIFAR-10. 
+- The results from Group and sample variations seems to not follow any particular trend. Could this be because of the extra upper limit / layer being imposed? 
+- Moving to MLP with upper limit / layer to observe behaviour more quickly.
