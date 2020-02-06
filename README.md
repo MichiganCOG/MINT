@@ -21,10 +21,11 @@
 |   (b)   |     N/A      |     10       |       250           |    88.23        |     98.56        | (Requested Prune Percent: 0.415) 
 |   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
 |   (b)   |     N/A      |     50       |       250           |    91.87        |     98.52        | (Requested Prune Percent: 0.376)
+
 |   (b)   |     0.8      |     5        |       250           |    86.27        |     98.58        | (Requested Prune Percent: 0.340) 
-|   (b)   |     0.8      |     10       |       250           |    --.--        |     98.--        | (Requested Prune Percent: 0.---) 
-|   (b)   |     0.8      |     20       |       250           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
-|   (b)   |     0.8      |     50       |       250           |    --.--        |     98.--        | (Requested Prune Percent: 0.---)
+|   (b)   |     0.8      |     10       |       250           |    85.29        |     98.60        | (Requested Prune Percent: 0.364)
+|   (b)   |     0.8      |     20       |       250           |    76.96        |     98.62        | (Requested Prune Percent: 0.287)
+|   (b)   |     0.8      |     50       |       250           |    77.32        |     98.60        | (Requested Prune Percent: 0.316)
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
@@ -85,7 +86,7 @@
 | Linear1- Linear2 |         = 5120            |         5120              |
 | Total            |       **14977728**        |                           | 
 ----------------------------------------------------------------------------
-Untouched params = 2882240/14977728 = 19.24\%
+Untouched params = 14977728 - 13275136  = 1702592
 
 ### Results Compilation
 #### Group variations

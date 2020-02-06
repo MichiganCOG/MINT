@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="ALG1B_MNIST_MLP_20g_RETRAIN"
 #SBATCH -N 1
-#SBATCH --array=1-71
+#SBATCH --array=1-11
 #SBATCH --nodelist=fovea
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
@@ -40,9 +40,9 @@ python retrain_stage3.py \
 --parent_clusters   20 20 \
 --children_clusters 20 10 \
 --upper_prune_limit 0.8 \
---upper_prune_per 0.99 \
---lower_prune_per 0.1 \
---prune_per_step 0.012 \
+--upper_prune_per 0.292 \
+--lower_prune_per 0.291 \
+--prune_per_step 0.0001 \
 --Save_dir BASELINE_MNIST_MLP_RETRAIN_1 \
 --key_id $SLURM_ARRAY_TASK_ID
 

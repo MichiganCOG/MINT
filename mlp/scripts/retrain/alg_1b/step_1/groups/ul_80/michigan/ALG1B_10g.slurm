@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="ALG1B_MNIST_MLP_10g_RETRAIN"
 #SBATCH -N 1
-#SBATCH --array=1-71
+#SBATCH --array=30-71
 #SBATCH --nodelist=fovea
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
