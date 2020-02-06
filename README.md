@@ -2,15 +2,15 @@
 
 ### Experiment 1: [Learning Efficient Convolutional Networks through Network Slimming](http://openaccess.thecvf.com/content_ICCV_2017/papers/Liu_Learning_Efficient_Convolutional_ICCV_2017_paper.pdf)
 
---------------------------------------------------------------
-| Method                       | Params Pruned | Performance |
-|:----------------------------:|:-------------:|:-----------:|
-| Baseline  (ours)             |       N/A     |    98.59    |
-| Structured Sparsity Learning |       83.5    |    98.47    |
-| Network Slimming             |       84.4    |    98.51    |
-| MINT (a) (ours)              |       --.-    |    --.--    |
-| MINT (b) (ours)              |       --.-    |    --.--    |
---------------------------------------------------------------
+----------------------------------------------------------------------
+| Method                       |    Params Pruned      | Performance |
+|:----------------------------:|:---------------------:|:-----------:|
+| Baseline  (ours)             |       N/A             |    98.59    |
+| Structured Sparsity Learning |       90.61 (83.5)    |    98.47    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
+| Network Slimming             |       95.68 (84.4)    |    98.51    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
+| MINT (a) (ours)              |       --.-            |    --.--    |
+| MINT (b) (ours)              |       --.-            |    --.--    |
+----------------------------------------------------------------------
 
 ### Results Compilation
 #### Group variations 
