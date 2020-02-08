@@ -175,3 +175,8 @@ def test():
     print(y.size())
 
 # test()
+
+
+if __name__=="__main__":
+    model = ResNet50(10)
+    import pdb; pdb.set_trace()
