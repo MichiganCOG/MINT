@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -N ALG1B_CIFAR10_RESNET56_A_64g_RETRAIN
-#PBS -t 20-30
+#PBS -t 1-15%10 
 #PBS -j oe
-#PBS -l walltime=02:00:00
+#PBS -l walltime=05:00:00
 #PBS -l nodes=1:ppn=16:gpus=1
 
 IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))

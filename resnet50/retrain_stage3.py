@@ -39,13 +39,13 @@ from torch.autograd            import Variable
 from mpl_toolkits.mplot3d      import Axes3D
 from torch.optim.lr_scheduler  import MultiStepLR
  
-from model                     import VGG16_bn      as vgg 
+from model                     import resnet50    as resnet50
 
-#torch.backends.cudnn.deterministic = True
-#torch.manual_seed(1000)
-#random.seed(1000)
-#torch.manual_seed(1000)
-#np.random.seed(1000)
+torch.backends.cudnn.deterministic = True
+torch.manual_seed(1000)
+random.seed(1000)
+torch.manual_seed(1000)
+np.random.seed(1000)
 
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
         I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
@@ -163,8 +163,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     # Load Network
-    if Model == 'vgg':
-        model = vgg(num_classes=Dims).to(device)
+    if Model == 'resnet':
+        model = resnet50(num_classes=Dims).to(device)
 
     else:
         print('Invalid optimizer selected. Exiting')
@@ -298,7 +298,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
  
     possible_prune_percents   = np.arange(args.lower_prune_per, args.upper_prune_per, step=args.prune_per_step)
-
 
     true_prune_percent, best_model_acc, model, optimizer = train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, possible_prune_percents[args.key_id-1], args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
 
