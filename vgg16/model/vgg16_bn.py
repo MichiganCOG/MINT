@@ -102,6 +102,7 @@ class VGG16_bn(nn.Module):
         # Leave it for the future
 
         self.conv2.set_mask(torch.Tensor(masks['conv2.weight']).cuda())
+        self.conv8.set_mask(torch.Tensor(masks['conv8.weight']).cuda())
         self.conv9.set_mask(torch.Tensor(masks['conv9.weight']).cuda())
         self.conv10.set_mask(torch.Tensor(masks['conv10.weight']).cuda())
 
