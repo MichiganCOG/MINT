@@ -119,9 +119,11 @@ def activations(data_loader, model, device, item_key):
         del visualisation[list(visualisation.keys())[0]]
 
     if len(parents_op.shape) > 2:
-        parents_op  = np.mean(parents_op, axis=(2,3))
+        if item_key == 'input':
+            parents_op  = np.mean(parents_op, axis=(1)).reshape(parents_op.shape[0],-1)
 
-    import pdb; pdb.set_trace()
+        else:
+            parents_op  = np.mean(parents_op, axis=(2,3))
 
     return parents_op, labels_op
 

@@ -203,8 +203,8 @@ if __name__=='__main__':
 
     print('Selected key id is %d'%(args.key_id))
 
-    parents  = ['fc1.weight','fc2.weight']
-    children = ['fc2.weight','fc3.weight']
+    parents  = ['input','fc1.weight','fc2.weight']
+    children = ['fc1.weight','fc2.weight','fc3.weight']
 
     if args.key_id == len(parents):
         args.children_clusters = [args.dims]
