@@ -381,79 +381,236 @@ class Resnet50(nn.Module):
 def resnet50(num_classes):
     model = Resnet50(num_classes)
 
-    state_dict = load_state_dict_from_url(model_urls['resnet50'],
-                                          progress=True)
-    new_state_dict = {}
-    new_state_dict['conv1.weight'] = state_dict['conv1.weight']
+    #state_dict = load_state_dict_from_url(model_urls['resnet50'],
+    #                                      progress=True)
+    #new_state_dict = {}
+    #new_state_dict['conv1.weight'] = state_dict['conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn1'+ite] = state_dict['bn1'+ite]
 
-    new_state_dict['conv2.weight'] = state_dict['layer1.0.conv1.weight']
-    new_state_dict['conv3.weight'] = state_dict['layer1.0.conv2.weight']
-    new_state_dict['conv4.weight'] = state_dict['layer1.0.conv3.weight']
-    new_state_dict['conv5.weight'] = state_dict['layer1.0.downsample.0.weight']
-    new_state_dict['conv6.weight'] = state_dict['layer1.1.conv1.weight']
-    new_state_dict['conv7.weight'] = state_dict['layer1.1.conv2.weight']
-    new_state_dict['conv8.weight'] = state_dict['layer1.1.conv3.weight']
-    new_state_dict['conv9.weight'] = state_dict['layer1.2.conv1.weight']
-    new_state_dict['conv10.weight'] = state_dict['layer1.2.conv2.weight']
-    new_state_dict['conv11.weight'] = state_dict['layer1.2.conv3.weight']
+    #new_state_dict['conv2.weight'] = state_dict['layer1.0.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn2'+ite] = state_dict['layer1.0.bn1'+ite]
 
-    new_state_dict['conv12.weight'] = state_dict['layer2.0.conv1.weight']
-    new_state_dict['conv13.weight'] = state_dict['layer2.0.conv2.weight']
-    new_state_dict['conv14.weight'] = state_dict['layer2.0.conv3.weight']
-    new_state_dict['conv15.weight'] = state_dict['layer2.0.downsample.0.weight']
-    new_state_dict['conv16.weight'] = state_dict['layer2.1.conv1.weight']
-    new_state_dict['conv17.weight'] = state_dict['layer2.1.conv2.weight']
-    new_state_dict['conv18.weight'] = state_dict['layer2.1.conv3.weight']
-    new_state_dict['conv19.weight'] = state_dict['layer2.2.conv1.weight']
-    new_state_dict['conv20.weight'] = state_dict['layer2.2.conv2.weight']
-    new_state_dict['conv21.weight'] = state_dict['layer2.2.conv3.weight']
-    new_state_dict['conv22.weight'] = state_dict['layer2.3.conv1.weight']
-    new_state_dict['conv23.weight'] = state_dict['layer2.3.conv2.weight']
-    new_state_dict['conv24.weight'] = state_dict['layer2.3.conv3.weight']
+    #new_state_dict['conv3.weight'] = state_dict['layer1.0.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn3'+ite] = state_dict['layer1.0.bn2'+ite]
 
-    new_state_dict['conv25.weight'] = state_dict['layer3.0.conv1.weight']
-    new_state_dict['conv26.weight'] = state_dict['layer3.0.conv2.weight']
-    new_state_dict['conv27.weight'] = state_dict['layer3.0.conv3.weight']
-    new_state_dict['conv28.weight'] = state_dict['layer3.0.downsample.0.weight']
-    new_state_dict['conv29.weight'] = state_dict['layer3.1.conv1.weight']
-    new_state_dict['conv30.weight'] = state_dict['layer3.1.conv2.weight']
-    new_state_dict['conv31.weight'] = state_dict['layer3.1.conv3.weight']
-    new_state_dict['conv32.weight'] = state_dict['layer3.2.conv1.weight']
-    new_state_dict['conv33.weight'] = state_dict['layer3.2.conv2.weight']
-    new_state_dict['conv34.weight'] = state_dict['layer3.2.conv3.weight']
-    new_state_dict['conv35.weight'] = state_dict['layer3.3.conv1.weight']
-    new_state_dict['conv36.weight'] = state_dict['layer3.3.conv2.weight']
-    new_state_dict['conv37.weight'] = state_dict['layer3.3.conv3.weight']
-    new_state_dict['conv38.weight'] = state_dict['layer3.4.conv1.weight']
-    new_state_dict['conv39.weight'] = state_dict['layer3.4.conv2.weight']
-    new_state_dict['conv40.weight'] = state_dict['layer3.4.conv3.weight']
-    new_state_dict['conv41.weight'] = state_dict['layer3.5.conv1.weight']
-    new_state_dict['conv42.weight'] = state_dict['layer3.5.conv2.weight']
-    new_state_dict['conv43.weight'] = state_dict['layer3.5.conv3.weight']
+    #new_state_dict['conv4.weight'] = state_dict['layer1.0.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn4'+ite] = state_dict['layer1.0.bn3'+ite]
 
-    new_state_dict['conv44.weight'] = state_dict['layer4.0.conv1.weight']
-    new_state_dict['conv45.weight'] = state_dict['layer4.0.conv2.weight']
-    new_state_dict['conv46.weight'] = state_dict['layer4.0.conv3.weight']
-    new_state_dict['conv47.weight'] = state_dict['layer4.0.downsample.0.weight']
-    new_state_dict['conv48.weight'] = state_dict['layer4.1.conv1.weight']
-    new_state_dict['conv49.weight'] = state_dict['layer4.1.conv2.weight']
-    new_state_dict['conv50.weight'] = state_dict['layer4.1.conv3.weight']
-    new_state_dict['conv51.weight'] = state_dict['layer4.2.conv1.weight']
-    new_state_dict['conv52.weight'] = state_dict['layer4.2.conv2.weight']
-    new_state_dict['conv53.weight'] = state_dict['layer4.2.conv3.weight']
+    #new_state_dict['conv5.weight'] = state_dict['layer1.0.downsample.0.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn5'+ite] = state_dict['layer1.0.downsample.1'+ite]
 
-    for key in state_dict.keys():
-        if 'bn' in key:
-            new_state_dict[key] = state_dict[key]
+    #new_state_dict['conv6.weight'] = state_dict['layer1.1.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn6'+ite] = state_dict['layer1.1.bn1'+ite]
 
-    torch.save({'state_dict': new_state_dict}, 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl')     
-    import pdb; pdb.set_trace()
+    #new_state_dict['conv7.weight'] = state_dict['layer1.1.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn7'+ite] = state_dict['layer1.1.bn2'+ite]
 
-    model.load_state_dict(new_state_dict)
+    #new_state_dict['conv8.weight'] = state_dict['layer1.1.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn8'+ite] = state_dict['layer1.1.bn3'+ite]
+
+    #new_state_dict['conv9.weight'] = state_dict['layer1.2.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn9'+ite] = state_dict['layer1.2.bn1'+ite]
+
+    #new_state_dict['conv10.weight'] = state_dict['layer1.2.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn10'+ite] = state_dict['layer1.2.bn2'+ite]
+
+    #new_state_dict['conv11.weight'] = state_dict['layer1.2.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn11'+ite] = state_dict['layer1.2.bn3'+ite]
+
+
+    #new_state_dict['conv12.weight'] = state_dict['layer2.0.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn12'+ite] = state_dict['layer2.0.bn1'+ite]
+
+    #new_state_dict['conv13.weight'] = state_dict['layer2.0.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn13'+ite] = state_dict['layer2.0.bn2'+ite]
+
+    #new_state_dict['conv14.weight'] = state_dict['layer2.0.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn14'+ite] = state_dict['layer2.0.bn3'+ite]
+
+    #new_state_dict['conv15.weight'] = state_dict['layer2.0.downsample.0.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn15'+ite] = state_dict['layer2.0.downsample.1'+ite]
+
+    #new_state_dict['conv16.weight'] = state_dict['layer2.1.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn16'+ite] = state_dict['layer2.1.bn1'+ite]
+
+    #new_state_dict['conv17.weight'] = state_dict['layer2.1.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn17'+ite] = state_dict['layer2.1.bn2'+ite]
+
+    #new_state_dict['conv18.weight'] = state_dict['layer2.1.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn18'+ite] = state_dict['layer2.1.bn3'+ite]
+
+    #new_state_dict['conv19.weight'] = state_dict['layer2.2.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn19'+ite] = state_dict['layer2.2.bn1'+ite]
+
+    #new_state_dict['conv20.weight'] = state_dict['layer2.2.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn20'+ite] = state_dict['layer2.2.bn2'+ite]
+
+    #new_state_dict['conv21.weight'] = state_dict['layer2.2.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn21'+ite] = state_dict['layer2.2.bn3'+ite]
+
+    #new_state_dict['conv22.weight'] = state_dict['layer2.3.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn22'+ite] = state_dict['layer2.3.bn1'+ite]
+
+    #new_state_dict['conv23.weight'] = state_dict['layer2.3.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn23'+ite] = state_dict['layer2.3.bn2'+ite]
+
+    #new_state_dict['conv24.weight'] = state_dict['layer2.3.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn24'+ite] = state_dict['layer2.3.bn3'+ite]
+
+    #new_state_dict['conv25.weight'] = state_dict['layer3.0.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn25'+ite] = state_dict['layer3.0.bn1'+ite]
+
+    #new_state_dict['conv26.weight'] = state_dict['layer3.0.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn26'+ite] = state_dict['layer3.0.bn2'+ite]
+
+    #new_state_dict['conv27.weight'] = state_dict['layer3.0.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn27'+ite] = state_dict['layer3.0.bn3'+ite]
+
+    #new_state_dict['conv28.weight'] = state_dict['layer3.0.downsample.0.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn28'+ite] = state_dict['layer3.0.downsample.1'+ite]
+
+    #new_state_dict['conv29.weight'] = state_dict['layer3.1.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn29'+ite] = state_dict['layer3.1.bn1'+ite]
+
+    #new_state_dict['conv30.weight'] = state_dict['layer3.1.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn30'+ite] = state_dict['layer3.1.bn2'+ite]
+
+    #new_state_dict['conv31.weight'] = state_dict['layer3.1.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn31'+ite] = state_dict['layer3.1.bn3'+ite]
+
+    #new_state_dict['conv32.weight'] = state_dict['layer3.2.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn32'+ite] = state_dict['layer3.2.bn1'+ite]
+
+    #new_state_dict['conv33.weight'] = state_dict['layer3.2.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn33'+ite] = state_dict['layer3.2.bn2'+ite]
+
+    #new_state_dict['conv34.weight'] = state_dict['layer3.2.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn34'+ite] = state_dict['layer3.2.bn3'+ite]
+
+    #new_state_dict['conv35.weight'] = state_dict['layer3.3.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn35'+ite] = state_dict['layer3.3.bn1'+ite]
+
+    #new_state_dict['conv36.weight'] = state_dict['layer3.3.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn36'+ite] = state_dict['layer3.3.bn2'+ite]
+
+    #new_state_dict['conv37.weight'] = state_dict['layer3.3.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn37'+ite] = state_dict['layer3.3.bn3'+ite]
+
+    #new_state_dict['conv38.weight'] = state_dict['layer3.4.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn38'+ite] = state_dict['layer3.4.bn1'+ite]
+
+    #new_state_dict['conv39.weight'] = state_dict['layer3.4.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn39'+ite] = state_dict['layer3.4.bn2'+ite]
+
+    #new_state_dict['conv40.weight'] = state_dict['layer3.4.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn40'+ite] = state_dict['layer3.4.bn3'+ite]
+
+    #new_state_dict['conv41.weight'] = state_dict['layer3.5.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn41'+ite] = state_dict['layer3.5.bn1'+ite]
+
+    #new_state_dict['conv42.weight'] = state_dict['layer3.5.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn42'+ite] = state_dict['layer3.5.bn2'+ite]
+
+    #new_state_dict['conv43.weight'] = state_dict['layer3.5.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn43'+ite] = state_dict['layer3.5.bn3'+ite]
+
+
+    #new_state_dict['conv44.weight'] = state_dict['layer4.0.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn44'+ite] = state_dict['layer4.0.bn1'+ite]
+
+    #new_state_dict['conv45.weight'] = state_dict['layer4.0.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn45'+ite] = state_dict['layer4.0.bn2'+ite]
+
+    #new_state_dict['conv46.weight'] = state_dict['layer4.0.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn46'+ite] = state_dict['layer4.0.bn3'+ite]
+
+    #new_state_dict['conv47.weight'] = state_dict['layer4.0.downsample.0.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn47'+ite] = state_dict['layer4.0.downsample.1'+ite]
+
+    #new_state_dict['conv48.weight'] = state_dict['layer4.1.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn48'+ite] = state_dict['layer4.1.bn1'+ite]
+
+    #new_state_dict['conv49.weight'] = state_dict['layer4.1.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn49'+ite] = state_dict['layer4.1.bn2'+ite]
+
+    #new_state_dict['conv50.weight'] = state_dict['layer4.1.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn50'+ite] = state_dict['layer4.1.bn3'+ite]
+
+    #new_state_dict['conv51.weight'] = state_dict['layer4.2.conv1.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn51'+ite] = state_dict['layer4.2.bn1'+ite]
+
+    #new_state_dict['conv52.weight'] = state_dict['layer4.2.conv2.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn52'+ite] = state_dict['layer4.2.bn2'+ite]
+
+    #new_state_dict['conv53.weight'] = state_dict['layer4.2.conv3.weight']
+    #for ite in ['.running_var', '.weight', '.running_mean','.bias']:
+    #    new_state_dict['bn53'+ite] = state_dict['layer4.2.bn3'+ite]
+
+
+    #import pdb; pdb.set_trace()
+    #new_state_dict['linear1.weight'] = state_dict['fc.weight']
+    #new_state_dict['linear1.bias']   = state_dict['fc.bias']
+
+
+    #torch.save({'state_dict': new_state_dict}, 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl')     
+
+    #model.load_state_dict(new_state_dict)
 
     return model
 
 if __name__=="__main__":
-    net = resnet50(num_classes=10)
+    net = resnet50(num_classes=1000)
     import pdb; pdb.set_trace()
 
