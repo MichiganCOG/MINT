@@ -441,7 +441,9 @@ def resnet50(num_classes):
     new_state_dict['conv51.weight'] = state_dict['layer4.2.conv1.weight']
     new_state_dict['conv52.weight'] = state_dict['layer4.2.conv2.weight']
     new_state_dict['conv53.weight'] = state_dict['layer4.2.conv3.weight']
-    
+
+    torch.save({'state_dict': new_state_dict}, 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl')     
+
     model.load_state_dict(state_dict)
 
     return model

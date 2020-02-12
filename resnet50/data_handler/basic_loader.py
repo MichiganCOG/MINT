@@ -9,7 +9,7 @@ from torchvision  import datasets, transforms
 def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
 
 
-    elif dataset == 'IMAGENET':
+    if dataset == 'IMAGENET':
 
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
@@ -22,9 +22,9 @@ def data_loader(dataset='CIFAR10', Batch_size = 64, pre='cutout'):
         extra_transform = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
         test_transform  = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize])
     
-        train_data = datasets.ImageFolder('~/MINT/MINT/resnet50/data/train/', transform=train_transform)
-        extra_data = datasets.ImageFolder('~/MINT/MINT/resnet50/data/val/',   transform=extra_transform)
-        test_data  = datasets.ImageFolder('~/MINT/MINT/resnet50/data/val/',   transform=test_transform)
+        train_data = datasets.ImageFolder('/fs/scratch/PYS1047/imagenet_data/train/', transform=train_transform)
+        extra_data = datasets.ImageFolder('/fs/scratch/PYS1047/imagenet_data/val/',   transform=extra_transform)
+        test_data  = datasets.ImageFolder('/fs/scratch/PYS1047/imagenet_data/val/',   transform=test_transform)
 
     else:
         print('Dataset selected isn\'t supported! Error.')
