@@ -217,69 +217,23 @@ if __name__=='__main__':
                 'conv51.weight','conv52.weight','conv53.weight','linear1.weight']
 
 
-    # Set 1
-    if args.key_id <= 19:
-        if args.parent_clusters[0] == 0:
-            args.parent_clusters[0] = 2
-        elif args.parent_clusters[0] == 1:
-            args.parent_clusters[0] = 4 
-        elif args.parent_clusters[0] == 2:
-            args.parent_clusters[0] = 8
-        else:
-            args.parent_clusters[0] = 16 
+    if args.parent_clusters[0] == 0:
+        args.parent_clusters[0] = 8
+    elif args.parent_clusters[0] == 1:
+        args.parent_clusters[0] = 16 
+    elif args.parent_clusters[0] == 2:
+        args.parent_clusters[0] = 32
+    else:
+        args.parent_clusters[0] = 64
 
-    if args.key_id <= 18:
-        if args.children_clusters[0] == 0:
-            args.children_clusters[0] = 2
-        elif args.children_clusters[0] == 1:
-            args.children_clusters[0] = 4 
-        elif args.children_clusters[0] == 2:
-            args.children_clusters[0] = 8
-        else:
-            args.children_clusters[0] = 16 
-
-
-    # Set 2
-    if args.key_id > 19 and args.key_id <= 37:
-        if args.parent_clusters[0] == 0:
-            args.parent_clusters[0] = 4
-        elif args.parent_clusters[0] == 1:
-            args.parent_clusters[0] = 8 
-        elif args.parent_clusters[0] == 2:
-            args.parent_clusters[0] = 16
-        else:
-            args.parent_clusters[0] = 32 
- 
-    if args.key_id > 18 and args.key_id <= 36:
-        if args.children_clusters[0] == 0:
-            args.children_clusters[0] = 4
-        elif args.children_clusters[0] == 1:
-            args.children_clusters[0] = 8 
-        elif args.children_clusters[0] == 2:
-            args.children_clusters[0] = 16
-        else:
-            args.children_clusters[0] = 32 
-
-    # Set 3
-    if args.key_id > 37:
-        if args.parent_clusters[0] == 0:
-            args.parent_clusters[0] = 8
-        elif args.parent_clusters[0] == 1:
-            args.parent_clusters[0] = 16 
-        elif args.parent_clusters[0] == 2:
-            args.parent_clusters[0] = 32
-        else:
-            args.parent_clusters[0] = 64
-
-    if args.key_id > 36: 
-        if args.children_clusters[0] == 0:
-            args.children_clusters[0] = 8
-        elif args.children_clusters[0] == 1:
-            args.children_clusters[0] = 16 
-        elif args.children_clusters[0] == 2:
-            args.children_clusters[0] = 32
-        else:
-            args.children_clusters[0] = 64 
+    if args.children_clusters[0] == 0:
+        args.children_clusters[0] = 8
+    elif args.children_clusters[0] == 1:
+        args.children_clusters[0] = 16 
+    elif args.children_clusters[0] == 2:
+        args.children_clusters[0] = 32
+    else:
+        args.children_clusters[0] = 64 
         
 
     if args.key_id ==len(parents):

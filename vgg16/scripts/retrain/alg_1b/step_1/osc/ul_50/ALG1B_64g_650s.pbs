@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N ALG1B_CIFAR10_VGG16_BN_64g_650s_RETRAIN
-#PBS -t 1-11 
+#PBS -t 1-15
 #PBS -j oe
 #PBS -l walltime=00:30:00
 #PBS -l nodes=1:ppn=16:gpus=1
@@ -38,14 +38,14 @@ python retrain_stage3.py \
 --Retrain_mask BASELINE_CIFAR10_VGG16_BN/0/I_parent_64g_650s_1b.npy \
 --Labels_file BASELINE_CIFAR10_VGG16_BN/0/Labels_64g_650s_1b.npy \
 --Labels_children_file BASELINE_CIFAR10_VGG16_BN/0/Labels_children_64g_650s_1b.npy \
---parent_key conv1.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
---children_key conv2.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
---parent_clusters   64 64 64 64 64 64 64 \
---children_clusters 64 64 64 64 64 64 64 \
---upper_prune_limit 0.80 \
---upper_prune_per 0.89 \
---lower_prune_per 0.84 \
---prune_per_step 0.001 \
+--parent_key conv1.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
+--children_key conv2.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
+--parent_clusters   64 64 64 64 64 64 64 64 \
+--children_clusters 64 64 64 64 64 64 64 64 \
+--upper_prune_limit 0.5 \
+--upper_prune_per 0.95 \
+--lower_prune_per 0.8 \
+--prune_per_step 0.01 \
 --Save_dir BASELINE_CIFAR10_VGG16_BN_RETRAIN_1 \
 --key_id $PBS_ARRAYID
 
