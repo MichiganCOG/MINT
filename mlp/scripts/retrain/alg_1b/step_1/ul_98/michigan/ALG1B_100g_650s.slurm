@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="ALG1B_MNIST_MLP_100g_650s_RETRAIN"
 #SBATCH -N 1
-#SBATCH --array=1-51
+#SBATCH --array=1-10
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
 #SBATCH --time=30  # Time in Minutes
@@ -39,8 +39,8 @@ python retrain_stage3.py \
 --parent_clusters   100 100 \
 --children_clusters 100 10 \
 --upper_prune_limit 0.98 \
---upper_prune_per 0.484 \
---lower_prune_per 0.483 \
+--upper_prune_per 0.4651 \
+--lower_prune_per 0.4650 \
 --prune_per_step 0.00001 \
 --Save_dir BASELINE_MNIST_MLP_RETRAIN_1 \
 --key_id $SLURM_ARRAY_TASK_ID

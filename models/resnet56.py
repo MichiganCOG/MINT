@@ -178,5 +178,5 @@ def test():
 
 
 if __name__=="__main__":
-    model = ResNet50(10)
+    model = ResNet50(1000)
     import pdb; pdb.set_trace()
