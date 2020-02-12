@@ -10,7 +10,7 @@ import torchvision.models as models
 
 from torch.utils.model_zoo import load_url as load_state_dict_from_url
 from torch.autograd        import Variable
-from .layers                import *
+from layers                import *
 
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
@@ -36,7 +36,7 @@ class Resnet50(nn.Module):
 
         self.relu = nn.ReLU()
 
-        self.conv1   = MaskedConv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1   = MaskedConv2d(3, 64, kernel_size=7, stride=1, padding=1, bias=False)
         self.bn1     = nn.BatchNorm2d(64)
 
         # ---
@@ -82,7 +82,7 @@ class Resnet50(nn.Module):
         self.conv14 = MaskedConv2d(128, 512, kernel_size=1, stride=1, bias=False)
         self.bn14   = nn.BatchNorm2d(512)
         
-        self.conv15 = MaskedConv2d(128, 512, kernel_size=1, stride=2, bias=False)
+        self.conv15 = MaskedConv2d(256, 512, kernel_size=1, stride=2, bias=False)
         self.bn15   = nn.BatchNorm2d(512)
         
         # ---
@@ -442,9 +442,14 @@ def resnet50(num_classes):
     new_state_dict['conv52.weight'] = state_dict['layer4.2.conv2.weight']
     new_state_dict['conv53.weight'] = state_dict['layer4.2.conv3.weight']
 
-    torch.save({'state_dict': new_state_dict}, 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl')     
+    for key in state_dict.keys():
+        if 'bn' in key:
+            new_state_dict[key] = state_dict[key]
 
-    model.load_state_dict(state_dict)
+    torch.save({'state_dict': new_state_dict}, 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl')     
+    import pdb; pdb.set_trace()
+
+    model.load_state_dict(new_state_dict)
 
     return model
 
