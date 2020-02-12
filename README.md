@@ -54,7 +54,7 @@
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 ```diff
-- Incomplete 
++ Experiment Run Complete 
 ```
 --------------------------------------------------------------
 | Model                        | Params Pruned | Performance |
@@ -77,7 +77,7 @@
 | Conv4 - Conv5    |         = 294912          |         294912            |
 | Conv5 - Conv6    |         = 589824          |         589824            | 
 | Conv6 - Conv7    |         = 589824          |         589824            | 
-| Conv7 - Conv8    |         = 1179648         |                           | 
+| Conv7 - Conv8    |         = 1179648         |         1179648           | 
 |*Conv8 - Conv9*   |         = 2359296         |                           | 
 |*Conv9 - Conv10*  |         = 2359296         |                           | 
 |*Conv10 - Conv11* |         = 2359296         |                           | 

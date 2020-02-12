@@ -29,7 +29,7 @@ if __name__=="__main__":
 
     orig_file       = torch.load('/z/home/madantrg/Pruning/vgg16/results/BASELINE_CIFAR10_VGG16_BN/0/logits_best.pkl')['state_dict']
 
-    for compressed_file in ['/z/home/madantrg/Pruning/vgg16/results/BASELINE_CIFAR10_VGG16_BN_RETRAIN_1/0/logits_22.62849133899645.pkl']:
+    for compressed_file in ['/z/home/madantrg/Pruning/vgg16/results/BASELINE_CIFAR10_VGG16_BN_RETRAIN_1/0/logits_19.203483150080427.pkl']:
         compressed_file = torch.load(compressed_file)['state_dict']
 
         compare(orig_file, compressed_file)
