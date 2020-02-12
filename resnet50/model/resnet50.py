@@ -10,7 +10,7 @@ import torchvision.models as models
 
 from torch.utils.model_zoo import load_url as load_state_dict_from_url
 from torch.autograd        import Variable
-from layers                import *
+from .layers                import *
 
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
