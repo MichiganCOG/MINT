@@ -54,14 +54,19 @@
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 ```diff
-+ Experiment Run Complete 
+- Incomplete  
 ```
 --------------------------------------------------------------
 | Model                        | Params Pruned | Performance |
 |:----------------------------:|:-------------:|:-----------:|
 | VGG16(ours)                  |       N/A     |    93.98    |
 | VGG16-pruned-A               |      64.00    |    93.40    |
-| MINT (b) (ours)              |      65.24    |    93.47    |
+| MINT (b) (ours)              |      65.24    |    93.47    | (Prune: , Acc: 93.47, Params: )
+| SSS                          |      66.70    |    93.63    |
+| SSS                          |      73.80    |    93.02    |
+| GAL-0.05                     |      77.60    |    93.77    |
+| GAL-0.1                      |      82.20    |    93.42    |
+| MINT (b) (ours)              |      80.84    |    93.47    | (Prune: 8.782999, Acc: 93.47, Params: 13275136)
 --------------------------------------------------------------
 
 
