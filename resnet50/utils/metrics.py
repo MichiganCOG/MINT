@@ -22,5 +22,6 @@ def accuracy(net, testloader, device):
                 #    Var = outputs.cpu().numpy()
 
             total   += labels.size(0)
+
             correct += (predicted == labels).sum().item()
     return float(correct) / total

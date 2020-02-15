@@ -71,7 +71,7 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
 
 
     #### Load Data ####
-    trainloader, testloader, extraloader = data_loader(dataset, 64)
+    trainloader, testloader, extraloader = data_loader(dataset, 16)
  
     #### Load Model ####
     init_weights   = load_checkpoint(weights_dir+'logits_best.pkl')

@@ -1,9 +1,9 @@
 #!/bin/bash
 #PBS -N BASELINE_IMAGENET2012_RESNET50_64g_PRUNE
-#PBS -t 1
+#PBS -t 1-53
 #PBS -j oe
 #PBS -l walltime=100:00:00
-#PBS -l nodes=1:ppn=16:gpus=1
+#PBS -l nodes=1:ppn=20:gpus=1
 
 IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))
 echo I got allocated the following gpus
@@ -24,12 +24,12 @@ python pruning_1b.py \
 --model resnet \
 --dataset IMAGENET \
 --weights_dir BASELINE_IMAGENET2012_RESNET50/0/ \
---cores 16 \
---dims 10 \
+--cores 20 \
+--dims 1000 \
 --key_id $PBS_ARRAYID \
 --parent_clusters 64 \
 --children_clusters 64 \
---name_postfix 64g_1b \
+--name_postfix 64g_5s_1b \
 --samples_per_class 5
 
 

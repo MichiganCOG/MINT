@@ -52,11 +52,19 @@ def activations(data_loader, model, device, item_key):
             model(x_input.to(device))
 
             if temp_op is None:
-                temp_op        = visualisation[list(visualisation.keys())[0]].cpu().numpy()
+                if len(visualisation[list(visualisation.keys())[0]].cpu().numpy().shape) > 2:
+                    temp_op  = np.mean(visualisation[list(visualisation.keys())[0]].cpu().numpy(), axis=(2,3))
+                else:
+                    temp_op        = visualisation[list(visualisation.keys())[0]].cpu().numpy()
+
                 temp_labels_op = y_label.numpy()
 
             else:
-                temp_op        = np.vstack((visualisation[list(visualisation.keys())[0]].cpu().numpy(), temp_op))
+                if len(visualisation[list(visualisation.keys())[0]].cpu().numpy().shape) > 2:
+                    temp_op        = np.vstack((np.mean(visualisation[list(visualisation.keys())[0]].cpu().numpy(), axis=(2,3)), temp_op))
+                else:
+                    temp_op        = np.vstack((visualisation[list(visualisation.keys())[0]].cpu().numpy(), temp_op))
+
                 temp_labels_op = np.hstack((y_label.numpy(), temp_labels_op))
 
             # END IF 
@@ -65,6 +73,7 @@ def activations(data_loader, model, device, item_key):
                 if parents_op is None:
                     parents_op = copy.deepcopy(temp_op)
                     labels_op  = copy.deepcopy(temp_labels_op)
+
 
                     temp_op        = None
                     temp_labels_op = None

@@ -36,8 +36,10 @@ class Resnet50(nn.Module):
 
         self.relu = nn.ReLU()
 
-        self.conv1   = MaskedConv2d(3, 64, kernel_size=7, stride=1, padding=1, bias=False)
+        self.conv1   = MaskedConv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1     = nn.BatchNorm2d(64)
+
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         # ---
         self.conv2  = MaskedConv2d(64, 64, kernel_size=1, stride=1, bias=False)
@@ -76,7 +78,7 @@ class Resnet50(nn.Module):
         self.conv12 = MaskedConv2d(256, 128, kernel_size=1, stride=1, bias=False)
         self.bn12   = nn.BatchNorm2d(128)
         
-        self.conv13 = MaskedConv2d(128, 128, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv13 = MaskedConv2d(128, 128, kernel_size=3, stride=2, padding=1, bias=False)
         self.bn13   = nn.BatchNorm2d(128)
         
         self.conv14 = MaskedConv2d(128, 512, kernel_size=1, stride=1, bias=False)
@@ -99,7 +101,7 @@ class Resnet50(nn.Module):
         self.conv19 = MaskedConv2d(512, 128, kernel_size=1, stride=1, bias=False)
         self.bn19   = nn.BatchNorm2d(128)
         
-        self.conv20 = MaskedConv2d(128, 128, kernel_size=3, stride=2, padding=1, bias=False)
+        self.conv20 = MaskedConv2d(128, 128, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn20   = nn.BatchNorm2d(128)
 
         self.conv21 = MaskedConv2d(128, 512, kernel_size=1, stride=1, bias=False)
@@ -119,7 +121,7 @@ class Resnet50(nn.Module):
         self.conv25 = MaskedConv2d(512, 256, kernel_size=1, stride=1, bias=False)
         self.bn25   = nn.BatchNorm2d(256)
 
-        self.conv26 = MaskedConv2d(256, 256, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv26 = MaskedConv2d(256, 256, kernel_size=3, stride=2, padding=1, bias=False)
         self.bn26   = nn.BatchNorm2d(256)
 
         self.conv27 = MaskedConv2d(256, 1024, kernel_size=1, stride=1, bias=False)
@@ -212,8 +214,8 @@ class Resnet50(nn.Module):
         self.bn53   = nn.BatchNorm2d(2048)
 
         # ---
+        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
         self.linear1 = MaskedLinear(2048, num_classes)
-
 
 
 
@@ -281,96 +283,97 @@ class Resnet50(nn.Module):
 
     def forward(self, x, labels=False):
         
-        outer = self.relu(self.bn1(self.conv1(x)))
-
+        outer = self.maxpool(self.relu(self.bn1(self.conv1(x))))
+    
         # ----
         out = self.relu(self.bn2(self.conv2(outer)))
         out = self.relu(self.bn3(self.conv3(out))) 
         out = self.bn4(self.conv4(out))
-        out = self.relu(self.bn5(self.conv5(outer)) + out) 
+        outer = self.relu(self.bn5(self.conv5(outer)) + out) 
 
         # ---
-        out = self.relu(self.bn6(self.conv6(out)))
+        out = self.relu(self.bn6(self.conv6(outer)))
         out = self.relu(self.bn7(self.conv7(out))) 
-        out = self.relu(self.bn8(self.conv8(out)))
+        outer = self.relu(self.bn8(self.conv8(out)) + outer)
 
         # ---
-        out = self.relu(self.bn9(self.conv9(out))) 
+        out = self.relu(self.bn9(self.conv9(outer))) 
         out = self.relu(self.bn10(self.conv10(out)))
-        outer = self.relu(self.bn11(self.conv11(out))) 
+        outer = self.relu(self.bn11(self.conv11(out))+ outer) 
 
         # ---
         out = self.relu(self.bn12(self.conv12(outer)))
         out = self.relu(self.bn13(self.conv13(out))) 
         out = self.bn14(self.conv14(out))
-        out = self.relu(self.bn15(self.conv15(outer)) + out) 
+        outer = self.relu(self.bn15(self.conv15(outer)) + out) 
         
         # ---
-        out = self.relu(self.bn16(self.conv16(out)))
+        out = self.relu(self.bn16(self.conv16(outer)))
         out = self.relu(self.bn17(self.conv17(out))) 
-        out = self.relu(self.bn18(self.conv18(out)))
+        outer = self.relu(self.bn18(self.conv18(out)) + outer)
 
         # ---
-        out = self.relu(self.bn19(self.conv19(out))) 
+        out = self.relu(self.bn19(self.conv19(outer))) 
         out = self.relu(self.bn20(self.conv20(out)))
-        out = self.relu(self.bn21(self.conv21(out))) 
+        outer = self.relu(self.bn21(self.conv21(out)) + outer) 
        
         # --- 
-        out = self.relu(self.bn22(self.conv22(out)))
+        out = self.relu(self.bn22(self.conv22(outer)))
         out = self.relu(self.bn23(self.conv23(out))) 
-        outer = self.relu(self.bn24(self.conv24(out)))
+        outer = self.relu(self.bn24(self.conv24(out)) + outer)
             
         # ---
-        out = self.relu(self.bn25(self.conv25(out))) 
+        out = self.relu(self.bn25(self.conv25(outer))) 
         out = self.relu(self.bn26(self.conv26(out)))
         out = self.bn27(self.conv27(out)) 
-        out = self.relu(self.bn28(self.conv28(outer)) + out)
+        outer = self.relu(self.bn28(self.conv28(outer)) + out)
 
         # ---
-        out = self.relu(self.bn29(self.conv29(out))) 
+        out = self.relu(self.bn29(self.conv29(outer))) 
         out = self.relu(self.bn30(self.conv30(out)))
-        out = self.relu(self.bn31(self.conv31(out))) 
+        outer = self.relu(self.bn31(self.conv31(out)) + outer) 
     
         # ---
-        out = self.relu(self.bn32(self.conv32(out)))
+        out = self.relu(self.bn32(self.conv32(outer)))
         out = self.relu(self.bn33(self.conv33(out))) 
-        out = self.relu(self.bn34(self.conv34(out)))
+        outer = self.relu(self.bn34(self.conv34(out)) + outer)
 
         # ---
-        out = self.relu(self.bn35(self.conv35(out))) 
+        out = self.relu(self.bn35(self.conv35(outer))) 
         out = self.relu(self.bn36(self.conv36(out)))
-        out = self.relu(self.bn37(self.conv37(out))) 
+        outer = self.relu(self.bn37(self.conv37(out)) + outer) 
 
         # ----
-        out = self.relu(self.bn38(self.conv38(out)))
+        out = self.relu(self.bn38(self.conv38(outer)))
         out = self.relu(self.bn39(self.conv39(out))) 
-        out = self.relu(self.bn40(self.conv40(out)))
+        outer = self.relu(self.bn40(self.conv40(out)) + outer)
     
         # ---
-        out = self.relu(self.bn41(self.conv41(out))) 
+        out = self.relu(self.bn41(self.conv41(outer))) 
         out = self.relu(self.bn42(self.conv42(out)))
-        outer = self.relu(self.bn43(self.conv43(out))) 
+        outer = self.relu(self.bn43(self.conv43(out)) + outer) 
 
         # ---
-        out = self.relu(self.bn44(self.conv44(out)))
+        out = self.relu(self.bn44(self.conv44(outer)))
         out = self.relu(self.bn45(self.conv45(out))) 
         out = self.bn46(self.conv46(out))
-        out = self.relu(self.bn47(self.conv47(outer)) + out) 
+        outer = self.relu(self.bn47(self.conv47(outer)) + out) 
 
         # ---
-        out = self.relu(self.bn48(self.conv48(out)))
+        out = self.relu(self.bn48(self.conv48(outer)))
         out = self.relu(self.bn49(self.conv49(out))) 
-        out = self.relu(self.bn50(self.conv50(out)))
+        outer = self.relu(self.bn50(self.conv50(out)) + outer)
 
         # ---
-        out = self.relu(self.bn51(self.conv51(out))) 
+        out = self.relu(self.bn51(self.conv51(outer))) 
         out = self.relu(self.bn52(self.conv52(out)))
-        out = self.relu(self.bn53(self.conv53(out))) 
+        out = self.relu(self.bn53(self.conv53(out)) + outer) 
 
         # ---
-        out = F.avg_pool2d(out, out.size()[3])
+        out = self.avgpool(out) 
 
-        out = out.view(out.size(0), -1)
+        out = torch.flatten(out,1)
+        #out.view(out.size(0), -1)
         out = self.linear1(out)
 
         if labels:
