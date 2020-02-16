@@ -81,10 +81,14 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
-                if layer_remove_per >= upper_prune_limit:
+                if ((layer_remove_per >= upper_prune_limit) and (parent_k!='input')):
                     local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
                     cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
                 
+                elif ((layer_remove_per >= 0.97) and (parent_k=='input')):
+                    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
+                    cutoff_value_local   = local_sorted_weights[np.round(0.97 * local_sorted_weights.shape[0]).astype('int')]
+
                 else:
                     cutoff_value_local = cutoff_value
 
@@ -300,9 +304,12 @@ if __name__ == "__main__":
     possible_prune_percents   = np.arange(args.lower_prune_per, args.upper_prune_per, step=args.prune_per_step)
 
 
-    true_prune_percent, best_model_acc, model, optimizer = train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, possible_prune_percents[args.key_id-1], args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
+    for values in range(args.key_id):
+    
+        true_prune_percent, best_model_acc, model, optimizer = train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, possible_prune_percents[values], args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
+    #true_prune_percent, best_model_acc, model, optimizer = train(args.Epoch, args.Batch_size, args.Lr, args.Dataset, args.Dims, args.Milestones, args.Expt_rerun, args.Opt, args.Weight_decay, args.Model, args.Gamma, args.Nesterov, args.Device_ids, args.Retrain, args.Retrain_mask, args.Labels_file, args.Labels_children_file, possible_prune_percents[args.key_id-1], args.parent_key, args.children_key, args.parent_clusters, args.children_clusters, args.upper_prune_limit)
 
-    print('Saving best model: True prune percent %f, Best Acc. %f'%(true_prune_percent, best_model_acc))
-    save_checkpoint(args.Epoch, 0, model, optimizer, args.Save_dir+'/0/logits_'+str(true_prune_percent)+'.pkl')
+        print('Saving best model: True prune percent %f, Best Acc. %f'%(true_prune_percent, best_model_acc))
+        save_checkpoint(args.Epoch, 0, model, optimizer, args.Save_dir+'/0/logits_'+str(true_prune_percent)+'.pkl')
             
         
