@@ -36,6 +36,6 @@ class MLP(nn.Module):
         return x
 
     def setup_masks(self, mask):
-        self.fc1.set_mask(torch.Tensor(mask['fc1.weight']).cuda())
+        #self.fc1.set_mask(torch.Tensor(mask['fc1.weight']).cuda())
         self.fc2.set_mask(torch.Tensor(mask['fc2.weight']).cuda())
         self.fc3.set_mask(torch.Tensor(mask['fc3.weight']).cuda())
