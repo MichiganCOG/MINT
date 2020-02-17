@@ -30,6 +30,7 @@ import torch.optim       as optim
 import torch.utils.data  as Data
 import matplotlib.pyplot as plt
 
+from tqdm                      import tqdm
 from utils                     import save_checkpoint, load_checkpoint, accuracy
 from matplotlib                import cm
 from torchvision               import datasets, transforms
@@ -76,8 +77,10 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
         for num_layers in range(len(parent_key)):
             parent_k   = parent_key[num_layers]
             children_k = children_key[num_layers]
-
             for child in range(clusters_children[num_layers]):
+
+                #if num_layers == 31 and child == 7:
+                #    import pdb; pdb.set_trace()
 
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
@@ -90,16 +93,28 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                     cutoff_value_local = cutoff_value
 
                 # END IF
+                if num_layers == 31 and child == 7:
+                    for group_1 in tqdm(range(clusters[num_layers])):
+                        if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
+                            for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
+                                for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
+                                    init_weights[children_k][group_c, group_p] = 0.
 
-                for group_1 in range(clusters[num_layers]):
-                    if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
-                        for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
-                            for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                                init_weights[children_k][group_c, group_p] = 0.
+                        # END IF
 
-                    # END IF
+                    # END FOR
+                    import pdb; pdb.set_trace()
+                else:
 
-                # END FOR
+                    for group_1 in range(clusters[num_layers]):
+                        if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
+                            for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
+                                for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
+                                    init_weights[children_k][group_c, group_p] = 0.
+
+                        # END IF
+
+                    # END FOR
 
             # END FOR
 
@@ -158,7 +173,6 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # Load Data
     trainloader, testloader, extraloader = data_loader(Dataset, Batch_size)
 
-   
     # Check if GPU is available (CUDA)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
@@ -199,7 +213,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     best_model     = None
 
     # Training Loop
-    for epoch in range(Epoch):
+    for epoch in tqdm(range(Epoch)):
         running_loss = 0.0
 
         # Setup Model To Train 
@@ -207,7 +221,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
         start_time = time.time()
 
-        for step, data in enumerate(trainloader):
+        for step, data in enumerate(tqdm(trainloader)):
     
             # Extract Data From Loader
             x_input, y_label = data

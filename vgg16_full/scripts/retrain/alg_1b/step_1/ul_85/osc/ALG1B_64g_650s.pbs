@@ -1,20 +1,26 @@
 #!/bin/bash
-#SBATCH --job-name="ALG1B_CIFAR10_VGG16_BN_FULL_FULL_64g_650s_650s_RETRAIN"
-#SBATCH -N 1
-#SBATCH --array=1-31
-#SBATCH --cpus-per-task=6
-#SBATCH --gres=gpu:1
-#SBATCH --time=05:00:00  # Time in Minutes
-#SBATCH --output="ALG1B_CIFAR10_VGG16_BN_FULL_FULL_64g_650s_650s_%A_%a_RETRAIN.out"
+#PBS -N ALG1B_CIFAR10_VGG16_BN_FULL_FULL_64g_650s_650s_RETRAIN
+#PBS -t 1-31%10
+#PBS -j oe
+#PBS -l walltime=02:00:00
+#PBS -l nodes=1:ppn=16:gpus=1
 
-export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
+
+IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))
+echo I got allocated the following gpus
+for g in "${allocatedgpus[@]}"; do
+    echo "gpu: $g"
+done
+
+
+export CUDA_VISIBLE_DEVICES="${allocatedgpus[0]}"
 
 echo "Start Job"
 
-cd /z/home/madantrg/ViP/
+cd ~/MINT/
 source setup.sh 
 
-cd /z/home/madantrg/Pruning/vgg16_full/
+cd MINT/vgg16_full
 
 python retrain_stage3.py \
 --Epoch 300 \
@@ -43,6 +49,6 @@ python retrain_stage3.py \
 --lower_prune_per 0.85 \
 --prune_per_step 0.001 \
 --Save_dir BASELINE_CIFAR10_VGG16_BN_FULL_RETRAIN_1 \
---key_id $SLURM_ARRAY_TASK_ID
+--key_id $PBS_ARRAYID
 
 echo "end"
