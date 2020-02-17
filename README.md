@@ -10,7 +10,7 @@
 | Baseline  (ours)             |       N/A             |    98.59    |
 | Structured Sparsity Learning |       90.61 (83.5)    |    98.47    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
 | Network Slimming             |       95.68 (84.4)    |    98.51    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
-| MINT (b) (ours)              |       88.45           |    98.43    |
+| MINT (b) (ours)              |       89.45           |    98.52    |
 ----------------------------------------------------------------------
 
 ### Results Compilation
