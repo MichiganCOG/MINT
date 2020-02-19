@@ -93,28 +93,29 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                     cutoff_value_local = cutoff_value
 
                 # END IF
-                if num_layers == 31 and child == 7:
-                    for group_1 in tqdm(range(clusters[num_layers])):
-                        if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
-                            for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
-                                for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                                    init_weights[children_k][group_c, group_p] = 0.
+                #if num_layers == 31 and child == 7:
+                for group_1 in np.where(I_parent[str(num_layers)][child, :] <= cutoff_value_local)[0]:
+                    group_p, group_c = np.meshgrid(np.where(labels[str(num_layers)]==group_1)[0], np.where(labels_children[str(num_layers)]==child)[0])
+                    init_weights[children_k].detach().cpu()[group_c, group_p] = 0.
+                    #for group_1 in tqdm(range(clusters[num_layers])):
+                    #    if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
+                         #for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
+                         #    for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
 
-                        # END IF
+                    #    # END IF
 
-                    # END FOR
-                    import pdb; pdb.set_trace()
-                else:
+                    ## END FOR
+                #else:
 
-                    for group_1 in range(clusters[num_layers]):
-                        if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
-                            for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
-                                for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                                    init_weights[children_k][group_c, group_p] = 0.
+                #    for group_1 in range(clusters[num_layers]):
+                #        if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
+                #            for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
+                #                for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
+                #                    init_weights[children_k][group_c, group_p] = 0.
 
-                        # END IF
+                #        # END IF
 
-                    # END FOR
+                #    # END FOR
 
             # END FOR
 

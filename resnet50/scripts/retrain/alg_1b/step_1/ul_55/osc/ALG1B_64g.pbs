@@ -1,8 +1,9 @@
 #!/bin/bash
 #PBS -N ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN
+#PBS -t 1-4
 #PBS -j oe
-#PBS -l walltime=01:00:00
-#PBS -l nodes=1:ppn=16:gpus=1
+#PBS -l walltime=100:00:00
+#PBS -l nodes=1:ppn=20:gpus=1
 
 IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))
 echo I got allocated the following gpus
@@ -21,7 +22,7 @@ cd MINT/resnet50
 
 python retrain_stage3.py \
 --Epoch 30 \
---Batch_size 32 \
+--Batch_size 64 \
 --Lr 0.01 \
 --Dataset IMAGENET \
 --Dims 1000 \
@@ -59,9 +60,9 @@ conv51.weight conv52.weight conv53.weight \
 64 64 \
 --upper_prune_limit 0.55 \
 --upper_prune_per 0.95 \
---lower_prune_per 0.1 \
---prune_per_step 0.012 \
+--lower_prune_per 0.10 \
+--prune_per_step 0.01 \
 --Save_dir BASELINE_IMAGENET2012_RESNET50_RETRAIN_1 \
---key_id 1 
+--key_id $PBS_ARRAYID 
 
 echo "End Job"

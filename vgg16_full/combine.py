@@ -36,7 +36,7 @@ if __name__=='__main__':
 
     args = parser.parse_args()
 
-    load_keys  = ['_conv1.weight_conv2.weight', '_conv7.weight_conv8.weight', 
+    load_keys  = ['_conv1.weight_conv2.weight', '_conv6.weight_conv7.weight', '_conv7.weight_conv8.weight', 
                   '_conv8.weight_conv9.weight', '_conv9.weight_conv10.weight','_conv10.weight_conv11.weight',
                   '_conv11.weight_conv12.weight','_conv12.weight_conv13.weight','_conv13.weight_linear1.weight']
 

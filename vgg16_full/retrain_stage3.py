@@ -82,9 +82,17 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
-                if layer_remove_per >= upper_prune_limit:
+                if ((layer_remove_per >= upper_prune_limit) and (parent_k!='conv6.weight')):
                     local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
                     cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
+                
+                elif ((layer_remove_per >= 0.4) and (parent_k=='conv6.weight')):
+                    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
+                    cutoff_value_local   = local_sorted_weights[np.round(0.4 * local_sorted_weights.shape[0]).astype('int')]
+                
+                #if layer_remove_per >= upper_prune_limit:
+                #    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
+                #    cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
                 
                 else:
                     cutoff_value_local = cutoff_value
@@ -178,6 +186,9 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     # Obtain masks
     mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
+
+    print('Requested prune percentage is %f'%(prune_percent))
+    print('True pruning percentage is %f'%(true_prune_percent))
 
     # Apply masks
     model.setup_masks(mask)

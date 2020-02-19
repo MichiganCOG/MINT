@@ -91,15 +91,19 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
 
                 # END IF
 
-                for group_1 in range(clusters[num_layers]):
-                    if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
-                        for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
-                            for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                                init_weights[children_k][group_c, group_p] = 0.
+                for group_1 in np.where(I_parent[str(num_layers)][child, :] <= cutoff_value_local)[0]:
+                    group_p, group_c = np.meshgrid(np.where(labels[str(num_layers)]==group_1)[0], np.where(labels_children[str(num_layers)]==child)[0])
+                    init_weights[children_k].detach().cpu()[group_c, group_p] = 0.
 
-                    # END IF
+                #for group_1 in range(clusters[num_layers]):
+                #    if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
+                #        for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
+                #            for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
+                #                init_weights[children_k][group_c, group_p] = 0.
 
-                # END FOR
+                #    # END IF
+
+                ## END FOR
 
             # END FOR
 
@@ -179,6 +183,9 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # Obtain masks
     mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
 
+    print('Requested prune percentage is %f'%(prune_percent))
+    print('True pruning percentage is %f '%(true_prune_percent))
+
     # Apply masks
     model.setup_masks(mask)
 
@@ -201,11 +208,10 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # Training Loop
     for epoch in range(Epoch):
         running_loss = 0.0
+        print('Epoch: ', epoch)
 
         # Setup Model To Train 
         model.train()
-
-        start_time = time.time()
 
         for step, data in enumerate(trainloader):
     
@@ -229,8 +235,10 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
                 loss.backward()
                 optimizer.step()
     
+                running_loss += loss.item()
+
                 ## Add Loss Element
-                if np.isnan(loss.item()):
+                if np.isnan(running_loss):
                     import pdb; pdb.set_trace()
 
                 # END IF
@@ -238,18 +246,23 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
             # END IF
 
             ########################### Data Loader + Training ##################################
+
+            if step % 100 == 0:
+                print('Epoch: ', epoch, '| train loss: %.4f' % (running_loss/100.))
+                running_loss = 0.0
+
+            # END IF
  
    
         scheduler.step()
 
-        end_time = time.time()
- 
         epoch_acc = 100*accuracy(model, testloader, device)
 
 
         if best_model_acc < epoch_acc:
             best_model_acc = epoch_acc
             best_model     = copy.deepcopy(model)
+            save_checkpoint(epoch, 0, model, optimizer, args.Save_dir+'/0/logits_'+str(true_prune_percent)+'.pkl')
     
     # END FOR
 
