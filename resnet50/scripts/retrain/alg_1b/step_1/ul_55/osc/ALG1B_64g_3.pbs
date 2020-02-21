@@ -1,6 +1,6 @@
 #!/bin/bash
-#PBS -N ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN
-#PBS -t 1
+#PBS -N ALG1B_IMAGENET2012_RESNET50_64g_3_RETRAIN
+#PBS -t 3 
 #PBS -j oe
 #PBS -l walltime=100:00:00
 #PBS -l nodes=1:ppn=20:gpus=1
@@ -21,16 +21,16 @@ source setup.sh
 cd MINT/resnet50
 
 python retrain_stage3.py \
---Epoch 14 \
+--Epoch 19 \
 --Batch_size 64 \
 --Lr 0.001 \
 --Dataset IMAGENET \
 --Dims 1000 \
 --Model resnet \
---Milestones 4 \
+--Milestones 9 \
 --Weight_decay 0.0005 \
 --Gamma 0.1 \
---Retrain BASELINE_IMAGENET2012_RESNET50/0/logits_53.2144243945449.pkl \
+--Retrain BASELINE_IMAGENET2012_RESNET50/0/logits_43.142143585397015.pkl \
 --Retrain_mask BASELINE_IMAGENET2012_RESNET50/0/I_parent_64g_5s_1b.npy \
 --Labels_file BASELINE_IMAGENET2012_RESNET50/0/Labels_64g_5s_1b.npy \
 --Labels_children_file BASELINE_IMAGENET2012_RESNET50/0/Labels_children_64g_5s_1b.npy \
