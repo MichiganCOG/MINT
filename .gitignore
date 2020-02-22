@@ -1,4 +1,5 @@
 *.o*
+pyt_env/
 results/*
 *.pkl
 */data/*

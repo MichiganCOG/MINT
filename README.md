@@ -4,14 +4,14 @@
 ```diff
 - Incomplete 
 ```
-----------------------------------------------------------------------
-| Method                       |    Params Pruned      | Performance |
-|:----------------------------:|:---------------------:|:-----------:|
-| Baseline  (ours)             |       N/A             |    98.59    |
-| Structured Sparsity Learning |       90.61 (83.5)    |    98.47    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
-| Network Slimming             |       95.68 (84.4)    |    98.51    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
-| MINT (b) (ours)              |       89.45           |    98.52    |
-----------------------------------------------------------------------
+------------------------------------------------------------------------------
+| Method                       |        Params Pruned          | Performance |
+|:----------------------------:|:-----------------------------:|:-----------:|
+| Baseline  (ours)             |       N/A                     |    98.59    |
+| Structured Sparsity Learning |       90.61 (83.5) (90.95)    |    98.47    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
+| Network Slimming             |       95.68 (84.4) (96.00)    |    98.51    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
+| MINT (b) (ours)              |       96.208                  |    98.47    | (Requested Prune percent: 0.645800, True Prune Percent: 3.792, UL: 0.99, Parameters: 150000)
+------------------------------------------------------------------------------
 
 ### Results Compilation
 #### Group variations 
@@ -51,6 +51,12 @@
 - Removed 30 and 40 groups and ran results on 1 system, hyaloidcanal. Results seem more consistent. 
 - Current weird trend is that in increasing samples beyond a point, number of params to prune seems to dip. Confirming this by running 650samples/class experiment. 550samples/class seems to an anomaly rather than the trend.
 - Imposing an 80% limit still gives 13\% pruning somehow! Look into this ASAP. Although this ceiling seems to hold, in terms of fixed upper limit (whatever is computed) 
+
+
+- Command to get current best results
+python retrain\_stage3.py --Epoch 30 --Batch\_size 256 --Lr 0.1 --Dataset MNIST --Dims 10 --Expt\_rerun 1 --Milestones 10 20 --Opt sgd --Weight\_decay 0.0001 --Model mlp --Gamma 0.1 --Nesterov --Device\_ids 0 --Retrain BASELINE\_MNIST\_MLP\_FULL/0/logits\_best.pkl --Retrain\_mask BASELINE\_MNIST\_MLP\_FULL/0/I\_parent\_peak\_1b.npy --Labels\_file BASELINE\_MNIST\_MLP\_FULL/0/Labels\_peak\_1b.npy --Labels\_children\_file BASELINE\_MNIST\_MLP\_FULL/0/Labels\_children\_peak\_1b.npy --parent\_key fc1.weight --children\_key fc2.weight --parent\_clusters 250 --children\_clusters 100 --upper\_prune\_limit 0.99 --upper\_prune\_per 0.65 --lower\_prune\_per 0.639 --prune\_per\_step 0.0001 --Save\_dir BASELINE\_MNIST\_MLP\_FULL\_RETRAIN\_1 --key\_id 111
+
+
 
 ### Experiment 2: [Pruning filters for efficient Convnets](https://openreview.net/pdf?id=rJqFGTslg)
 ```diff
@@ -108,7 +114,7 @@ Untouched params = 14977728 - 13275136  = 1702592
 --------------------------------------------------------------
 | Model                        | Params Pruned | Performance |
 |:----------------------------:|:-------------:|:-----------:|
-| ResNet56(ours)               |       N/A     |    93.98    |
+| ResNet56(ours)               |       N/A     |    92.55    |
 | GAL                          |      11.80    |    93.38    |
 | ResNet56-Pruned-A            |      14.10    |    93.06    |
 | NISP                         |      42.40    |    93.01    |
@@ -197,7 +203,6 @@ Untouched params = 848944 - 785664 = 63280
 | OED 0.04                     |      25.68    |    73.55    |
 | SSS                          |      27.05    |    74.18    |
 | ThiNet-50                    |      51.45    |    71.01    |
-| MINT (b) (ours)              |      --.--    |    --.--    | (Prune: --.--, Acc: --.--, Params: ------)
 | MINT (b) (ours)              |      --.--    |    --.--    | (Prune: --.--, Acc: --.--, Params: ------)
 --------------------------------------------------------------
 

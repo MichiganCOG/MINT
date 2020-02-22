@@ -4,7 +4,10 @@ import torch
 
 import numpy as np
 
-def compare(orig_file, compressed_file):
+def compare_performance(orig_file, compressed_file):
+
+
+def compare_compression(orig_file, compressed_file):
 
     assert(len(orig_file.keys()) == len(compressed_file.keys()))
 
@@ -32,4 +35,5 @@ if __name__=="__main__":
     for compressed_file in ['/z/home/madantrg/Pruning/resnet56/results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_40.14502382697947.pkl','/z/home/madantrg/Pruning/resnet56/results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_43.36395711143695.pkl']:
         compressed_file = torch.load(compressed_file)['state_dict']
 
+        # Performance
         compare(orig_file, compressed_file)

@@ -188,6 +188,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     # Apply masks
     model.setup_masks(mask)
+    model = torch.nn.DataParallel(model, device_ids=Device_ids)
 
     logsoftmax = nn.LogSoftmax()
 

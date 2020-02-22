@@ -175,7 +175,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     trainloader, testloader, extraloader = data_loader(Dataset, Batch_size)
 
     # Check if GPU is available (CUDA)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Load Network
     if Model == 'resnet':
@@ -195,7 +195,9 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
 
     # Apply masks
-    model.setup_masks(mask)
+    model.setup_masks(mask, device)
+
+    model = torch.nn.DataParallel(model, device_ids=Device_ids)
 
     logsoftmax = nn.LogSoftmax()
 
