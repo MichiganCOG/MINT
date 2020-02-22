@@ -82,13 +82,13 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
-                if ((layer_remove_per >= upper_prune_limit) and (parent_k!='conv6.weight')):
+                if ((layer_remove_per >= upper_prune_limit)):
                     local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
                     cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
                 
-                elif ((layer_remove_per >= 0.4) and (parent_k=='conv6.weight')):
-                    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
-                    cutoff_value_local   = local_sorted_weights[np.round(0.4 * local_sorted_weights.shape[0]).astype('int')]
+                #elif ((layer_remove_per >= 0.4) and (parent_k=='conv6.weight')):
+                #    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
+                #    cutoff_value_local   = local_sorted_weights[np.round(0.4 * local_sorted_weights.shape[0]).astype('int')]
                 
                 #if layer_remove_per >= upper_prune_limit:
                 #    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
