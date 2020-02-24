@@ -34,10 +34,10 @@ python retrain_stage3.py \
 --Retrain_mask BASELINE_CIFAR10_VGG16_BN_FULL/0/I_parent_64g_650s_1b.npy \
 --Labels_file BASELINE_CIFAR10_VGG16_BN_FULL/0/Labels_64g_650s_1b.npy \
 --Labels_children_file BASELINE_CIFAR10_VGG16_BN_FULL/0/Labels_children_64g_650s_1b.npy \
---parent_key   conv1.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
---children_key conv2.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
---parent_clusters   64 64 64 64 64 64 64 64 64 \
---children_clusters 64 64 64 64 64 64 64 64 64 \
+--parent_key   conv1.weight conv2.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight \
+--children_key conv2.weight conv3.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight \
+--parent_clusters   64 64 64 64 64 64 64 64 64 64 \
+--children_clusters 64 64 64 64 64 64 64 64 64 64 \
 --upper_prune_limit 0.85 \
 --upper_prune_per 0.8 \
 --lower_prune_per 0.7 \

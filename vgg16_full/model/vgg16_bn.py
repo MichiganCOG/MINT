@@ -103,7 +103,7 @@ class VGG16_bn(nn.Module):
 
         self.conv2.set_mask(torch.Tensor(masks['conv2.weight']).cuda())
         #self.conv3.set_mask(torch.Tensor(masks['conv3.weight']).cuda())
-        #self.conv4.set_mask(torch.Tensor(masks['conv4.weight']).cuda())
+        self.conv4.set_mask(torch.Tensor(masks['conv4.weight']).cuda())
         #self.conv5.set_mask(torch.Tensor(masks['conv5.weight']).cuda())
         #self.conv6.set_mask(torch.Tensor(masks['conv6.weight']).cuda())
         #self.conv7.set_mask(torch.Tensor(masks['conv7.weight']).cuda())

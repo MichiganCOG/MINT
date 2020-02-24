@@ -82,13 +82,14 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
+                #if ((layer_remove_per >= upper_prune_limit) and parent_k!='conv2.weight'):
                 if ((layer_remove_per >= upper_prune_limit)):
                     local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
                     cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
                 
-                #elif ((layer_remove_per >= 0.4) and (parent_k=='conv6.weight')):
+                #elif ((layer_remove_per >= 0.25) and (parent_k=='conv2.weight')):
                 #    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
-                #    cutoff_value_local   = local_sorted_weights[np.round(0.4 * local_sorted_weights.shape[0]).astype('int')]
+                #    cutoff_value_local   = local_sorted_weights[np.round(0.25 * local_sorted_weights.shape[0]).astype('int')]
                 
                 #if layer_remove_per >= upper_prune_limit:
                 #    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
@@ -103,8 +104,10 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                     if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
                         for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
                             for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                                init_weights[children_k][group_c, group_p] = 0.
-
+                                try:
+                                    init_weights[children_k][group_c, group_p] = 0.
+                                except:
+                                    import pdb; pdb.set_trace()
                     # END IF
 
                 # END FOR
@@ -189,6 +192,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     print('Requested prune percentage is %f'%(prune_percent))
     print('True pruning percentage is %f'%(true_prune_percent))
+    print('Total parameter count is %d'%(total_count))
 
     # Apply masks
     model.setup_masks(mask)
