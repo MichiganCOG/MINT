@@ -21,9 +21,9 @@ source setup.sh
 cd MINT/resnet50
 
 python retrain_stage3.py \
---Epoch 19 \
+--Epoch 30 \
 --Batch_size 64 \
---Lr 0.001 \
+--Lr 0.0001 \
 --Dataset IMAGENET \
 --Dims 1000 \
 --Model resnet \
