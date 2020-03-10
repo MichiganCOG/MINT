@@ -10,7 +10,7 @@
 | Baseline  (ours)             |       N/A                     |    98.59    |
 | Structured Sparsity Learning |       90.61 (83.5) (90.95)    |    98.47    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
 | Network Slimming             |       95.68 (84.4) (96.00)    |    98.51    | Original paper edits all layers, to be fair we evaluate pruning beyond layer 1 only.
-| MINT (b) (ours)              |       96.208                  |    98.47    | (Requested Prune percent: 0.645800, True Prune Percent: 3.792, UL: 0.99, Parameters: 150000)
+| MINT (b) (ours)              |       96.01                   |    98.47    | (Requested Prune percent: 0.645800, True Prune Percent: 3.792, UL: 0.99, Parameters: 150000)
 ------------------------------------------------------------------------------
 
 ### Results Compilation
@@ -18,27 +18,37 @@
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     5        |       250           |    86.47        |     98.50        | (Requested Prune Percent: 0.424) 
-|   (b)   |     N/A      |     10       |       250           |    88.23        |     98.56        | (Requested Prune Percent: 0.415) 
-|   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
-|   (b)   |     N/A      |     50       |       250           |    91.87        |     98.52        | (Requested Prune Percent: 0.376)
+|   (b)   |     N/A      |     5        |       250           |    86.27        |     98.--        |  
+|   (b)   |     N/A      |     10       |       250           |    88.23        |     98.56        |  
+|   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | 
+|   (b)   |     N/A      |     50       |       250           |    91.87        |     98.52        | 
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     0.8      |     5        |       250           |    86.47        |     98.50        | (Requested Prune Percent: 0.424) 
-|   (b)   |     0.8      |     10       |       250           |    86.00        |     98.53        | (Requested Prune Percent: 0.676)
-|   (b)   |     0.8      |     20       |       250           |    76.96        |     98.62        | (Requested Prune Percent: 0.287)
-|   (b)   |     0.8      |     50       |       250           |    77.32        |     98.60        | (Requested Prune Percent: 0.316)
+|   (b)   |     0.8      |     5        |       250           |    86.54        |     98.--        |  
+|   (b)   |     0.8      |     10       |       250           |    86.00        |     98.53        | 
+|   (b)   |     0.8      |     20       |       250           |    76.96        |     98.62        | 
+|   (b)   |     0.8      |     50       |       250           |    77.32        |     98.60        | 
+|:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
+|   (b)   |     0.1      |     5        |       250           |    11.96        |     98.--        |  
+|   (b)   |     0.2      |     10       |       250           |    86.00        |     98.53        | 
+|   (b)   |     0.4      |     20       |       250           |    76.96        |     98.62        | 
+|   (b)   |     1.0      |     50       |       250           |    77.32        |     98.60        | 
+|:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
+|   (b)   |     0.0      |     5        |       250           |    3.96         |     98.--        |  
+|   (b)   |     0.04     |     10       |       250           |    86.00        |     98.53        | 
+|   (b)   |     0.16     |     20       |       250           |    76.96        |     98.62        | 
+|   (b)   |     1.0      |     50       |       250           |    77.32        |     98.60        | 
 ----------------------------------------------------------------------------------------------------
 
 #### Sample variations
 ----------------------------------------------------------------------------------------------------
 | Version | Upper limit  |   Groups     |  Samples per class  | Params Pruned   |    Performance   |
 |:-------:|:------------:|:------------:|:-------------------:|:---------------:|:----------------:|
-|   (b)   |     N/A      |     20       |       150           |    85.35        |     98.58        | (Requested Prune Percent: 0.352) 
-|   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | (Requested Prune Percent: 0.340)
-|   (b)   |     N/A      |     20       |       350           |    88.48        |     98.55        | (Requested Prune Percent: 0.364)
-|   (b)   |     N/A      |     20       |       450           |    88.72        |     98.51        | (Requested Prune Percent: 0.405)
-|   (b)   |     N/A      |     20       |       550           |    79.41        |     98.54        | (Requested Prune Percent: 0.333)
-|   (b)   |     N/A      |     20       |       650           |    89.70        |     98.53        | (Requested Prune Percent: 0.429)
+|   (b)   |     N/A      |     20       |       150           |    85.35        |     98.58        |  
+|   (b)   |     N/A      |     20       |       250           |    88.48        |     98.53        | 
+|   (b)   |     N/A      |     20       |       350           |    88.48        |     98.55        | 
+|   (b)   |     N/A      |     20       |       450           |    88.72        |     98.51        | 
+|   (b)   |     N/A      |     20       |       550           |    79.41        |     98.54        | 
+|   (b)   |     N/A      |     20       |       650           |    89.70        |     98.53        | 
 ----------------------------------------------------------------------------------------------------
 ### Notes
 - Anomaly is that increasing groups doesn't linearly help. There is a slight dip in params pruned. 
@@ -72,7 +82,7 @@ python retrain\_stage3.py --Epoch 30 --Batch\_size 256 --Lr 0.1 --Dataset MNIST 
 | SSS                          |      73.80    |    93.02    |
 | GAL-0.05                     |      77.60    |    93.77    |
 | GAL-0.1                      |      82.20    |    93.42    |
-| MINT (b) (ours)              |      80.84    |    93.47    | (Prune: 8.782999, Acc: 93.47, Params: 13275136)
+| MINT (b) (ours)              |      83.43    |    93.43    | (Prune: 15.035583, Params: 14712832)
 --------------------------------------------------------------
 
 
@@ -203,7 +213,11 @@ Untouched params = 848944 - 785664 = 63280
 | OED 0.04                     |      25.68    |    73.55    |
 | SSS                          |      27.05    |    74.18    |
 | ThiNet-50                    |      51.45    |    71.01    |
-| MINT (b) (ours)              |      --.--    |    --.--    | (Prune: --.--, Acc: --.--, Params: ------)
+| MINT (b) (ours)              |      --.--    |    71.54    | (Requested Prune: 0.11201, Retained percent: 46.693903, Epochs: 130)
+| MINT (b) (ours)              |      --.--    |    71.41    | (Requested Prune: 0.114,   Retained percent: 46.020009, Epochs: 130)
+| MINT (b) (ours)              |      --.--    |    71.--    | (Requested Prune: 0.---,   Retained percent: 43.142143, Epochs: 100)
+| MINT (b) (ours)              |      --.--    |    71.--    | (Requested Prune: 0.114,   Retained percent: )
+| MINT (b) (ours)              |      --.--    |    71.--    | (Requested Prune: 0.114,   Retained percent: )
 --------------------------------------------------------------
 
 ### ResNet56 Layer Breakdown (Baseline)
@@ -271,3 +285,7 @@ Untouched params = 848944 - 785664 = 63280
 ----------------------------------------------------------------------------
 
 Untouched params = 848944 - 785664 = 63280
+
+### Notes
+- ``` python
+python retrain_stage3.py --Epoch 100 --Batch_size 64 --Lr 0.1 --Dataset IMAGENET --Dims 1000 --Model resnet --Milestones 30 60 90 --Weight_decay 0.0001 --Gamma 0.1 --Device_ids 0 --Retrain BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl --Retrain_mask BASELINE_IMAGENET2012_RESNET50/0/I_parent_64g_5s_1b.npy --Labels_file BASELINE_IMAGENET2012_RESNET50/0/Labels_64g_5s_1b.npy --Labels_children_file BASELINE_IMAGENET2012_RESNET50/0/Labels_children_64g_5s_1b.npy --parent_key conv1.weight conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight conv19.weight conv20.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight conv37.weight conv38.weight conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight --children_key  conv2.weight conv3.weight conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight conv14.weight conv15.weight conv16.weight conv17.weight conv18.weight conv19.weight conv20.weight conv21.weight conv22.weight conv23.weight conv24.weight conv25.weight conv26.weight conv27.weight conv28.weight conv29.weight conv30.weight conv31.weight conv32.weight conv33.weight conv34.weight conv35.weight conv36.weight conv37.weight conv38.weight conv39.weight conv40.weight conv41.weight conv42.weight conv43.weight conv44.weight conv45.weight conv46.weight conv47.weight conv48.weight conv49.weight conv50.weight conv51.weight conv52.weight conv53.weight --parent_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 --children_clusters 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 64 --upper_prune_limit 0.55 --upper_prune_per 0.95 --lower_prune_per 0.11201 --prune_per_step 0.01 --Save_dir BASELINE_IMAGENET2012_RESNET50_RETRAIN_1 --key_id 1```
