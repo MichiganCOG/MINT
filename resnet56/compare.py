@@ -1,15 +1,21 @@
 import os
 import sys
+import copy
 import torch
+import scipy.sparse
 
 import numpy               as np
 import torch.nn            as nn
 import torch.nn.functional as F
 
 # Custom Imports
+from pathlib                 import Path
+from torch.optim             import SGD
 from data_handler            import data_loader
 from utils                   import activations, sub_sample_uniform, mi
 from utils                   import save_checkpoint, load_checkpoint, accuracy, mi
+from scipy.sparse            import csr_matrix
+from PIL                     import Image
 
 from model                   import Resnet56_A    as resnet56_a
 from torch.autograd.gradcheck import zero_gradients
@@ -152,17 +158,59 @@ def compare_accuracy(results):
         model.load_state_dict(state_dict)
         results[key]["accuracy"]= 100.*accuracy(model, testloader, device)
 
+        # Temp to gen CSV file for calibration    
+        with torch.no_grad():
+            import csv
+            with open(os.path.split(key)[1]+'.csv', 'w', newline='') as csvfile:
+                spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                for data in testloader:
+                    images, labels = data
+                    images, labels = images.to(device), labels.to(device)
+                    
+                    outputs      = model(images, labels=True)
+                    values, predicted = torch.max(outputs.data, 1)
+                    correct = (predicted == labels).cpu().numpy()
+                    for ite in np.vstack((values.cpu().numpy(), correct.astype('int32'))).T:
+                        spamwriter.writerow(ite.tolist())
+
+    print('-----------------------------------')
+    print('Accuracy Stats For MLP on MNIST')
+    print('-----------------------------------')
+    for key in results.keys():
+        print('File name: %s'%(os.path.split(key)[1]))
+        print('Accuracy: %f'%(results[key]["accuracy"]))
+        print('-----------------------------------')
+    print('\n')
+
 
 def compare_compression(results):
 
     print("Running Compression Comparison")
+    orig_state_dict = None
 
-    for key in results.keys():
+    for key in sorted(results.keys()):
         state_dict = torch.load(key)['state_dict']
 
         if 'best' in key:
             orig_state_dict = torch.load(key)['state_dict']
             results[key]["compression"] = 0.0
+            file_size = 0
+
+            for key_dict in orig_state_dict.keys():
+                if 'bn' in key_dict:
+                    continue
+
+                if len(orig_state_dict[key_dict].cpu().shape) > 2:
+                    last_dim  = np.prod(orig_state_dict[key_dict].cpu().shape[1:])
+                    first_dim = np.prod(orig_state_dict[key_dict].cpu().shape[0])
+                    scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(orig_state_dict[key_dict].cpu().numpy().reshape(first_dim, last_dim)))
+
+                else:
+                    scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(orig_state_dict[key_dict].cpu()))
+
+                file_size += Path(key_dict+'.npz').stat().st_size/(1024*1024.)
+
+            results[key]["memory"] = file_size
 
         else:
             assert(len(orig_state_dict.keys()) == len(state_dict.keys()))
@@ -170,20 +218,46 @@ def compare_compression(results):
 
             total_params = 0
             exist_params = 0
+            file_size 	 = 0
+
 
             for key_dict in orig_state_dict.keys():
+                #total_params = 0
+                #exist_params = 0
 
-                if 'bn' in key:
+                if 'bn' in key_dict:
                     continue
                 non_zero_params = len(np.where(state_dict[key_dict].reshape(-1).cpu()!=0)[0])
 
-                #print('Percentage of parameters removed in layer %s is %f'%(key, non_zero_params/float(orig_file[key].reshape(-1).cpu().shape[0])))
                 exist_params += non_zero_params 
                 total_params += orig_state_dict[key_dict].reshape(-1).shape[0]
 
+                # Save orig and compressed version in CSR format for memory footprint
+                if len(state_dict[key_dict].cpu().shape) > 2:
+                    last_dim  = np.prod(state_dict[key_dict].cpu().shape[1:])
+                    first_dim = np.prod(state_dict[key_dict].cpu().shape[0])
+                    scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(state_dict[key_dict].cpu().numpy().reshape(first_dim, last_dim)))
 
-            #print('Final compression percentage for ResNet56 with logit name %s on CIFAR10 is %f'%(os.path.split(compressed_file)[1], 1 - (exist_params/float(total_params))))
+                else:
+                    scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(state_dict[key_dict].cpu()))
+
+                file_size += Path(key_dict+'.npz').stat().st_size/(1024*1024.)
+                
+                #print('Compression of layer %s is %f'%(key_dict, 1 - (exist_params/float(total_params))))
+
+
             results[key]["compression"] = 1 - (exist_params/float(total_params))
+            results[key]["memory"]      = file_size
+
+    print('-----------------------------------')
+    print('Compression Stats For MLP on MNIST')
+    print('-----------------------------------')
+    for key in results.keys():
+        print('File name: %s'%(os.path.split(key)[1]))
+        print('Compression: %f'%(results[key]["compression"]*100.))
+        print('Memory Footprint: %f Mb'%(results[key]["memory"]))
+        print('-----------------------------------')
+    print('\n')
 
 
 if __name__=="__main__":
@@ -193,10 +267,11 @@ if __name__=="__main__":
 
     results[orig_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
-    for compressed_file in ['results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_40.14502382697947.pkl','results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_43.36395711143695.pkl']:
+    for compressed_file in ['results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_40.14502382697947.pkl', 'results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_43.36395711143695.pkl']:
         results[compressed_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
     # Run Comparisons
-    compare_adversarial(results)
+    #compare_adversarial(results)
     compare_accuracy(results)
-    compare_compression(results)
+    #compare_compression(results)
+    import pdb; pdb.set_trace()
