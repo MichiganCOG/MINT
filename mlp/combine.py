@@ -37,5 +37,6 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     load_keys  = ['_fc1.weight_fc2.weight', '_fc2.weight_fc3.weight']
+    #load_keys  = ['_fc1.weight_fc2.weight']
 
     combine(args.directory, args.prefix, load_keys)

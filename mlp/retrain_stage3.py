@@ -41,11 +41,6 @@ from torch.optim.lr_scheduler  import MultiStepLR
  
 from model                     import MLP           as mlp 
 
-#torch.backends.cudnn.deterministic = True
-#torch.manual_seed(1000)
-#random.seed(1000)
-#torch.manual_seed(1000)
-#np.random.seed(1000)
 
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
         I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
@@ -148,11 +143,9 @@ def set_lr(optimizer, lr_update, utype='const'):
 
 def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Retrain, Retrain_mask, Labels_file, Labels_children_file, prune_percent, parent_key, children_key, parent_clusters, children_clusters, upper_prune_limit):
 
-    #print("Experimental Setup: ", args)
+    print("Experimental Setup: ", args)
 
-    np.random.seed(1993)
     total_acc = []
-
 
     # Load Data
     trainloader, testloader, extraloader = data_loader(Dataset, Batch_size)
