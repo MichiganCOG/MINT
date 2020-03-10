@@ -41,12 +41,6 @@ from torch.optim.lr_scheduler  import MultiStepLR
  
 from model                     import VGG16_bn      as vgg 
 
-#torch.backends.cudnn.deterministic = True
-#torch.manual_seed(1000)
-#random.seed(1000)
-#torch.manual_seed(1000)
-#np.random.seed(1000)
-
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
         I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
         labels          = np.load('results/'+Labels_file, allow_pickle=True).item()
@@ -82,9 +76,13 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 # Pre-compute % of weights to be removed in layer
                 layer_remove_per = float(len(np.where(I_parent[str(num_layers)].reshape(-1) <= cutoff_value)[0]) * (init_weights[children_k].shape[0]/ clusters[num_layers])* (init_weights[children_k].shape[1]/clusters_children[num_layers])) / np.prod(init_weights[children_k].shape[:2])
 
-                if layer_remove_per >= upper_prune_limit:
+                if ((layer_remove_per >= upper_prune_limit) and ((parent_k!='conv4.weight') and (parent_k!='conv5.weight') and (parent_k!='conv6.weight') and (parent_k!='conv7.weight'))):
                     local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
                     cutoff_value_local   = local_sorted_weights[np.round(upper_prune_limit * local_sorted_weights.shape[0]).astype('int')]
+                
+                elif ((layer_remove_per >= 0.45) and ((parent_k=='conv4.weight') or (parent_k=='conv5.weight') or (parent_k=='conv6.weight') or (parent_k=='conv7.weight'))):
+                    local_sorted_weights = np.sort(np.unique(I_parent[str(num_layers)].reshape(-1)))
+                    cutoff_value_local   = local_sorted_weights[np.round(0.45 * local_sorted_weights.shape[0]).astype('int')]
                 
                 else:
                     cutoff_value_local = cutoff_value
@@ -95,8 +93,10 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                     if (I_parent[str(num_layers)][child, group_1] <= cutoff_value_local):
                         for group_p in np.where(labels[str(num_layers)]==group_1)[0]:
                             for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
-                                init_weights[children_k][group_c, group_p] = 0.
-
+                                try:
+                                    init_weights[children_k][group_c, group_p] = 0.
+                                except:
+                                    import pdb; pdb.set_trace()
                     # END IF
 
                 # END FOR
@@ -113,8 +113,13 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
             valid_count = 0
 
             for num_layers in range(len(parent_key)):
+                #total_count = 0
+                #valid_count = 0
+
                 total_count += init_weights[children_key[num_layers]].reshape(-1).shape[0]
                 valid_count += len(np.where(init_weights[children_key[num_layers]].detach().cpu().reshape(-1)!=0.)[0])
+                
+                #print('Compression percent of layer %s is %f'%(children_key[num_layers], 1 - valid_count/float(total_count)))
 
         else:
             valid_count = len(np.where(init_weights[children_key[0]].detach().cpu().reshape(-1)!= 0.0)[0])
@@ -123,7 +128,7 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
 
 
         true_prune_percent = valid_count / float(total_count) * 100.
-
+        #import pdb; pdb.set_trace()
         return mask_weights, true_prune_percent, total_count
 
 
@@ -178,6 +183,10 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     # Obtain masks
     mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
+
+    print('Requested prune percentage is %f'%(prune_percent))
+    print('True pruning percentage is %f'%(true_prune_percent))
+    print('Total parameter count is %d'%(total_count))
 
     # Apply masks
     model.setup_masks(mask)
