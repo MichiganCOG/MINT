@@ -7,4 +7,5 @@ results/*
 *.npy
 *.pdf
 *.tar*
+*.npz
 data/*
