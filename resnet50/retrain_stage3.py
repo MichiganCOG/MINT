@@ -178,10 +178,22 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
     # Retrain Setup 
     # Load old state
-    model.load_state_dict(load_checkpoint(Retrain))
+    state_dict = load_checkpoint(Retrain)
+
+    # Clean keys of compressed file
+    change_if_nec = {}
+    for ite in state_dict.keys():
+        if 'module' in ite:
+            change_if_nec[ite.split('module.')[1]] = state_dict[ite]
+
+    if len(change_if_nec.keys()) > 0:
+        state_dict = change_if_nec
+
+    model.load_state_dict(state_dict)
+
 
     # Obtain masks
-    mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, load_checkpoint(Retrain), upper_prune_limit)
+    mask, true_prune_percent, total_count = gen_mask(Retrain_mask, prune_percent, parent_key, children_key, parent_clusters, children_clusters, Labels_file, Labels_children_file, state_dict, upper_prune_limit)
 
     print('Requested prune percentage is %f'%(prune_percent))
     print('True pruning percentage is %f '%(true_prune_percent))

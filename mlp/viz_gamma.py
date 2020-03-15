@@ -30,11 +30,11 @@ params_gamma_08        = np.array([86.54, 86.21, 76.96, 77.32])
 params_gamma_linear    = np.array([11.96, 17.00, 38.05, 91.87])
 params_gamma_quadratic = np.array([3.96, 3., 6.06, 91.87])
 
-fig, ax = plt.subplots(figsize=(8.1,7.9))
-ax.plot(groups, params_nolimit,  color=Blue[3], linewidth=5, linestyle='--', marker='o', markevery=1, markersize=20, label= 'No Gamma')
-ax.plot(groups, params_gamma_08, color=Purpul[6], linewidth=5, linestyle='--', marker='^', markevery=1, markersize=20, label= 'Gamma = 0.8')
-ax.plot(groups, params_gamma_linear, color=Green[6], linewidth=5, linestyle='--', marker='*', markevery=1, markersize=20, label= 'Gamma = Linear')
-ax.plot(groups, params_gamma_quadratic, color=Allcolor[6], linewidth=5, linestyle='--', marker='x', markevery=1, markersize=20, label= 'Gamma = Quadratic')
+fig, ax = plt.subplots(figsize=(10,7.9))
+ax.plot(groups, params_nolimit,  color=Blue[3], linewidth=5, linestyle='--', marker='o', markevery=1, markersize=20, label= 'No $\gamma$')
+ax.plot(groups, params_gamma_08, color=Purpul[6], linewidth=5, linestyle='--', marker='^', markevery=1, markersize=20, label= '$\gamma = 0.8$')
+ax.plot(groups, params_gamma_linear, color=Green[6], linewidth=5, linestyle='--', marker='*', markevery=1, markersize=20, label= '$\gamma =$ Linear')
+ax.plot(groups, params_gamma_quadratic, color=Allcolor[6], linewidth=5, linestyle='--', marker='x', markevery=1, markersize=20, label= '$\gamma =$ Quadratic')
 
 #pointer = ax.bar(groups,params, width=0.5, color=Purpul[4])
 #for pointer_idx in range(len(pointer)):

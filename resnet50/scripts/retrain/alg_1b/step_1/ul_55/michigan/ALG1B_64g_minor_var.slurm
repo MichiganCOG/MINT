@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name="ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN"
-#SBATCH --output="ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN_64g_%A_%a.out"
+#SBATCH --job-name="ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN_MINOR_VAR"
+#SBATCH --output="ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN_64g_%A_%a_MINOR_VAR.out"
 #SBATCH -N 1               # number of nodes requested
 #SBATCH --partition=lgns27
 #SBATCH --gres=gpu:1
@@ -19,7 +19,7 @@ cd /z/home/madantrg/Pruning/resnet50
 python retrain_stage3.py \
 --Epoch 30 \
 --Batch_size 64 \
---Lr 0.00001 \
+--Lr 0.0001 \
 --Dataset IMAGENET \
 --Dims 1000 \
 --Model resnet \
@@ -59,7 +59,7 @@ conv51.weight conv52.weight conv53.weight \
 --upper_prune_per 0.95 \
 --lower_prune_per 0.10 \
 --prune_per_step 0.01 \
---Save_dir BASELINE_IMAGENET2012_RESNET50_RETRAIN_3 \
+--Save_dir BASELINE_IMAGENET2012_RESNET50_RETRAIN_4 \
 --key_id $SLURM_ARRAY_TASK_ID 
 
 echo "End Job"

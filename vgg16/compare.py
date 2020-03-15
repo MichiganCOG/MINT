@@ -222,11 +222,13 @@ def compare_compression(results):
 
 
             for key_dict in orig_state_dict.keys():
-                total_params = 0
-                exist_params = 0
+                #total_params = 0
+                #exist_params = 0
 
                 if 'bn' in key_dict:
                     continue
+
+
                 non_zero_params = len(np.where(state_dict[key_dict].reshape(-1).cpu()!=0)[0])
 
                 exist_params += non_zero_params 
@@ -243,8 +245,14 @@ def compare_compression(results):
 
                 file_size += Path(key_dict+'.npz').stat().st_size/(1024*1024.)
                 print('Compression of layer %s is %f'%(key_dict, 1 - (exist_params/float(total_params))))
+                #if 1 - exist_params/float(total_params) > 0:
+                #    #import matplotlib.pyplot as plt
+                #    #plt.matshow(torch.sum(torch.abs(state_dict[key_dict]), (2,3)).detach().cpu().numpy())
+                #    #plt.show()
+                #    print('Number of removed parents %d/%d'%(np.where(np.sum(torch.sum(torch.abs(state_dict[key_dict]), (2,3)).detach().cpu().numpy(),0)==0)[0].shape[0], state_dict[key_dict].shape[1]))
 
 
+            import pdb; pdb.set_trace()
             results[key]["compression"] = 1 - (exist_params/float(total_params))
             results[key]["memory"]      = file_size
 
@@ -271,7 +279,7 @@ if __name__=="__main__":
 
     # Run Comparisons
     #compare_class_viz(results)
-    compare_adversarial(results)
+    #compare_adversarial(results)
     #compare_accuracy(results)
-    #compare_compression(results)
+    compare_compression(results)
     import pdb; pdb.set_trace()

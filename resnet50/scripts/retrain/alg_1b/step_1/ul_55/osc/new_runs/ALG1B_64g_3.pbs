@@ -1,33 +1,36 @@
 #!/bin/bash
-#SBATCH --job-name="ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN"
-#SBATCH --output="ALG1B_IMAGENET2012_RESNET50_64g_RETRAIN_64g_%A_%a.out"
-#SBATCH -N 1               # number of nodes requested
-#SBATCH --partition=lgns27
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=16
-#SBATCH -t 80:00:00         # run time (hh:mm:ss) - 1.5 hours
-#SBATCH --array=1
-echo ${SLURM_JOB_GPUS}
-export CUDA_VISIBLE_DEVICES="${SLURM_JOB_GPUS}"
+#PBS -N ALG1B_IMAGENET2012_RESNET50_64g_3_RETRAIN
+#PBS -t 3 
+#PBS -j oe
+#PBS -l walltime=100:00:00
+#PBS -l nodes=1:ppn=20:gpus=1
+
+IFS=$'\n' allocatedgpus=($(sed -e 's/.*-gpu\([0-9]\+\)/\1/' $PBS_GPUFILE))
+echo I got allocated the following gpus
+for g in "${allocatedgpus[@]}"; do
+    echo "gpu: $g"
+done
+
+
+export CUDA_VISIBLE_DEVICES="${allocatedgpus[0]}"
 echo "Start Job"
 
-cd /z/home/madantrg/ViP 
+cd ~/MINT/
 source setup.sh 
 
-cd /z/home/madantrg/Pruning/resnet50
+cd MINT/resnet50
 
 python retrain_stage3.py \
 --Epoch 30 \
 --Batch_size 64 \
---Lr 0.00001 \
+--Lr 0.0001 \
 --Dataset IMAGENET \
 --Dims 1000 \
 --Model resnet \
---Milestones 40 \
---Weight_decay 0.0001 \
+--Milestones 9 \
+--Weight_decay 0.0005 \
 --Gamma 0.1 \
---Device_ids 0 \
---Retrain BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_53.2144243945449.pkl \
+--Retrain BASELINE_IMAGENET2012_RESNET50/0/logits_43.142143585397015.pkl \
 --Retrain_mask BASELINE_IMAGENET2012_RESNET50/0/I_parent_64g_5s_1b.npy \
 --Labels_file BASELINE_IMAGENET2012_RESNET50/0/Labels_64g_5s_1b.npy \
 --Labels_children_file BASELINE_IMAGENET2012_RESNET50/0/Labels_children_64g_5s_1b.npy \
@@ -59,7 +62,7 @@ conv51.weight conv52.weight conv53.weight \
 --upper_prune_per 0.95 \
 --lower_prune_per 0.10 \
 --prune_per_step 0.01 \
---Save_dir BASELINE_IMAGENET2012_RESNET50_RETRAIN_3 \
---key_id $SLURM_ARRAY_TASK_ID 
+--Save_dir BASELINE_IMAGENET2012_RESNET50_RETRAIN_1 \
+--key_id $PBS_ARRAYID 
 
 echo "End Job"
