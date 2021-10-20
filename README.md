@@ -72,7 +72,7 @@ This repository contains code relevant to the article titled: ``[Mutual Informat
 |  MNIST-MLP  |      650     |         89.70       |        98.53         |
 ---------------------------------------------------------------------------
 
-####Notes:
+#### Notes:
 - For filter group size experiments, number of samples per class is 250.
 - For sample size experiments, number of groups is 20.
 
