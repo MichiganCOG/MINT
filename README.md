@@ -106,3 +106,24 @@ python retrain_stage3.py --Epoch $num_epochs --Batch_size $batch_size --Lr $lear
 - Examples of parent and children layer lists are: [fc1.weight fc2.weight] and [fc2.weight final.weight]
 - ``` new_save_directory``` is an alternative save directory used for the new pruned DNN. It has to be different from the original ```save_directory```.
 - ```key_id``` in the retraining script is used to select the pruning value requested from the list of pruning values generated between ```upper_prune_per``` and ```lower_prune_per``` at a step size of ```prune_per_step```
+
+## BibTeX citation
+```
+@inproceedings{DBLP:conf/icpr/GaneshCS20,
+  author    = {Madan Ravi Ganesh and
+               Jason J. Corso and
+               Salimeh Yasaei Sekeh},
+  title     = {{MINT:} Deep Network Compression via Mutual Information-based Neuron
+               Trimming},
+  booktitle = {25th International Conference on Pattern Recognition, {ICPR} 2020,
+               Virtual Event / Milan, Italy, January 10-15, 2021},
+  pages     = {8251--8258},
+  publisher = {{IEEE}},
+  year      = {2020},
+  url       = {https://doi.org/10.1109/ICPR48806.2021.9412590},
+  doi       = {10.1109/ICPR48806.2021.9412590},
+  timestamp = {Fri, 07 May 2021 12:53:57 +0200},
+  biburl    = {https://dblp.org/rec/conf/icpr/GaneshCS20.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+```
