@@ -197,7 +197,7 @@ def compare_compression(results):
             file_size = 0
 
             for key_dict in orig_state_dict.keys():
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
 
                 if len(orig_state_dict[key_dict].cpu().shape) > 2:
@@ -225,7 +225,7 @@ def compare_compression(results):
                 #total_params = 0
                 #exist_params = 0
 
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
                 non_zero_params = len(np.where(state_dict[key_dict].reshape(-1).cpu()!=0)[0])
 
@@ -242,6 +242,7 @@ def compare_compression(results):
                     scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(state_dict[key_dict].cpu()))
 
                 file_size += Path(key_dict+'.npz').stat().st_size/(1024*1024.)
+                print('Compression of layer %s is %f'%(key_dict, 1 - (non_zero_params/float(orig_state_dict[key_dict].reshape(-1).shape[0]))))
                 
                 #print('Compression of layer %s is %f'%(key_dict, 1 - (exist_params/float(total_params))))
 
@@ -264,14 +265,22 @@ if __name__=="__main__":
 
     results = {}
     orig_file       = 'results/BASELINE_CIFAR10_RESNET56_A/0/logits_best.pkl'
+    #orig_file       = 'results/SNACS/0/logits_original.pkl'
 
     results[orig_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
-    for compressed_file in ['results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_40.14502382697947.pkl', 'results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_43.36395711143695.pkl']:
+    #for compressed_file in ['results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_40.14502382697947.pkl', 'results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_43.36395711143695.pkl', 'results/BASELINE_CIFAR10_RESNET56_RETRAIN_1/0/logits_42.95649324935888.pkl']:
+    #for compressed_file in ['results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_43.36395711143695.pkl', 'results/BASELINE_CIFAR10_RESNET56_RETRAIN_1/0/logits_42.95649324935888.pkl']:
+    #for compressed_file in ['results/BASELINE_CIFAR10_RESNET56_A_RETRAIN_1/0/logits_40.14502382697947.pkl']:
+    #for compressed_file in ['/z/home/madantrg/wMINT/results/BASELINE_CIFAR10_RESNET56_RETRAIN_1/final/logits_36.99865175742948.pkl']:
+    #for compressed_file in ['results/iSNACS/0/logits_70.72510465379393.pkl']:
+    #for compressed_file in ['results/iSNACS/0/logits_65.71657206969377.pkl']:
+    #for compressed_file in ['results/iSNACS/0/logits_67.20682795293408.pkl']:
+    #for compressed_file in ['results/SNACS/0/logits_68.6313216548499.pkl']:
+    for compressed_file in ['results/SNACS/0/logits_68.6313216548499.pkl','results/SNACS/0/logits_69.003620455574.pkl']:
         results[compressed_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
     # Run Comparisons
     #compare_adversarial(results)
     compare_accuracy(results)
-    #compare_compression(results)
-    import pdb; pdb.set_trace()
+    compare_compression(results)

@@ -253,7 +253,7 @@ def compare_compression(results):
             file_size = 0
 
             for key_dict in orig_state_dict.keys():
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
 
                 scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(orig_state_dict[key_dict].cpu()))
@@ -271,7 +271,7 @@ def compare_compression(results):
 
             for key_dict in orig_state_dict.keys():
 
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
                 non_zero_params = len(np.where(state_dict[key_dict].reshape(-1).cpu()!=0)[0])
 
@@ -313,8 +313,9 @@ if __name__=="__main__":
     
     # Run Comparisons
     #compare_class_viz(results)
-    compare_adversarial(results)
-    import pdb; pdb.set_trace()
-    #compare_accuracy(results)
+    #compare_adversarial(results)
+    #import pdb; pdb.set_trace()
+    compare_accuracy(results)
     #sorted(results.keys())
-    #compare_compression(results)
+    compare_compression(results)
+    import pdb; pdb.set_trace()

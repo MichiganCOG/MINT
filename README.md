@@ -115,6 +115,8 @@ Untouched params = 14977728 - 13275136  = 1702592
 - The results from Group and sample variations seems to not follow any particular trend. Could this be because of the extra upper limit / layer being imposed? 
 - Moving to MLP with upper limit / layer to observe behaviour more quickly.
 - Limit now is 85\%, lets change it to 75\%? Maximum limit for pruning percentage is 66.47. Lets do 80\% first, this translates to 70.90\%.
+- python retrain\_stage3\_cmos.py --Epoch 300 --Batch\_size 128 --Lr 0.1 --Dataset CIFAR10 --Dims 10 --Expt\_rerun 1 --
+Milestones 90 180 260 --Opt sgd --Weight\_decay 0.0005 --Model vgg --Gamma 0.2 --Nesterov --Device\_ids 0 --Retrain BASELINE\_CIFAR10\_VGG16\_BN\_FULL/0/logits\_best.pkl --Retrain\_mask BASELINE\_CIFAR10\_VGG16\_BN\_FULL/0/I\_parent\_64g\_650s\_1b.npy --Labels\_file BASELINE\_CIFAR10\_VGG16\_BN\_FULL/0/Labels\_64g\_650s\_1b.npy --Labels\_children\_file BASELINE\_CIFAR10\_VGG16\_BN\_FULL/0/Labels_children\_64g\_650s\_1b.npy --parent\_key conv4.weight conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight --children\_key conv5.weight conv6.weight conv7.weight conv8.weight conv9.weight conv10.weight conv11.weight conv12.weight conv13.weight linear1.weight --parent\_clusters   64 64 64 64 64 64 64 64 64 64 --children\_clusters 64 64 64 64 64 64 64 64 64 64 --upper\_prune\_limit 0.8 --upper\_prune\_per 0.99 --lower\_prune\_per 0.84 --prune\_per\_step 0.001 --Save\_dir BASELINE\_CIFAR10\_VGG16\_BN\_FULL\_RETRAIN\_1 --key\_id 31
 
 
 ### Experiment 3: [Pruning blocks for CNN Compression and Acceleration via Online Ensemble Distillation](https://ieeexplore.ieee.org/iel7/6287639/8600701/08918410.pdf)

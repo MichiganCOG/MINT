@@ -194,7 +194,7 @@ def compare_compression(results):
             file_size = 0
 
             for key_dict in orig_state_dict.keys():
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
 
                 if len(orig_state_dict[key_dict].cpu().shape) > 2:
@@ -231,9 +231,10 @@ def compare_compression(results):
                 #total_params = 0
                 #exist_params = 0
 
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
                 non_zero_params = len(np.where(state_dict[key_dict].reshape(-1).cpu()!=0)[0])
+                #print('Layer %s, Total Params: %d '%(key_dict, orig_state_dict[key_dict].reshape(-1).shape[0]))
 
                 exist_params += non_zero_params 
                 total_params += orig_state_dict[key_dict].reshape(-1).shape[0]
@@ -248,9 +249,10 @@ def compare_compression(results):
                     scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(state_dict[key_dict].cpu()))
 
                 file_size += Path(key_dict+'.npz').stat().st_size/(1024*1024.)
-                #print('Percentage of parameters removed in layer %s is %f'%(key_dict, 1 - non_zero_params/float(total_params)))
+                print('Percentage of parameters removed in layer %s is %f'%(key_dict, 1 - non_zero_params/float(orig_state_dict[key_dict].reshape(-1).shape[0])))
 
                 #print('Final compression percentage for ResNet56 with logit name %s on CIFAR10 is %f'%(os.path.split(compressed_file)[1], 1 - (exist_params/float(total_params))))
+            print(total_params)
             results[key]["compression"] = 1 - (exist_params/float(total_params))
             results[key]["memory"]      = file_size
 
@@ -269,8 +271,8 @@ if __name__=="__main__":
 
     results = {}
 
-    #orig_file = 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl'
-    #results[orig_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
+    orig_file = 'results/BASELINE_IMAGENET2012_RESNET50/0/logits_best.pkl'
+    results[orig_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
     # Michigan Cluster
     #mint_files = ['results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_39.96294556090583.pkl',
@@ -284,22 +286,32 @@ if __name__=="__main__":
     #              'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_4/0/logits_53.2144243945449.pkl',
     #              'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_53.2144243945449.pkl']
 
-    #mint_files = ['results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_46.0200087829206.pkl',
     #              'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_46.69390344519785.pkl', 
-    #              'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_3/0/logits_53.2144243945449.pkl',
-    #              'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_4/0/logits_53.2144243945449.pkl',
-    #              'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_53.2144243945449.pkl']
+    #mint_files  = ['results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_3/0/logits_53.2144243945449.pkl']#,
+                  #'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_4/0/logits_53.2144243945449.pkl',
+                  #'results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_53.2144243945449.pkl']
 
-    mint_files = ['results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_43.142143585397015.pkl']
+    #mint_files = ['results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_43.142143585397015.pkl']#,
+    #              'results/BASELINE_IM_RETRAIN_1/0/logits_43.268911949754475.pkl']
+    #mint_files = ['results/BASELINE_IM_RETRAIN_1/0/logits_43.268911949754475.pkl']#,
+		  #'results/BASELINE_IM_RETRAIN_1/0/logits_43.279873016047.pkl',
+		  #'results/BASELINE_IM_RETRAIN_1/0/logits_43.39277199886005.pkl',
+		  #'results/BASELINE_IM_RETRAIN_1/0/logits_43.49799823526833.pkl',
+		  #'results/BASELINE_IM_RETRAIN_1/0/logits_43.757775506401266.pkl']
 
+    #mint_files = ['results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/0/logits_46.0200087829206.pkl']#,
+    #mint_files = ['/z/home/madantrg/wMINT/results/BASELINE_IMAGENET2012_RESNET50_RETRAIN_1/final/logits_43.268911949754475.pkl']
+    #mint_files = ['results/SNACS/0/logits_50.57493789870879_ep_09.pkl']
+    #mint_files = ['results/SNACS/0/logits_60.176498000975535_0.8.pkl']
+    #mint_files = ['results/SNACS/0/logits_60.176498000975535_0.8.pkl','results/SNACS/0/logits_55.049150962655645_0.15.pkl', 'results/SNACS/0/logits_50.57493789870879_ep_09.pkl']
+    mint_files = ['results/SNACS/0/logits_65.0961756497172_0.85.pkl','results/SNACS/0/logits_70.16880727157138_0.8.pkl', 'results/SNACS/0/logits_75.13476545373334_0.8.pkl']
+    #mint_files = ['results/SNACS/0/logits_70.16880727157138.pkl']
     for compressed_file in mint_files:
         results[compressed_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
    
 
     # Run Comparisons
     #compare_adversarial(results)
-    compare_accuracy(results)
-    #compare_compression(results)
+    #compare_accuracy(results)
+    compare_compression(results)
     import pdb; pdb.set_trace()
-
- 

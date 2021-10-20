@@ -205,6 +205,9 @@ if __name__=='__main__':
     parents  = ['conv1.weight','conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight', 'conv10.weight','conv11.weight','conv12.weight','conv13.weight', 'linear1.weight']
     children = ['conv2.weight','conv3.weight','conv4.weight','conv5.weight','conv6.weight','conv7.weight','conv8.weight','conv9.weight','conv10.weight','conv11.weight','conv12.weight','conv13.weight','linear1.weight', 'linear3.weight']
 
+    if args.key_id in [12,11,10,9,8,7,6,5,4]:
+        args.children_clusters = [128]
+        args.parent_clusters   = [128]
 
     if args.key_id ==len(parents):
         args.children_clusters = [args.dims]

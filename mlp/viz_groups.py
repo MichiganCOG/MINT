@@ -28,7 +28,7 @@ groups = ['5',    '10',   '20', '50']
 acc    = [98.55, 98.52, 98.55, 98.55]
 params = np.array([86.27, 87.25, 88.48, 91.87])
 
-fig, ax = plt.subplots(figsize=(8.1,7.9))
+fig, ax = plt.subplots(figsize=(9.0,9.0))
 #ax.plot(groups, params, color=Purpul[4], linewidth=3, marker='o', markevery=1, markersize=10, label= 'Params. Pruned (%)')
 
 #ax.plot(groups, params, color=Blue[6], linewidth=3, linestyle='--', marker='o', markevery=1, markersize=10, label= 'Params. Pruned (%)')
@@ -36,15 +36,16 @@ pointer = ax.bar(groups,params, width=0.5, color=Purpul[4])
 x_collect = []
 for pointer_idx in range(len(pointer)):
     ht = pointer[pointer_idx].get_height()
-    ax.text(pointer[pointer_idx].get_x() + pointer[pointer_idx].get_width()/15., 1.005*ht, '(%.2f)' % (acc[pointer_idx]), fontsize=20)
+    ax.text(pointer[pointer_idx].get_x() - pointer[pointer_idx].get_width()/10., 1.005*ht, '(%.2f)' % (acc[pointer_idx]), fontsize=25)
     x_collect.append(pointer[pointer_idx].get_x()+ pointer[pointer_idx].get_width()/2.)
 
 ax.set_ylim([86,94])
 #ax.legend()
-ax.set_xlabel('Number of groups (G)', fontsize=30)
-ax.set_ylabel('Params. Pruned (%)', fontsize=30)
+ax.set_xlabel('Number of groups (G)', fontsize=35)
+ax.set_ylabel('Params. Pruned (%)', fontsize=35)
 #plt.legend(fontsize=13, loc= "best")
+#plt.tight_layout()
 plt.tick_params(labelsize=25)
 plt.setp(ax.spines.values(), linewidth=1, color ='k')
-fig.savefig('./groups.pdf', format='pdf', dpi=1200)
+fig.savefig('./groups.png', format='png', dpi=1200)
 

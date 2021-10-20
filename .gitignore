@@ -9,3 +9,6 @@ results/*
 *.tar*
 *.npz
 data/*
+*.csv
+*.png
+ers_2021/

@@ -183,13 +183,19 @@ def compare_accuracy(results):
     print('\n')
 
 
-def compare_compression(results):
+def compare_compression(results, orig_file):
 
     print("Running Compression Comparison")
     orig_state_dict = None
 
     for key in sorted(results.keys()):
-        state_dict = torch.load(key)['state_dict']
+        #if not(orig_state_dict is None) and key == orig_file:
+        #    continue
+
+        try:
+            state_dict = torch.load(key)['state_dict']
+        except:
+            import pdb; pdb.set_trace()
 
         if 'best' in key:
             orig_state_dict = torch.load(key)['state_dict']
@@ -197,7 +203,7 @@ def compare_compression(results):
             file_size = 0
 
             for key_dict in orig_state_dict.keys():
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
 
                 if len(orig_state_dict[key_dict].cpu().shape) > 2:
@@ -213,7 +219,7 @@ def compare_compression(results):
             results[key]["memory"] = file_size
 
         else:
-            assert(len(orig_state_dict.keys()) == len(state_dict.keys()))
+            #assert(len(orig_state_dict.keys()) == len(state_dict.keys()))
             
 
             total_params = 0
@@ -225,12 +231,13 @@ def compare_compression(results):
                 #total_params = 0
                 #exist_params = 0
 
-                if 'bn' in key_dict:
+                if 'bn' in key_dict or 'bias' in key_dict:
                     continue
 
 
                 non_zero_params = len(np.where(state_dict[key_dict].reshape(-1).cpu()!=0)[0])
 
+                #print('Layer %s, Total Params: %d, Removed Params:%d'%(key_dict, orig_state_dict[key_dict].reshape(-1).shape[0], orig_state_dict[key_dict].reshape(-1).shape[0] - non_zero_params))
                 exist_params += non_zero_params 
                 total_params += orig_state_dict[key_dict].reshape(-1).shape[0]
 
@@ -244,7 +251,7 @@ def compare_compression(results):
                     scipy.sparse.save_npz(key_dict+'.npz', csr_matrix(state_dict[key_dict].cpu()))
 
                 file_size += Path(key_dict+'.npz').stat().st_size/(1024*1024.)
-                print('Compression of layer %s is %f'%(key_dict, 1 - (exist_params/float(total_params))))
+                print('Compression of layer %s is %f'%(key_dict, 1 - (non_zero_params/float(orig_state_dict[key_dict].reshape(-1).shape[0]))))
                 #if 1 - exist_params/float(total_params) > 0:
                 #    #import matplotlib.pyplot as plt
                 #    #plt.matshow(torch.sum(torch.abs(state_dict[key_dict]), (2,3)).detach().cpu().numpy())
@@ -252,7 +259,6 @@ def compare_compression(results):
                 #    print('Number of removed parents %d/%d'%(np.where(np.sum(torch.sum(torch.abs(state_dict[key_dict]), (2,3)).detach().cpu().numpy(),0)==0)[0].shape[0], state_dict[key_dict].shape[1]))
 
 
-            import pdb; pdb.set_trace()
             results[key]["compression"] = 1 - (exist_params/float(total_params))
             results[key]["memory"]      = file_size
 
@@ -274,12 +280,17 @@ if __name__=="__main__":
 
     results[orig_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
-    for compressed_file in ['results/BASELINE_CIFAR10_VGG16_BN_RETRAIN_1/0/logits_15.03558254454343.pkl']:
+    #for compressed_file in ['results/BASELINE_CIFAR10_VGG16_BN_RETRAIN_1/0/logits_15.03558254454343.pkl']:
+    #for compressed_file in ['/z/home/madantrg/wMINT/results/BASELINE_CIFAR10_VGG16_RETRAIN_1/final/logits_15.530962873931625.pkl']:
+    #for compressed_file in ['/z/home/madantrg/wMINT/results/BASELINE_CIFAR10_VGG16_RETRAIN_1/final/logits_14.950434027777778.pkl']:
+    #for compressed_file in ['/z/home/madantrg/wMINT/results/BASELINE_CIFAR10_VGG16_RETRAIN_1/0/logits_23.855669070512818.pkl']:
+    #for compressed_file in ['/z/home/madantrg/wMINT/results/BASELINE_CIFAR10_VGG16_RETRAIN_1/0/logits_17.394798344017094.pkl']:
+    #for compressed_file in ['/z/home/madantrg/wMINT/results/BASELINE_CIFAR10_VGG16_RETRAIN_1/0/logits_22.998350694444444.pkl']:
+    for compressed_file in ['results/BASELINE_CIFAR10_VGG16_SNACS/0/logits_96.17270966880342.pkl']:
         results[compressed_file] = {"fgsm": 0.0, "ll": 0.0, "accuracy": 0.0, "compression": 0.0}
 
     # Run Comparisons
     #compare_class_viz(results)
     #compare_adversarial(results)
-    #compare_accuracy(results)
-    compare_compression(results)
-    import pdb; pdb.set_trace()
+    compare_accuracy(results)
+    compare_compression(results, orig_file)
