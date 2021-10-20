@@ -1,12 +1,7 @@
 """
-LEGACY:
-    View more, visit my tutorial page: https://morvanzhou.github.io/tutorials/
-    My Youtube Channel: https://www.youtube.com/user/MorvanZhou
-    Dependencies:
-    torch: 0.4
-    matplotlib
-    numpy
+Code Acknowledgements: https://morvanzhou.github.io/tutorials/
 """
+
 import os
 import cv2
 import time
@@ -35,47 +30,25 @@ from torch.optim.lr_scheduler  import MultiStepLR
 from model                     import MLP           as mlp 
 
 torch.backends.cudnn.deterministic = True
-torch.manual_seed(999)
 random.seed(999)
-torch.manual_seed(999)
 np.random.seed(999)
+torch.manual_seed(999)
+torch.manual_seed(999)
 
-def set_lr(optimizer, lr_update, utype='const'):
-    for param_group in optimizer.param_groups:
-
-        if utype == 'const':
-            current_lr = param_group['lr']
-            #print("Updating LR to ", lr_update)
-            param_group['lr'] = lr_update
-
-        else:
-            current_lr = param_group['lr']
-            print("Updating LR to ", current_lr*lr_update)
-            param_group['lr'] = current_lr * lr_update
-            current_lr*= lr_update
-
-        # END IF
-
-    # END FOR
-
-    return optimizer
-
+#### Function to Train DNN ####
 def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids):
 
     print("Experimental Setup: ", args)
 
     np.random.seed(1993)
+
     total_acc = []
 
     for total_iteration in range(Rerun):
 
-        # Tensorboard Element
-        writer = SummaryWriter() 
-
         # Load Data
         trainloader, testloader, extraloader = data_loader(Dataset, Batch_size)
 
-   
         # Check if GPU is available (CUDA)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         
@@ -90,8 +63,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         # END IF
 
         logsoftmax = nn.LogSoftmax()
-
-        # Prune-Loop
         params     = [p for p in model.parameters() if p.requires_grad]
 
         if Opt == 'rms':
@@ -139,8 +110,6 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
         
                     running_loss += loss.item()
                 
-                    ## Add Loss Element
-                    writer.add_scalar(Dataset+'/'+Model+'/loss', loss.item(), epoch*len(trainloader) + step)
                     if np.isnan(running_loss):
                         import pdb; pdb.set_trace()
 
@@ -155,6 +124,8 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
                     running_loss = 0.0
 
                 # END IF
+
+            # END FOR
    
             scheduler.step()
 
@@ -162,19 +133,16 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
             print("Time for epoch: %f", end_time - start_time)
  
             epoch_acc = 100*accuracy(model, testloader, device)
-            writer.add_scalar(Dataset+'/'+Model+'/accuracy', epoch_acc, epoch)
 
             print('Accuracy of the network on the 10000 test images: %f %%\n' % (epoch_acc))
-
 
             if best_model_acc < epoch_acc:
                 best_model_acc = epoch_acc
                 save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_best.pkl')
+
+            # END IF
         
         # END FOR
-
-        # Close Tensorboard Element
-        writer.close()
 
         # Save Final Model
         save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_final.pkl')

@@ -8,6 +8,7 @@ import torch.utils.data  as Data
 
 from torchvision  import datasets, transforms
 
+####  Function to Load MNIST ####
 def data_loader(dataset='MNIST', Batch_size = 64):
 
 

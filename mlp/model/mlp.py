@@ -2,9 +2,9 @@
 
 import torch
 
-import torch.nn.functional   as F
 import torch.nn              as nn
 import torchvision.models    as models
+import torch.nn.functional   as F
 import torch.utils.model_zoo as model_zoo
 
 from torch.autograd import Variable
@@ -32,6 +32,8 @@ class MLP(nn.Module):
 
         if labels:
             x = F.softmax(x, dim=1)
+
+        # END IF
 
         return x
 

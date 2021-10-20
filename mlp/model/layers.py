@@ -1,10 +1,11 @@
 import torch
-import torch.nn as nn
+
+import torch.nn            as nn
 import torch.nn.functional as F
 
 from .utils import to_var
 
-
+####  Function to Generate Masked Linear Layer####
 class MaskedLinear(nn.Linear):
     def __init__(self, in_features, out_features, bias=True, act=None):
         super(MaskedLinear, self).__init__(in_features, out_features, bias)
@@ -29,14 +30,20 @@ class MaskedLinear(nn.Linear):
             else:
                 return F.relu(F.linear(x, weight, self.bias))
 
+            # END IF
+
         else:
             if self.act is None:
                 return F.linear(x, self.weight, self.bias)
 
             else:
                 return F.relu(F.linear(x, self.weight, self.bias))
+
+            # END IF
+
+        # END IF
         
-        
+####  Function to Generate Masked Conv2D Layer####
 class MaskedConv2d(nn.Conv2d):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1,
                  padding=0, dilation=1, groups=1, bias=True, act=None):
@@ -65,6 +72,8 @@ class MaskedConv2d(nn.Conv2d):
                 return F.relu(F.conv2d(x, weight, self.bias, self.stride,
                             self.padding, self.dilation, self.groups))
 
+            # END IF
+
         else:
             if self.act is None:
                 return F.conv2d(x, self.weight, self.bias, self.stride,
@@ -73,4 +82,7 @@ class MaskedConv2d(nn.Conv2d):
             else:
                 return F.relu(F.conv2d(x, self.weight, self.bias, self.stride,
                             self.padding, self.dilation, self.groups))
-        
+
+            # END IF
+
+        # END IF        

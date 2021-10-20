@@ -12,3 +12,5 @@ data/*
 *.csv
 *.png
 ers_2021/
+*/extras/*
+*/scripts/
