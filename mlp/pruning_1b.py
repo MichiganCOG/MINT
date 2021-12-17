@@ -187,8 +187,8 @@ if __name__=='__main__':
     clusters          = [8,8,8,8,8,8,8,8,8,8,8,8,8,8]
     clusters_children = [8,8,8,8,8,8,8,8,8,8,8,8,8,8]
 
-    load_weights  = '/z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/logits_best.pkl'
-    save_data_dir = '/z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/'
+    load_weights  = 'results/CIFAR10_VGG16_BN_BATCH/0/logits_best.pkl'
+    save_data_dir = 'results/CIFAR10_VGG16_BN_BATCH/0/'
     """
 
 

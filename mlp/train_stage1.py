@@ -33,7 +33,6 @@ torch.backends.cudnn.deterministic = True
 random.seed(999)
 np.random.seed(999)
 torch.manual_seed(999)
-torch.manual_seed(999)
 
 #### Function to Train DNN ####
 def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids):

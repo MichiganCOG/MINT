@@ -212,6 +212,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
 
             ########################### Data Loader + Training ##################################
  
+        # END FOR
    
         scheduler.step()
 

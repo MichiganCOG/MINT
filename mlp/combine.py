@@ -26,7 +26,7 @@ if __name__=='__main__':
 
     """    
     Sample Inputs
-    directory = '/z/home/madantrg/Pruning/results/MNIST_MLP_BATCH/0/'
+    directory = 'results/MNIST_MLP_BATCH/0/'
     prefix = '10g'
     model  = 'mlp'
 

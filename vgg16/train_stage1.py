@@ -1,12 +1,7 @@
 """
-LEGACY:
-    View more, visit my tutorial page: https://morvanzhou.github.io/tutorials/
-    My Youtube Channel: https://www.youtube.com/user/MorvanZhou
-    Dependencies:
-    torch: 0.4
-    matplotlib
-    numpy
+Code Acknowledgements: https://morvanzhou.github.io/tutorials/
 """
+
 import os
 import cv2
 import time
@@ -35,29 +30,12 @@ from torch.optim.lr_scheduler  import MultiStepLR
 from model                     import VGG16_bn      as vgg 
 
 torch.backends.cudnn.deterministic = True
+random.seed(999)
+np.random.seed(999)
 torch.manual_seed(999)
 
 
-def set_lr(optimizer, lr_update, utype='const'):
-    for param_group in optimizer.param_groups:
-
-        if utype == 'const':
-            current_lr = param_group['lr']
-            #print("Updating LR to ", lr_update)
-            param_group['lr'] = lr_update
-
-        else:
-            current_lr = param_group['lr']
-            print("Updating LR to ", current_lr*lr_update)
-            param_group['lr'] = current_lr * lr_update
-            current_lr*= lr_update
-
-        # END IF
-
-    # END FOR
-
-    return optimizer
-
+#### Function to Train DNN ####
 def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids):
 
     print("Experimental Setup: ", args)
@@ -153,6 +131,8 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
                     running_loss = 0.0
 
                 # END IF
+
+            # END FOR
    
             scheduler.step()
 
@@ -168,6 +148,8 @@ def train(Epoch, Batch_size, Lr, Save_dir, Dataset, Dims, Milestones, Rerun, Opt
             if best_model_acc < epoch_acc:
                 best_model_acc = epoch_acc
                 save_checkpoint(epoch + 1, 0, model, optimizer, Save_dir+'/'+str(total_iteration)+'/logits_best.pkl')
+
+            # END IF
         
         # END FOR
 
