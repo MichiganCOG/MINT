@@ -1,18 +1,7 @@
 """
-LEGACY:
-    View more, visit my tutorial page: https://morvanzhou.github.io/tutorials/
-    My Youtube Channel: https://www.youtube.com/user/MorvanZhou
-    Dependencies:
-    torch: 0.4
-    matplotlib
-    numpy
+Code Acknowledgements: https://morvanzhou.github.io/tutorials/
 """
-"""
-TODO:
-1. Add option to save the best performing model after pruning, with a request for directory to save this file in. File needs to be named logits_best.pkl so that this is compatible with retraining multiple times.
-    1 a. Secondary check to ensure certain weights are zeroed out when retraining multiple times and observe what variables get affected and how.
 
-"""
 import os
 import cv2
 import time
@@ -42,11 +31,12 @@ from torch.optim.lr_scheduler  import MultiStepLR
 from model                     import Resnet56_A    as resnet56_a
 
 torch.backends.cudnn.deterministic = True
-torch.manual_seed(1000)
-random.seed(1000)
-torch.manual_seed(1000)
-np.random.seed(1000)
 
+random.seed(1000)
+np.random.seed(1000)
+torch.manual_seed(1000)
+
+#### Function to Generate Mask Using CMI Values ####
 def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, clusters_children, Labels_file, Labels_children_file, final_weights, upper_prune_limit):
         I_parent        = np.load('results/'+I_parent_file, allow_pickle=True).item()
         labels          = np.load('results/'+Labels_file, allow_pickle=True).item()
@@ -65,6 +55,9 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
             else:
                 sorted_weights =  np.concatenate((sorted_weights, I_parent[str(looper_idx)].reshape(-1)))
 
+            # END IF
+
+        # END FOR
 
         # Compute unique values
         sorted_weights = np.unique(sorted_weights)
@@ -97,6 +90,10 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                             for group_c in np.where(labels_children[str(num_layers)]==child)[0]:
                                 init_weights[children_k][group_c, group_p] = 0.
 
+                            # END FOR
+    
+                        # END FOR
+
                     # END IF
 
                 # END FOR
@@ -116,10 +113,13 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
                 total_count += init_weights[children_key[num_layers]].reshape(-1).shape[0]
                 valid_count += len(np.where(init_weights[children_key[num_layers]].detach().cpu().reshape(-1)!=0.)[0])
 
+            # END FOR
+
         else:
             valid_count = len(np.where(init_weights[children_key[0]].detach().cpu().reshape(-1)!= 0.0)[0])
             total_count = float(init_weights[children_key[0]].reshape(-1).shape[0])
 
+        # END IF
 
 
         true_prune_percent = valid_count / float(total_count) * 100.
@@ -127,26 +127,7 @@ def gen_mask(I_parent_file, prune_percent, parent_key, children_key, clusters, c
         return mask_weights, true_prune_percent, total_count
 
 
-def set_lr(optimizer, lr_update, utype='const'):
-    for param_group in optimizer.param_groups:
-
-        if utype == 'const':
-            current_lr = param_group['lr']
-            #print("Updating LR to ", lr_update)
-            param_group['lr'] = lr_update
-
-        else:
-            current_lr = param_group['lr']
-            print("Updating LR to ", current_lr*lr_update)
-            param_group['lr'] = current_lr * lr_update
-            current_lr*= lr_update
-
-        # END IF
-
-    # END FOR
-
-    return optimizer
-
+####  Function to Re-train DNN After Masking Weights ####
 def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_decay, Model, Gamma, Nesterov, Device_ids, Retrain, Retrain_mask, Labels_file, Labels_children_file, prune_percent, parent_key, children_key, parent_clusters, children_clusters, upper_prune_limit):
 
     #print("Experimental Setup: ", args)
@@ -173,6 +154,7 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
     # END IF
 
     # Retrain Setup 
+
     # Load old state
     model.load_state_dict(load_checkpoint(Retrain))
 
@@ -238,8 +220,9 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
             # END IF
 
             ########################### Data Loader + Training ##################################
+
+        # END FOR
  
-   
         scheduler.step()
 
         end_time = time.time()
@@ -250,6 +233,8 @@ def train(Epoch, Batch_size, Lr, Dataset, Dims, Milestones, Rerun, Opt, Weight_d
         if best_model_acc < epoch_acc:
             best_model_acc = epoch_acc
             best_model     = copy.deepcopy(model)
+
+        # END IF
     
     # END FOR
 
