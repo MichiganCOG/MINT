@@ -20,10 +20,11 @@ from model                   import resnet50    as resnet50
 
 # Fixed Backend To Force Dataloader To Be Consistent
 torch.backends.cudnn.deterministic = True
+
 random.seed(1)
+np.random.seed(1)
 torch.manual_seed(1)
 torch.cuda.manual_seed(1)
-np.random.seed(1)
 
 
 #### Conditional Mutual Information Computation For Alg. 1 (a) groups
@@ -39,7 +40,7 @@ def cmi(data):
 
     return I_value 
 
-#### Alg. 1 (b) groups
+#### CMI Main Algorithm #### 
 def alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children, cores):
 
     print("----------------------------------")
@@ -87,6 +88,8 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     else:
         print('Invalid model selected')
 
+    # END IF
+
     model.load_state_dict(init_weights)
     model.eval()
 
@@ -115,11 +118,14 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
     for item_key in unique_keys:
         act[item_key], lab[item_key] = activations(extraloader, model, device, item_key)
 
+    # END FOR
+
     for item_idx in range(len(parent_key)):
         # Sub-sample activations
         p1_op[str(item_idx)] = copy.deepcopy(act[parent_key[item_idx]]) 
         c1_op[str(item_idx)] = copy.deepcopy(act[children_key[item_idx]])
 
+    # END FOR
 
     act_end_time   = time.time()
 
@@ -160,6 +166,8 @@ def calc_perf(model, dataset, parent_key, children_key, clusters, clusters_child
         p1_op[str(item_idx)] = sub_sample_uniform(copy.deepcopy(act[parent_key[item_idx]]),   lab[parent_key[item_idx]], num_samples_per_class=samples_per_class)
         c1_op[str(item_idx)] = sub_sample_uniform(copy.deepcopy(act[children_key[item_idx]]), lab[parent_key[item_idx]], num_samples_per_class=samples_per_class)
 
+    # END FOR
+
     del act, lab
 
     alg1b_group(nlayers, I_parent, p1_op, c1_op, labels, labels_children, clusters, clusters_children, cores)
@@ -180,8 +188,8 @@ if __name__=='__main__':
     clusters          = [8,8,8,8,8,8,8,8,8,8,8,8,8,8]
     clusters_children = [8,8,8,8,8,8,8,8,8,8,8,8,8,8]
 
-    load_weights  = '/z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/logits_best.pkl'
-    save_data_dir = '/z/home/madantrg/Pruning/results/CIFAR10_VGG16_BN_BATCH/0/'
+    load_weights  = 'results/CIFAR10_VGG16_BN_BATCH/0/logits_best.pkl'
+    save_data_dir = 'results/CIFAR10_VGG16_BN_BATCH/0/'
     """
 
 
@@ -226,6 +234,8 @@ if __name__=='__main__':
     else:
         args.parent_clusters[0] = 64
 
+    # END IF
+
     if args.children_clusters[0] == 0:
         args.children_clusters[0] = 8
     elif args.children_clusters[0] == 1:
@@ -234,10 +244,14 @@ if __name__=='__main__':
         args.children_clusters[0] = 32
     else:
         args.children_clusters[0] = 64 
+
+    # END IF
         
 
     if args.key_id ==len(parents):
         args.children_clusters = [args.dims]
+
+    # END IF
  
     calc_perf(args.model, args.dataset, [parents[args.key_id-1]], [children[args.key_id-1]], args.parent_clusters, args.children_clusters, args.weights_dir, args.cores, args.name_postfix +'_'+parents[args.key_id-1]+'_'+children[args.key_id-1], args.samples_per_class, args.dims)
 
