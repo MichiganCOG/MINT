@@ -9,7 +9,7 @@ import torch.nn as nn
 visualisation = {}
 
 """
-Code Acknowledgement: https://blog.paperspace.com/pytorch-hooks-gradient-clipping-debugging/
+Fwd Hook Code Acknowledgement: https://blog.paperspace.com/pytorch-hooks-gradient-clipping-debugging/
 """
 
 #### Hook Function
@@ -26,13 +26,14 @@ def get_all_layers(net, hook_handles, item_key):
 
             else:
                 hook_handles.append(layer.register_forward_hook(hook_fn))
+
             # END IF
 
         # END IF
 
     # END FOR
 
-#### Activation function ####
+#### Return Activations From Desired Layers ####
 def activations(data_loader, model, device, item_key):
     temp_op       = None
     temp_label_op = None
@@ -52,19 +53,11 @@ def activations(data_loader, model, device, item_key):
             model(x_input.to(device))
 
             if temp_op is None:
-                if len(visualisation[list(visualisation.keys())[0]].cpu().numpy().shape) > 2:
-                    temp_op  = np.mean(visualisation[list(visualisation.keys())[0]].cpu().numpy(), axis=(2,3))
-                else:
-                    temp_op        = visualisation[list(visualisation.keys())[0]].cpu().numpy()
-
+                temp_op        = visualisation[list(visualisation.keys())[0]].cpu().numpy()
                 temp_labels_op = y_label.numpy()
 
             else:
-                if len(visualisation[list(visualisation.keys())[0]].cpu().numpy().shape) > 2:
-                    temp_op        = np.vstack((np.mean(visualisation[list(visualisation.keys())[0]].cpu().numpy(), axis=(2,3)), temp_op))
-                else:
-                    temp_op        = np.vstack((visualisation[list(visualisation.keys())[0]].cpu().numpy(), temp_op))
-
+                temp_op        = np.vstack((visualisation[list(visualisation.keys())[0]].cpu().numpy(), temp_op))
                 temp_labels_op = np.hstack((y_label.numpy(), temp_labels_op))
 
             # END IF 
@@ -73,7 +66,6 @@ def activations(data_loader, model, device, item_key):
                 if parents_op is None:
                     parents_op = copy.deepcopy(temp_op)
                     labels_op  = copy.deepcopy(temp_labels_op)
-
 
                     temp_op        = None
                     temp_labels_op = None
@@ -85,9 +77,13 @@ def activations(data_loader, model, device, item_key):
                     temp_op        = None
                     temp_labels_op = None
 
+                # END IF
+
+            # END IF
+
         # END FOR
 
-    # END FOR
+    # END WITH 
 
     if parents_op is None:
         parents_op = copy.deepcopy(temp_op)
@@ -103,14 +99,20 @@ def activations(data_loader, model, device, item_key):
         temp_op        = None
         temp_labels_op = None
 
+    # END IF
+
     # Remove all hook handles
     for handle in handles:
         handle.remove()    
+
+    # END FOR
     
     del visualisation[list(visualisation.keys())[0]]
 
     if len(parents_op.shape) > 2:
         parents_op  = np.mean(parents_op, axis=(2,3))
+
+    # END IF
 
     return parents_op, labels_op
 
@@ -130,10 +132,11 @@ def sub_sample(activations, labels, num_samples_per_class=250):
 
         chosen_sample_idxs.extend((np.where(labels==unique_labels[idxs])[0])[chosen_idxs].tolist())
 
+    # END FOR
     
     return activations[chosen_sample_idxs]
 
-#### Sub-sample function (Uniform sampling)####
+#### Sub-sample and return activations, uniform prior over labels####
 def sub_sample_uniform(activations, labels, num_samples_per_class=250):
 
     chosen_sample_idxs = []
@@ -145,69 +148,8 @@ def sub_sample_uniform(activations, labels, num_samples_per_class=250):
         chosen_idxs     = np.random.choice(np.where(labels==unique_labels[idxs])[0],num_samples_per_class)
         chosen_sample_idxs.extend(chosen_idxs)
 
+    # END FOR
+
     random.shuffle(chosen_sample_idxs)
 
     return activations[chosen_sample_idxs]
-
-#### Temp Activation function ####
-def activations_temp(data_loader, model, device, item_key):
-    temp_op       = None
-    temp_label_op = None
-
-    parents_op  = None
-    labels_op   = None
-
-    print('Collecting Activations for Layer %s'%(item_key))
-
-    with torch.no_grad():
-        for step, data in enumerate(data_loader):
-            x_input, y_label = data
-            
-
-            if temp_op is None:
-                temp_op        = model(x_input.to(device), conv2=True).cpu().numpy()
-                temp_labels_op = y_label.numpy()
-
-            else:
-                temp_op        = np.vstack((model(x_input.to(device), conv2=True).cpu().numpy(), temp_op))
-                temp_labels_op = np.hstack((y_label.numpy(), temp_labels_op))
-
-            # END IF 
-
-            if step % 100 == 0:
-                if parents_op is None:
-                    parents_op = copy.deepcopy(temp_op)
-                    labels_op  = copy.deepcopy(temp_labels_op)
-
-                    temp_op        = None
-                    temp_labels_op = None
-
-                else:
-                    parents_op = np.vstack((temp_op, parents_op))
-                    labels_op  = np.hstack((temp_labels_op, labels_op))
-
-                    temp_op        = None
-                    temp_labels_op = None
-
-        # END FOR
-
-    # END FOR
-
-    if parents_op is None:
-        parents_op = copy.deepcopy(temp_op)
-        labels_op  = copy.deepcopy(temp_labels_op)
-
-        temp_op        = None
-        temp_labels_op = None
-
-    else:
-        parents_op = np.vstack((temp_op, parents_op))
-        labels_op  = np.hstack((temp_labels_op, labels_op))
-
-        temp_op        = None
-        temp_labels_op = None
-
-    if len(parents_op.shape) > 2:
-        parents_op  = np.mean(parents_op, axis=(2,3))
-
-    return parents_op, labels_op
